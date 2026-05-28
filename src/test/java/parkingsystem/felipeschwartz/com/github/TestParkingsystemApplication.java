@@ -1,4 +1,4 @@
-package io.github.felipeschwartz.parkingsystem;
+package parkingsystem.felipeschwartz.com.github;
 
 import org.springframework.boot.SpringApplication;
 

@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: parking_system
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/parkingsystem
+    username: postgres
+    password: 1234567890
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+    show-sql: false
+    open-in-view: false
+  profiles:
+    active: dev
+logging:
+  level:
+    # root: warn
+    felipeschwartz.com.github: DEBUG
