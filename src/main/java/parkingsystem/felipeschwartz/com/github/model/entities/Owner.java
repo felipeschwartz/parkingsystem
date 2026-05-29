@@ -2,13 +2,15 @@ package parkingsystem.felipeschwartz.com.github.model.entities;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "owner")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "owner_type", discriminatorType = DiscriminatorType.STRING)
-public abstract class Owner {
+public abstract class Owner implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

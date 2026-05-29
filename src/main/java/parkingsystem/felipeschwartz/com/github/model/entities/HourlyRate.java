@@ -1,14 +1,17 @@
 package parkingsystem.felipeschwartz.com.github.model.entities;
 
 import jakarta.persistence.*;
-import model.enums.VehicleType;
+import parkingsystem.felipeschwartz.com.github.model.enums.VehicleType;
 
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
 @Table
-public class HourlyRate {
+public class HourlyRate implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
