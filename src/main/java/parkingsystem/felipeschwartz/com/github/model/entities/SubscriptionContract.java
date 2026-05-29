@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import parkingsystem.felipeschwartz.com.github.model.enums.ContractStatus;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -29,7 +27,7 @@ public class SubscriptionContract implements Serializable {
     @Column(name = "status", nullable = false, length = 20)
     private ContractStatus status = ContractStatus.ACTIVE;
 
-    @Column(name = "start_Dadate", nullable = false)
+    @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
     @Column(name = "end_date")
@@ -43,12 +41,13 @@ public class SubscriptionContract implements Serializable {
     )
     private Owner owner;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
-            name = "subscription_contract_id",
-            foreignKey = @ForeignKey(name = "fk_vehicle_subscription_contract")
+            name = "vehicle_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_subscription_contract_vehicle")
     )
-    private List<Vehicle> vehicles = new ArrayList<Vehicle>();
+    private Vehicle vehicle;
 
     public SubscriptionContract() {}
 
@@ -61,8 +60,8 @@ public class SubscriptionContract implements Serializable {
 
     public Long getId() { return id; }
 
-    public List<Vehicle> getVehicle() {
-        return vehicles;
+    public Vehicle getVehicle() {
+        return vehicle;
     }
 
     public Plan getPlan() { return plan; }
@@ -70,8 +69,8 @@ public class SubscriptionContract implements Serializable {
     public LocalDate getStartDate() { return startDate; }
     public LocalDate getEndDate() { return endDate; }
 
-    public void setVehicle(List<Vehicle> vehicle) {
-        this.vehicles = vehicle;
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
     }
 
     public void setPlan(Plan plan) { this.plan = plan; }
@@ -89,11 +88,11 @@ public class SubscriptionContract implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof SubscriptionContract that)) return false;
-        return Objects.equals(getId(), that.getId()) && Objects.equals(getPlan(), that.getPlan()) && getStatus() == that.getStatus() && Objects.equals(getStartDate(), that.getStartDate()) && Objects.equals(getEndDate(), that.getEndDate()) && Objects.equals(owner, that.owner) && Objects.equals(vehicles, that.vehicles);
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getPlan(), getStatus(), getStartDate(), getEndDate(), owner, vehicles);
+        return Objects.hashCode(getId());
     }
 }

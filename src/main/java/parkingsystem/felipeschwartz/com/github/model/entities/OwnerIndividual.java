@@ -34,15 +34,4 @@ public class OwnerIndividual extends Owner implements Serializable {
         this.cpf = cpf;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof OwnerIndividual that)) return false;
-        if (!super.equals(o)) return false;
-        return Objects.equals(getCpf(), that.getCpf());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), getCpf());
-    }
 }

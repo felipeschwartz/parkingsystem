@@ -1,6 +1,5 @@
 package parkingsystem.felipeschwartz.com.github.model.enums;
 
-
 public enum VehicleType {
     CAR(1),
     MOTORCYCLE(2),

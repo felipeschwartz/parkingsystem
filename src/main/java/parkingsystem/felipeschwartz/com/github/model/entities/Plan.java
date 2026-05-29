@@ -1,10 +1,8 @@
 package parkingsystem.felipeschwartz.com.github.model.entities;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,7 +18,7 @@ public class Plan implements Serializable {
     @Column(length = 50)
     private String name;
 
-    @Column(length = 50)
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlanRate> rates = new ArrayList<>();
 
     public Plan() {
@@ -59,22 +57,11 @@ public class Plan implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Plan plan)) return false;
-        return Objects.equals(getId(), plan.getId()) && Objects.equals(getName(), plan.getName()) && Objects.equals(getRates(), plan.getRates());
+        return Objects.equals(getId(), plan.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getRates());
-    }
-
-    @OneToMany(mappedBy = "plan")
-    private Collection<SubscriptionContract> subscriptionContract;
-
-    public Collection<SubscriptionContract> getSubscriptionContract() {
-        return subscriptionContract;
-    }
-
-    public void setSubscriptionContract(Collection<SubscriptionContract> subscriptionContract) {
-        this.subscriptionContract = subscriptionContract;
+        return Objects.hashCode(getId());
     }
 }

@@ -69,11 +69,11 @@ public abstract class Owner implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Owner owner)) return false;
-        return Objects.equals(getId(), owner.getId()) && Objects.equals(getPhone(), owner.getPhone()) && Objects.equals(getEmail(), owner.getEmail()) && Objects.equals(getFullName(), owner.getFullName());
+        return Objects.equals(getId(), owner.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getPhone(), getEmail(), getFullName());
+        return Objects.hashCode(getId());
     }
 }

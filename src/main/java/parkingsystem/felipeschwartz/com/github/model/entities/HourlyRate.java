@@ -17,7 +17,8 @@ public class HourlyRate implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "vehicle_type", nullable = false, length = 10)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "vehicle_type", nullable = false, length = 20)
     private VehicleType vehicleType;
 
     @Column(name = "price_per_hour",  nullable = false,  length = 6)
@@ -55,11 +56,11 @@ public class HourlyRate implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof HourlyRate that)) return false;
-        return Objects.equals(getId(), that.getId()) && getVehicleType() == that.getVehicleType() && Objects.equals(getPricePerHour(), that.getPricePerHour());
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getVehicleType(), getPricePerHour());
+        return Objects.hashCode(getId());
     }
 }

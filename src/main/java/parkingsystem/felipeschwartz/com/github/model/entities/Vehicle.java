@@ -1,10 +1,9 @@
 package parkingsystem.felipeschwartz.com.github.model.entities;
-
-
 import jakarta.persistence.*;
 import parkingsystem.felipeschwartz.com.github.model.enums.VehicleType;
-
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -27,9 +26,12 @@ public class Vehicle implements Serializable {
     @JoinColumn(
             name = "owner_id",
             nullable = false,
-            foreignKey = @ForeignKey(name = "fk_subscription_contract_owner")
+            foreignKey = @ForeignKey(name = "fk_vehicle_owner")
     )
     private Owner owner;
+
+    @OneToMany(mappedBy = "vehicle")
+    private List<SubscriptionContract> subscriptionContracts = new ArrayList<>();
 
     public Vehicle() {
     }
@@ -73,14 +75,22 @@ public class Vehicle implements Serializable {
         this.owner = owner;
     }
 
+    public List<SubscriptionContract> getSubscriptionContracts() {
+        return subscriptionContracts;
+    }
+
+    public void setSubscriptionContracts(List<SubscriptionContract> subscriptionContracts) {
+        this.subscriptionContracts = subscriptionContracts;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Vehicle vehicle)) return false;
-        return Objects.equals(getId(), vehicle.getId()) && Objects.equals(getLicensePlate(), vehicle.getLicensePlate()) && getType() == vehicle.getType() && Objects.equals(getOwner(), vehicle.getOwner());
+        return Objects.equals(getId(), vehicle.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getLicensePlate(), getType(), getOwner());
+        return Objects.hashCode(getId());
     }
 }

@@ -45,14 +45,5 @@ public class OwnerEntity extends Owner implements Serializable {
         this.billingContact = billingContact;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof OwnerEntity that)) return false;
-        return Objects.equals(getCnpj(), that.getCnpj()) && Objects.equals(getBillingContact(), that.getBillingContact());
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getCnpj(), getBillingContact());
-    }
 }
