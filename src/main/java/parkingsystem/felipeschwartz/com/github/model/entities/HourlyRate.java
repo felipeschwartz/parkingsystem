@@ -1,6 +1,7 @@
 package parkingsystem.felipeschwartz.com.github.model.entities;
 
 import jakarta.persistence.*;
+import parkingsystem.felipeschwartz.com.github.model.converters.VehicleTypeConverter;
 import parkingsystem.felipeschwartz.com.github.model.enums.VehicleType;
 
 
@@ -17,8 +18,9 @@ public class HourlyRate implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+
     @Column(name = "vehicle_type", nullable = false, length = 20)
+    @Convert(converter = VehicleTypeConverter.class)
     private VehicleType vehicleType;
 
     @Column(name = "price_per_hour",  nullable = false,  length = 6)

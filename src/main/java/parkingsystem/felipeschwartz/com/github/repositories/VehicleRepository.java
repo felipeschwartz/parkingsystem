@@ -7,6 +7,6 @@ import parkingsystem.felipeschwartz.com.github.model.entities.Vehicle;
 
 import java.util.Optional;
 
-public interface VehicleRepository extends JpaRepository<Vehicle, String> {
+public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     Optional<Vehicle> findByLicensePlate(String vehicleLicensePlate);
 }

@@ -7,7 +7,7 @@ import parkingsystem.felipeschwartz.com.github.model.entities.PlanRate;
 
 import java.util.Optional;
 
-public interface HourlyRateRepository extends JpaRepository<HourlyRate, Integer> {
+public interface HourlyRateRepository extends JpaRepository<HourlyRate, Long> {
 
 
     Optional<HourlyRate> findByVehicleType(Integer vehicleType);

@@ -7,6 +7,8 @@ import parkingsystem.felipeschwartz.com.github.model.enums.VehicleType;
 import parkingsystem.felipeschwartz.com.github.repositories.HourlyRateRepository;
 import parkingsystem.felipeschwartz.com.github.repositories.PlanRateRepository;
 
+import java.util.List;
+
 @Service
 public class HourlyRateService {
 
@@ -16,13 +18,30 @@ public class HourlyRateService {
         this.hourlyRateRepository = hourlyRateRepository;
     }
 
-    public HourlyRate findByVehicleType(VehicleType vehicleType) {
-        return hourlyRateRepository
-                .findByVehicleType(vehicleType.getCode())
-                .orElseThrow(() -> new RuntimeException(
-                        "HourlyRate not found for Vehicle Type=" + vehicleType
-                ));
+
+
+    public List<HourlyRate> findAll() {
+        return hourlyRateRepository.findAll();
     }
 
+    public HourlyRate create(HourlyRate hourlyRate) {
+        return hourlyRateRepository.save(hourlyRate);
+    }
+
+    public HourlyRate findById(Long hourlyRateId) {
+        return hourlyRateRepository.findById(hourlyRateId).orElseThrow(() -> new RuntimeException("No records found for this ID"));
+    }
+
+    public HourlyRate update(HourlyRate hourlyRate) {
+        HourlyRate rate = hourlyRateRepository.findById(hourlyRate.getId()).orElseThrow(() -> new RuntimeException("No records found for this ID"));
+        rate.setVehicleType(hourlyRate.getVehicleType());
+        rate.setPricePerHour(hourlyRate.getPricePerHour());
+        return hourlyRateRepository.save(rate);
+    }
+
+    public void delete(Long hourlyRateId) {
+        HourlyRate hourlyRate = hourlyRateRepository.findById(hourlyRateId).orElseThrow(() -> new RuntimeException("No records found for this ID"));
+        hourlyRateRepository.delete(hourlyRate);
+    }
 
 }

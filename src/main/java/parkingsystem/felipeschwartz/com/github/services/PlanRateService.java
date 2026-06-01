@@ -16,7 +16,7 @@ public class PlanRateService  {
 
     public PlanRate findByPlanIdAndVehicleType(Long planId, VehicleType vehicleType) {
         return planRateRepository
-                .findByPlanIdAndVehicleType(planId, vehicleType.getCode())
+                .findByPlanIdAndVehicleType(planId, vehicleType)
                 .orElseThrow(() -> new RuntimeException(
                         "PlanRate not found for planId=" + planId + " and vehicleType=" + vehicleType
                 ));

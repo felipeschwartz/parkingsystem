@@ -15,6 +15,10 @@ spring:
     open-in-view: false
   profiles:
     active: dev
+  security:
+    user:
+      name: admin
+      password: admin
 logging:
   level:
     # root: warn

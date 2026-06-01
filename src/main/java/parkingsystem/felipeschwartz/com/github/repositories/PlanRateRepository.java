@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface PlanRateRepository extends JpaRepository<PlanRate, Long> {
 
-    Optional<PlanRate> findByPlanIdAndVehicleType(Long planId, Integer vehicleType);
+    Optional<PlanRate> findByPlanIdAndVehicleType(Long planId, VehicleType vehicleType);
 }

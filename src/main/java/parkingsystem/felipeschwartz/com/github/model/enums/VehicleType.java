@@ -1,28 +1,26 @@
 package parkingsystem.felipeschwartz.com.github.model.enums;
 
 public enum VehicleType {
-    CAR(1),
-    MOTORCYCLE(2),
-    TRUCK(3);
+    CAR((short) 1),
+    MOTORCYCLE((short) 2),
+    TRUCK((short) 3);
 
-    private final int code;
+    private final short code;
 
-    VehicleType(int code) {
+    VehicleType(short code) {
         this.code = code;
     }
 
-    public int getCode() {
+    public short getCode() {
         return code;
     }
 
-    public static VehicleType fromCode(Integer code) {
+    public static VehicleType fromCode(Short code) {
         if (code == null) return null;
 
-        for (VehicleType value : VehicleType.values()) {
-            if (value.getCode() == code) {
-                return value;
-            }
+        for (VehicleType vt : values()) {
+            if (vt.code == code) return vt;
         }
-        throw new IllegalArgumentException("Invalid VehicleType code: " + code);
+        throw new IllegalArgumentException("VehicleType code inválido: " + code);
     }
 }
