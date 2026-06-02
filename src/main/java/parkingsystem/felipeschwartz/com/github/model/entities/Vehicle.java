@@ -25,13 +25,16 @@ public class Vehicle implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
             name = "owner_id",
-            nullable = false,
+            nullable = true,
             foreignKey = @ForeignKey(name = "fk_vehicle_owner")
     )
     private Owner owner;
 
     @OneToMany(mappedBy = "vehicle")
     private List<SubscriptionContract> subscriptionContracts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "vehicle")
+    private List<ParkingSession> sessions = new ArrayList<>();
 
     public Vehicle() {
     }

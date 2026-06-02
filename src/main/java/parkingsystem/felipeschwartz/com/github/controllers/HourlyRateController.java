@@ -5,7 +5,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import parkingsystem.felipeschwartz.com.github.model.entities.HourlyRate;
-import parkingsystem.felipeschwartz.com.github.model.enums.VehicleType;
 import parkingsystem.felipeschwartz.com.github.services.HourlyRateService;
 
 import java.util.List;
