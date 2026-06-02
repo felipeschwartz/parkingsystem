@@ -3,7 +3,7 @@ package parkingsystem.felipeschwartz.com.github.services;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import parkingsystem.felipeschwartz.com.github.model.entities.SubscriptionContract;
-import parkingsystem.felipeschwartz.com.github.model.enums.ContractStatus;
+import parkingsystem.felipeschwartz.com.github.model.enums.SubscripionStatus;
 import parkingsystem.felipeschwartz.com.github.repositories.SubscriptionContractRepository;
 import java.time.LocalDate;
 import java.util.List;
@@ -19,7 +19,7 @@ public class SubscriptionContractService {
 
     @Transactional(readOnly = true)
     public SubscriptionContract findActiveContractOnDate(Long veicleId, LocalDate date) {
-        return subscriptionContractRepository.findActiveOnDate(veicleId, ContractStatus.ACTIVE, date).orElse(null);
+        return subscriptionContractRepository.findActiveOnDate(veicleId, SubscripionStatus.ACTIVE, date).orElse(null);
     }
 
     @Transactional
@@ -31,7 +31,7 @@ public class SubscriptionContractService {
 
         List<SubscriptionContract> overlaps = subscriptionContractRepository.findOverlappingContracts(
                 contract.getVehicle().getId(),
-                ContractStatus.ACTIVE,
+                SubscripionStatus.ACTIVE,
                 contract.getStartDate(),
                 end
         );
@@ -42,7 +42,7 @@ public class SubscriptionContractService {
 
         // Garante status default
         if (contract.getStatus() == null) {
-            contract.setStatus(ContractStatus.ACTIVE);
+            contract.setStatus(SubscripionStatus.ACTIVE);
         }
 
         return subscriptionContractRepository.save(contract);
@@ -54,7 +54,7 @@ public class SubscriptionContractService {
         SubscriptionContract contract = subscriptionContractRepository.findById(contractId)
                 .orElseThrow(() -> new IllegalArgumentException("Contrato não encontrado: " + contractId));
 
-        contract.setStatus(ContractStatus.CANCELLED);
+        contract.setStatus(SubscripionStatus.CANCELLED);
         return subscriptionContractRepository.save(contract);
     }
 

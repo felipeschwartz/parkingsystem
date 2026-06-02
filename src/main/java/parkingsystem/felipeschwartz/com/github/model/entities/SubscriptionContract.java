@@ -35,9 +35,6 @@ public class SubscriptionContract implements Serializable {
     )
     private Plan plan;
 
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlanRate> rates = new ArrayList<>();
-
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
@@ -147,14 +144,6 @@ public class SubscriptionContract implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public List<PlanRate> getRates() {
-        return rates;
-    }
-
-    public void setRates(List<PlanRate> rates) {
-        this.rates = rates;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof SubscriptionContract that)) return false;
@@ -171,5 +160,33 @@ public class SubscriptionContract implements Serializable {
         boolean afterStart = !date.isBefore(startDate);
         boolean beforeEnd = (endDate == null) || !date.isAfter(endDate);
         return afterStart && beforeEnd;
+    }
+
+    public void renew(LocalDate newEndDate) {
+        if (status != SubscripionStatus.ACTIVE) {
+            throw new IllegalStateException("Só é possível renovar contrato ACTIVE.");
+        }
+
+        if (this.endDate == null) {
+            throw new IllegalStateException("Contrato sem endDate não pode ser renovado por este método.");
+        }
+
+        LocalDate today = LocalDate.now();
+
+        // sua regra: não renova se já venceu
+        if (today.isAfter(this.endDate)) {
+            throw new IllegalStateException("Contrato vencido. Não é possível renovar.");
+        }
+
+        if (newEndDate == null) {
+            throw new IllegalArgumentException("newEndDate não pode ser nulo.");
+        }
+
+        // renovação deve estender (não encurtar, nem manter igual)
+        if (!newEndDate.isAfter(this.endDate)) {
+            throw new IllegalArgumentException("newEndDate deve ser após o endDate atual.");
+        }
+
+        this.endDate = newEndDate;
     }
 }
