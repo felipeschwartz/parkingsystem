@@ -1,10 +1,11 @@
 package parkingsystem.felipeschwartz.com.github.model.entities;
 
 import jakarta.persistence.*;
+import parkingsystem.felipeschwartz.com.github.model.enums.VehicleType;
+
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Entity
 @Table(name = "plan")
@@ -20,6 +21,12 @@ public class Plan implements Serializable {
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlanRate> rates = new ArrayList<>();
+
+    @Column
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime updatedAt;
 
     public Plan() {
     }
@@ -54,6 +61,22 @@ public class Plan implements Serializable {
         this.rates = rates;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Plan plan)) return false;
@@ -64,4 +87,48 @@ public class Plan implements Serializable {
     public int hashCode() {
         return Objects.hashCode(getId());
     }
+
+    public void validate(){
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Plan.name não pode ser vazio.");
+        }
+
+        if (rates == null || rates.isEmpty()) {
+            throw new IllegalArgumentException("Plan deve possuir pelo menos uma tarifa (PlanRate).");
+        }
+
+        Set<VehicleType> types = EnumSet.noneOf(VehicleType.class);
+
+        for (PlanRate rate : rates) {
+            if (rate.getVehicleType() == null) {
+                throw new IllegalArgumentException("PlanRate.vehicleType não pode ser nulo.");
+            }
+            if (rate.getMonthlyPrice() == null || rate.getMonthlyPrice().signum() <= 0) {
+                throw new IllegalArgumentException("PlanRate.monthlyPrice deve ser maior que zero.");
+            }
+            if (!types.add(rate.getVehicleType())) {
+                throw new IllegalArgumentException("Tarifa duplicada para vehicleType=" + rate.getVehicleType());
+            }
+
+            if (rate.getPlan() != this) {
+                rate.setPlan(this);
+            }
+        }
+    }
+
+    public boolean isActive(PlanRate chosenRate) {
+        if (chosenRate == null) return false;
+
+        boolean belongsToThisPlan =
+                chosenRate.getPlan() == this
+                        || (this.id != null
+                        && chosenRate.getPlan() != null
+                        && Objects.equals(chosenRate.getPlan().getId(), this.id));
+
+        if (!belongsToThisPlan) return false;
+
+        // Flag: null => false, true => true
+        return Boolean.TRUE.equals(chosenRate.getActive());
+    }
+
 }

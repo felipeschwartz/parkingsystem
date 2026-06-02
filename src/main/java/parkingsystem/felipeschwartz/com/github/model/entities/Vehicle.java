@@ -2,6 +2,7 @@ package parkingsystem.felipeschwartz.com.github.model.entities;
 import jakarta.persistence.*;
 import parkingsystem.felipeschwartz.com.github.model.enums.VehicleType;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +36,12 @@ public class Vehicle implements Serializable {
 
     @OneToMany(mappedBy = "vehicle")
     private List<ParkingSession> sessions = new ArrayList<>();
+
+    @Column
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime updatedAt;
 
     public Vehicle() {
     }
@@ -84,6 +91,30 @@ public class Vehicle implements Serializable {
 
     public void setSubscriptionContracts(List<SubscriptionContract> subscriptionContracts) {
         this.subscriptionContracts = subscriptionContracts;
+    }
+
+    public List<ParkingSession> getSessions() {
+        return sessions;
+    }
+
+    public void setSessions(List<ParkingSession> sessions) {
+        this.sessions = sessions;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

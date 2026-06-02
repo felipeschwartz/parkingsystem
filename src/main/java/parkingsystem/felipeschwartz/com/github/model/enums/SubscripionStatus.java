@@ -1,7 +1,9 @@
 package parkingsystem.felipeschwartz.com.github.model.enums;
 
-public enum ContractStatus {
+public enum SubscripionStatus {
     ACTIVE,
-    SUSPENDED,
-    CANCELLED
+    CANCELLED,
+    EXPIRED,
+    SUSPENDED
+
 }

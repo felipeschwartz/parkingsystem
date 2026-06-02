@@ -1,9 +1,13 @@
 package parkingsystem.felipeschwartz.com.github.model.entities;
 
 import jakarta.persistence.*;
-import parkingsystem.felipeschwartz.com.github.model.enums.ContractStatus;
+import parkingsystem.felipeschwartz.com.github.model.enums.SubscripionStatus;
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -17,21 +21,33 @@ public class SubscriptionContract implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
+            name = "vehicle_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_subscription_contract_vehicle")
+    )
+    private Vehicle vehicle;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
             name = "plan_id",
             nullable = false,
             foreignKey = @ForeignKey(name = "fk_subscription_contract_plan")
     )
     private Plan plan;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 20)
-    private ContractStatus status = ContractStatus.ACTIVE;
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlanRate> rates = new ArrayList<>();
+
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
     @Column(name = "end_date")
     private LocalDate endDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    private SubscripionStatus status = SubscripionStatus.ACTIVE;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
@@ -41,48 +57,102 @@ public class SubscriptionContract implements Serializable {
     )
     private Owner owner;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(
-            name = "vehicle_id",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk_subscription_contract_vehicle")
-    )
-    private Vehicle vehicle;
+    @Column
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime updatedAt;
 
     public SubscriptionContract() {}
 
-    public SubscriptionContract(Plan plan, LocalDate startDate, LocalDate endDate) {
+    public SubscriptionContract(Long id, Vehicle vehicle, Plan plan, LocalDate startDate, LocalDate endDate, SubscripionStatus status, Owner owner) {
+        this.id = id;
+        this.vehicle = vehicle;
         this.plan = plan;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.status = ContractStatus.ACTIVE;
+        this.status = status;
+        this.owner = owner;
     }
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Plan getPlan() {
+        return plan;
+    }
+
+    public void setPlan(Plan plan) {
+        this.plan = plan;
+    }
+
+    public SubscripionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(SubscripionStatus status) {
+        this.status = status;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Owner owner) {
+        this.owner = owner;
+    }
 
     public Vehicle getVehicle() {
         return vehicle;
     }
 
-    public Plan getPlan() { return plan; }
-    public ContractStatus getStatus() { return status; }
-    public LocalDate getStartDate() { return startDate; }
-    public LocalDate getEndDate() { return endDate; }
-
     public void setVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
     }
 
-    public void setPlan(Plan plan) { this.plan = plan; }
-    public void setStatus(ContractStatus status) { this.status = status; }
-    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
-    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-    public boolean isActiveOn(LocalDate date) {
-        if (status != ContractStatus.ACTIVE) return false;
-        boolean afterStart = !date.isBefore(startDate);
-        boolean beforeEnd = (endDate == null) || !date.isAfter(endDate);
-        return afterStart && beforeEnd;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public List<PlanRate> getRates() {
+        return rates;
+    }
+
+    public void setRates(List<PlanRate> rates) {
+        this.rates = rates;
     }
 
     @Override
@@ -94,5 +164,12 @@ public class SubscriptionContract implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());
+    }
+
+    public boolean isActiveOn(LocalDate date) {
+        if (status != SubscripionStatus.ACTIVE) return false;
+        boolean afterStart = !date.isBefore(startDate);
+        boolean beforeEnd = (endDate == null) || !date.isAfter(endDate);
+        return afterStart && beforeEnd;
     }
 }

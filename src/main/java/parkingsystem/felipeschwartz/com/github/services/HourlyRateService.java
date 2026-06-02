@@ -2,10 +2,7 @@ package parkingsystem.felipeschwartz.com.github.services;
 
 import org.springframework.stereotype.Service;
 import parkingsystem.felipeschwartz.com.github.model.entities.HourlyRate;
-import parkingsystem.felipeschwartz.com.github.model.entities.PlanRate;
-import parkingsystem.felipeschwartz.com.github.model.enums.VehicleType;
 import parkingsystem.felipeschwartz.com.github.repositories.HourlyRateRepository;
-import parkingsystem.felipeschwartz.com.github.repositories.PlanRateRepository;
 
 import java.util.List;
 
@@ -35,7 +32,7 @@ public class HourlyRateService {
     public HourlyRate update(HourlyRate hourlyRate) {
         HourlyRate rate = hourlyRateRepository.findById(hourlyRate.getId()).orElseThrow(() -> new RuntimeException("No records found for this ID"));
         rate.setVehicleType(hourlyRate.getVehicleType());
-        rate.setPricePerHour(hourlyRate.getPricePerHour());
+        rate.setRatePerHour(hourlyRate.getRatePerHour());
         return hourlyRateRepository.save(rate);
     }
 

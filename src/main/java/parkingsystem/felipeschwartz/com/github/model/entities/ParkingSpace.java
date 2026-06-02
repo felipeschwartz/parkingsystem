@@ -4,13 +4,16 @@ import jakarta.persistence.*;
 import parkingsystem.felipeschwartz.com.github.model.enums.SpaceStatus;
 import parkingsystem.felipeschwartz.com.github.model.enums.VehicleType;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table
-public class ParkingSpace {
+public class ParkingSpace implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,6 +39,12 @@ public class ParkingSpace {
 
     @OneToMany(mappedBy="parkingSpace")
     private List<Reservation> reservation = new ArrayList<>();
+
+    @Column
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime updatedAt;
 
     public ParkingSpace() {
     }
@@ -112,6 +121,22 @@ public class ParkingSpace {
 
     public void setReservation(List<Reservation> reservation) {
         this.reservation = reservation;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

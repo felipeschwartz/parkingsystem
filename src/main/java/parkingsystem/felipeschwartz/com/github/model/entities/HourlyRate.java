@@ -7,6 +7,7 @@ import parkingsystem.felipeschwartz.com.github.model.enums.VehicleType;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -23,16 +24,21 @@ public class HourlyRate implements Serializable {
     @Convert(converter = VehicleTypeConverter.class)
     private VehicleType vehicleType;
 
-    @Column(name = "price_per_hour",  nullable = false,  length = 6)
-    private BigDecimal pricePerHour;
+    @Column(name = "rate_per_hour",  nullable = false,  length = 6)
+    private BigDecimal ratePerHour;
 
+    @Column
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime updatedAt;
 
     public HourlyRate() {
     }
 
-    public HourlyRate(VehicleType vehicleType, BigDecimal pricePerHour) {
+    public HourlyRate(VehicleType vehicleType, BigDecimal ratePerHour) {
         this.vehicleType = vehicleType;
-        this.pricePerHour = pricePerHour;
+        this.ratePerHour = ratePerHour;
     }
 
     public Long getId() {
@@ -47,12 +53,28 @@ public class HourlyRate implements Serializable {
         this.vehicleType = vehicleType;
     }
 
-    public BigDecimal getPricePerHour() {
-        return pricePerHour;
+    public BigDecimal getRatePerHour() {
+        return ratePerHour;
     }
 
-    public void setPricePerHour(BigDecimal pricePerHour) {
-        this.pricePerHour = pricePerHour;
+    public void setRatePerHour(BigDecimal pricePerHour) {
+        this.ratePerHour = pricePerHour;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

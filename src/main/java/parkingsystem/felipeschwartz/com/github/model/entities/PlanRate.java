@@ -2,8 +2,11 @@ package parkingsystem.felipeschwartz.com.github.model.entities;
 
 import jakarta.persistence.*;
 import parkingsystem.felipeschwartz.com.github.model.enums.VehicleType;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -23,31 +26,108 @@ public class PlanRate implements Serializable {
     @Column(name = "vehicle_type", nullable = false, length = 20)
     private VehicleType vehicleType;
 
+    @Column(name = "duration_months", length = 10, nullable = false)
+    private Integer durationMonths;
+
     @Column(name = "monthly_price", length = 10, nullable = false)
     private BigDecimal monthlyPrice;
+
+    @Column
+    private BigDecimal discountPercent;
+
+    @Column
+    private Boolean active;
+
+    @Column
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime updatedAt;
 
     public PlanRate() {
     }
 
-    public PlanRate(Plan plan, VehicleType vehicleType, BigDecimal monthlyPrice) {
+    public PlanRate(Long id, Plan plan,VehicleType vehicleType, Integer durationMonths, BigDecimal monthlyPrice, BigDecimal discountPercent, Boolean active) {
+        this.id = id;
         this.plan = plan;
         this.vehicleType = vehicleType;
+        this.durationMonths = durationMonths;
+        this.monthlyPrice = monthlyPrice;
+        this.discountPercent = discountPercent;
+        this.active = active;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Plan getPlan() {
+        return plan;
+    }
+
+    public void setPlan(Plan plan) {
+        this.plan = plan;
+    }
+
+    public VehicleType getVehicleType() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(VehicleType vehicleType) {
+        this.vehicleType = vehicleType;
+    }
+
+    public Integer getDurationMonths() {
+        return durationMonths;
+    }
+
+    public void setDurationMonths(Integer durationMonths) {
+        this.durationMonths = durationMonths;
+    }
+
+    public BigDecimal getMonthlyPrice() {
+        return monthlyPrice;
+    }
+
+    public void setMonthlyPrice(BigDecimal monthlyPrice) {
         this.monthlyPrice = monthlyPrice;
     }
 
-    public Long getId() { return id; }
+    public BigDecimal getDiscountPercent() {
+        return discountPercent;
+    }
 
-    public Plan getPlan() { return plan; }
+    public void setDiscountPercent(BigDecimal disccount) {
+        this.discountPercent = disccount;
+    }
 
-    public VehicleType getVehicleType() { return vehicleType; }
+    public Boolean getActive() {
+        return active;
+    }
 
-    public BigDecimal getMonthlyPrice() { return monthlyPrice; }
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 
-    public void setPlan(Plan plan) { this.plan = plan; }
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-    public void setVehicleType(VehicleType vehicleType) { this.vehicleType = vehicleType; }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
-    public void setMonthlyPrice(BigDecimal monthlyPrice) { this.monthlyPrice = monthlyPrice; }
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -59,4 +139,21 @@ public class PlanRate implements Serializable {
     public int hashCode() {
         return Objects.hashCode(getId());
     }
+
+    public BigDecimal calculatePrice() {
+        if (monthlyPrice == null) {
+            throw new IllegalStateException("monthlyPrice não pode ser nulo");
+        }
+
+        BigDecimal discountPercent = (this.discountPercent == null)
+                ? BigDecimal.ZERO
+                : this.discountPercent;
+
+        BigDecimal discountFactor = discountPercent.divide(BigDecimal.valueOf(100), 6, RoundingMode.HALF_UP);
+
+        return monthlyPrice
+                .subtract(monthlyPrice.multiply(discountFactor))
+                .setScale(2, RoundingMode.HALF_UP);
+    }
+
 }
