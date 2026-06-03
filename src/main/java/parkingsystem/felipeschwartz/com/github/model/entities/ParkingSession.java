@@ -170,13 +170,13 @@ public class ParkingSession implements Serializable {
     }
 
     public void open(LocalDateTime entryTime) {
-        Objects.requireNonNull(entryTime, "entryTime não pode ser nulo");
+        Objects.requireNonNull(entryTime, "entryTime must not be null");
 
         if (this.status == SessionStatus.OPEN) {
-            throw new IllegalStateException("Sessão já está aberta");
+            throw new IllegalStateException("the session is already open");
         }
         if (this.status == SessionStatus.CLOSED) {
-            throw new IllegalStateException("Sessão já está fechada e não pode ser reaberta");
+            throw new IllegalStateException("the session is already closed");
         }
         this.entryTime = entryTime;
         this.exitTime = null;
@@ -188,16 +188,16 @@ public class ParkingSession implements Serializable {
     }
 
     public void close(LocalDateTime exitTime) {
-        Objects.requireNonNull(exitTime, "exitTime não pode ser nulo");
+        Objects.requireNonNull(exitTime, "exitTime must not be null");
 
         if (this.status != SessionStatus.OPEN) {
-            throw new IllegalStateException("Só é possível fechar uma sessão com status OPEN");
+            throw new IllegalStateException("It's only possible to close the session, it is OPEN");
         }
         if (this.entryTime == null) {
-            throw new IllegalStateException("entryTime não definido; impossível fechar a sessão");
+            throw new IllegalStateException("entryTime not defined; impossible to close it");
         }
         if (exitTime.isBefore(this.entryTime)) {
-            throw new IllegalArgumentException("exitTime não pode ser anterior ao entryTime");
+            throw new IllegalArgumentException("exitTime can not be before entryTime");
         }
 
         this.exitTime = exitTime;
@@ -215,12 +215,12 @@ public class ParkingSession implements Serializable {
     }
 
     public BigDecimal calculateAmount(BigDecimal ratePerHour) {
-        Objects.requireNonNull(ratePerHour, "ratePerHour não pode ser nulo");
+        Objects.requireNonNull(ratePerHour, "ratePerHour can not be null");
         if (ratePerHour.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("ratePerHour não pode ser negativo");
+            throw new IllegalArgumentException("ratePerHour can not be negative");
         }
         if (this.status != SessionStatus.CLOSED) {
-            throw new IllegalStateException("Calcular valor exige sessão CLOSED");
+            throw new IllegalStateException("Calculating the value requires a CLOSED session");
         }
 
         Duration duration = getDuration();
@@ -243,10 +243,10 @@ public class ParkingSession implements Serializable {
             ParkingSpace parkingSpace,
             LocalDateTime entryTime
     ) {
-        Objects.requireNonNull(licensePlate, "licensePlate não pode ser nulo");
-        Objects.requireNonNull(vehicleType, "vehicleType não pode ser nulo");
-        Objects.requireNonNull(parkingSpace, "parkingSpace não pode ser nulo");
-        Objects.requireNonNull(entryTime, "entryTime não pode ser nulo");
+        Objects.requireNonNull(licensePlate, "licensePlate can not be null");
+        Objects.requireNonNull(vehicleType, "vehicleType can not be null");
+        Objects.requireNonNull(parkingSpace, "parkingSpace can not be null");
+        Objects.requireNonNull(entryTime, "entryTime can not be null");
 
         ParkingSession s = new ParkingSession();
         s.vehicle = null;
@@ -263,9 +263,9 @@ public class ParkingSession implements Serializable {
             ParkingSpace parkingSpace,
             LocalDateTime entryTime
     ) {
-        Objects.requireNonNull(vehicle, "vehicle não pode ser nulo");
-        Objects.requireNonNull(parkingSpace, "parkingSpace não pode ser nulo");
-        Objects.requireNonNull(entryTime, "entryTime não pode ser nulo");
+        Objects.requireNonNull(vehicle, "vehicle can not be null");
+        Objects.requireNonNull(parkingSpace, "parkingSpace can not be null");
+        Objects.requireNonNull(entryTime, "entryTime can not be null");
 
         ParkingSession s = new ParkingSession();
         s.vehicle = vehicle;
