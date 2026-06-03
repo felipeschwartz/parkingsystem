@@ -24,9 +24,6 @@ public abstract class Owner implements Serializable {
     private String email;
 
     @Column
-    private String fullName;
-
-    @Column
     private LocalDateTime createdAt;
 
     @Column
@@ -35,10 +32,9 @@ public abstract class Owner implements Serializable {
     protected Owner() {
     }
 
-    protected Owner(String phone, String email, String fullName) {
+    protected Owner(String phone, String email) {
         this.phone = phone;
         this.email = email;
-        this.fullName = fullName;
     }
 
     public Long getId() {
@@ -63,14 +59,6 @@ public abstract class Owner implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 
     public LocalDateTime getCreatedAt() {

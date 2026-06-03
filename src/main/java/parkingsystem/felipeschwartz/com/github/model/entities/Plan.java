@@ -23,6 +23,9 @@ public class Plan implements Serializable {
     private List<PlanRate> rates = new ArrayList<>();
 
     @Column
+    private Boolean active;
+
+    @Column
     private LocalDateTime createdAt;
 
     @Column
@@ -75,6 +78,14 @@ public class Plan implements Serializable {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     @Override

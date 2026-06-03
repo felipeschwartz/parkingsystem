@@ -28,6 +28,9 @@ public class HourlyRate implements Serializable {
     private BigDecimal ratePerHour;
 
     @Column
+    private Boolean active;
+
+    @Column
     private LocalDateTime createdAt;
 
     @Column
@@ -36,9 +39,10 @@ public class HourlyRate implements Serializable {
     public HourlyRate() {
     }
 
-    public HourlyRate(VehicleType vehicleType, BigDecimal ratePerHour) {
+    public HourlyRate(VehicleType vehicleType, BigDecimal ratePerHour, Boolean active) {
         this.vehicleType = vehicleType;
         this.ratePerHour = ratePerHour;
+        this.active = active;
     }
 
     public Long getId() {
@@ -59,6 +63,14 @@ public class HourlyRate implements Serializable {
 
     public void setRatePerHour(BigDecimal pricePerHour) {
         this.ratePerHour = pricePerHour;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public LocalDateTime getCreatedAt() {

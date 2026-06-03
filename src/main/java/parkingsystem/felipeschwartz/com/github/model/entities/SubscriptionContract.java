@@ -28,12 +28,8 @@ public class SubscriptionContract implements Serializable {
     private Vehicle vehicle;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(
-            name = "plan_id",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk_subscription_contract_plan")
-    )
-    private Plan plan;
+    @JoinColumn(name = "plan_rate_id", nullable = false)
+    private PlanRate planRate;
 
 
     @Column(name = "start_date", nullable = false)
@@ -62,10 +58,10 @@ public class SubscriptionContract implements Serializable {
 
     public SubscriptionContract() {}
 
-    public SubscriptionContract(Long id, Vehicle vehicle, Plan plan, LocalDate startDate, LocalDate endDate, SubscripionStatus status, Owner owner) {
+    public SubscriptionContract(Long id, Vehicle vehicle, PlanRate planRate, LocalDate startDate, LocalDate endDate, SubscripionStatus status, Owner owner) {
         this.id = id;
         this.vehicle = vehicle;
-        this.plan = plan;
+        this.planRate = planRate;
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
@@ -80,12 +76,12 @@ public class SubscriptionContract implements Serializable {
         this.id = id;
     }
 
-    public Plan getPlan() {
-        return plan;
+    public PlanRate getPlanRate() {
+        return planRate;
     }
 
-    public void setPlan(Plan plan) {
-        this.plan = plan;
+    public void setPlanRate(PlanRate planRate) {
+        this.planRate = planRate;
     }
 
     public SubscripionStatus getStatus() {

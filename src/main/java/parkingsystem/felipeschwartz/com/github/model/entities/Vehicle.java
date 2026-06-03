@@ -26,7 +26,7 @@ public class Vehicle implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
             name = "owner_id",
-            nullable = true,
+            nullable = false,
             foreignKey = @ForeignKey(name = "fk_vehicle_owner")
     )
     private Owner owner;

@@ -48,4 +48,14 @@ public interface SubscriptionContractRepository extends JpaRepository<Subscripti
             @Param("endDate") LocalDate endDate
     );
 
+
+    @Query("""
+        select (count(sc) > 0)
+        from SubscriptionContract sc
+        where sc.vehicle.id = :vehicleId
+          and sc.status = 'ACTIVE'
+          and :today between sc.startDate and sc.endDate
+    """)
+    boolean hasActiveContractForDate(@Param("vehicleId") Long vehicleId,
+                                     @Param("today") LocalDate today);
 }

@@ -2,9 +2,11 @@ package parkingsystem.felipeschwartz.com.github.model.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -15,15 +17,28 @@ public class OwnerIndividual extends Owner implements Serializable {
     @Column
     private String cpf;
 
-    public OwnerIndividual(String cpf) {
-        this.cpf = cpf;
+    @Column
+    private String firstName;
+
+    @Column
+    private String lastName;
+
+    @Column
+    private LocalDate birthDate;
+
+    @Embedded
+    private Address address;
+
+    public OwnerIndividual() {
     }
 
-    protected OwnerIndividual() {}
-
-    public OwnerIndividual(String phone, String email, String fullName, String cpf) {
-        super(phone, email, fullName);
+    public OwnerIndividual(String phone, String email, String cpf, String firstName, String lastName, LocalDate birthDate, Address address) {
+        super(phone, email);
         this.cpf = cpf;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.address = address;
     }
 
     public String getCpf() {
@@ -32,6 +47,38 @@ public class OwnerIndividual extends Owner implements Serializable {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
 }

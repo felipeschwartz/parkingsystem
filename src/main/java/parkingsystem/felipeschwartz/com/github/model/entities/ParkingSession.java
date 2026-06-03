@@ -2,6 +2,7 @@ package parkingsystem.felipeschwartz.com.github.model.entities;
 
 import jakarta.persistence.*;
 import parkingsystem.felipeschwartz.com.github.model.enums.SessionStatus;
+import parkingsystem.felipeschwartz.com.github.model.enums.VehicleType;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -19,10 +20,25 @@ public class ParkingSession implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    // Opcional: só quando for veículo cadastrado
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle;
 
-    @ManyToOne
+    // Para avulso (ou para redundância/auditoria mesmo com vehicle cadastrado)
+    @Column(name = "license_plate", nullable = false, length = 20)
+    private String licensePlate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "vehicle_type", nullable = false, length = 20)
+    private VehicleType vehicleType;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "parking_space_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_parking_session_parking_space")
+    )
     private ParkingSpace parkingSpace;
 
     @Column
@@ -73,7 +89,17 @@ public class ParkingSession implements Serializable {
 
     public void setVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
+        if (vehicle != null) {
+            this.licensePlate = vehicle.getLicensePlate();
+            this.vehicleType = vehicle.getType();
+        }
     }
+
+    public String getLicensePlate() { return licensePlate; }
+    public void setLicensePlate(String licensePlate) { this.licensePlate = licensePlate; }
+
+    public VehicleType getVehicleType() { return vehicleType; }
+    public void setVehicleType(VehicleType vehicleType) { this.vehicleType = vehicleType; }
 
     public ParkingSpace getParkingSpace() {
         return parkingSpace;
@@ -209,5 +235,44 @@ public class ParkingSession implements Serializable {
         this.amountCharged = amount;
         this.updatedAt = LocalDateTime.now();
         return amount;
+    }
+
+    public static ParkingSession forHourly(
+            String licensePlate,
+            VehicleType vehicleType,
+            ParkingSpace parkingSpace,
+            LocalDateTime entryTime
+    ) {
+        Objects.requireNonNull(licensePlate, "licensePlate não pode ser nulo");
+        Objects.requireNonNull(vehicleType, "vehicleType não pode ser nulo");
+        Objects.requireNonNull(parkingSpace, "parkingSpace não pode ser nulo");
+        Objects.requireNonNull(entryTime, "entryTime não pode ser nulo");
+
+        ParkingSession s = new ParkingSession();
+        s.vehicle = null;
+        s.licensePlate = licensePlate;
+        s.vehicleType = vehicleType;
+        s.parkingSpace = parkingSpace;
+        s.open(entryTime);
+        return s;
+    }
+
+
+    public static ParkingSession forSubscription(
+            Vehicle vehicle,
+            ParkingSpace parkingSpace,
+            LocalDateTime entryTime
+    ) {
+        Objects.requireNonNull(vehicle, "vehicle não pode ser nulo");
+        Objects.requireNonNull(parkingSpace, "parkingSpace não pode ser nulo");
+        Objects.requireNonNull(entryTime, "entryTime não pode ser nulo");
+
+        ParkingSession s = new ParkingSession();
+        s.vehicle = vehicle;
+        s.licensePlate = vehicle.getLicensePlate();
+        s.vehicleType = vehicle.getType();
+        s.parkingSpace = parkingSpace;
+        s.open(entryTime);
+        return s;
     }
 }

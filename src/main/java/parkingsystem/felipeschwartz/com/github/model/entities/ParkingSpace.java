@@ -24,7 +24,8 @@ public class ParkingSpace implements Serializable {
     @Column
     private String position;
 
-    @Column
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private VehicleType vehicleType;
 
     @Enumerated(EnumType.STRING)
