@@ -1,13 +1,12 @@
 package parkingsystem.felipeschwartz.com.github.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import parkingsystem.felipeschwartz.com.github.model.enums.SubscripionStatus;
 import java.io.Serializable;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Objects;
 
 @Entity
@@ -27,9 +26,14 @@ public class SubscriptionContract implements Serializable {
     )
     private Vehicle vehicle;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "plan_rate_id", nullable = false)
-    private PlanRate planRate;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "plan_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_subscription_contract_plan")
+    )
+    private Plan plan;
 
 
     @Column(name = "start_date", nullable = false)
@@ -58,10 +62,10 @@ public class SubscriptionContract implements Serializable {
 
     public SubscriptionContract() {}
 
-    public SubscriptionContract(Long id, Vehicle vehicle, PlanRate planRate, LocalDate startDate, LocalDate endDate, SubscripionStatus status, Owner owner) {
+    public SubscriptionContract(Long id, Vehicle vehicle, Plan plan, LocalDate startDate, LocalDate endDate, SubscripionStatus status, Owner owner) {
         this.id = id;
         this.vehicle = vehicle;
-        this.planRate = planRate;
+        this.plan = plan;
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
@@ -76,12 +80,12 @@ public class SubscriptionContract implements Serializable {
         this.id = id;
     }
 
-    public PlanRate getPlanRate() {
-        return planRate;
+    public Plan getPlan() {
+        return plan;
     }
 
-    public void setPlanRate(PlanRate planRate) {
-        this.planRate = planRate;
+    public void setPlan(Plan plan) {
+        this.plan = plan;
     }
 
     public SubscripionStatus getStatus() {

@@ -18,9 +18,12 @@ public class Plan implements Serializable {
 
     @Column(length = 50)
     private String name;
+    
+    @OneToMany(mappedBy = "plan")
+    private Set<SubscriptionContract> subscriptionContracts =  new HashSet<>();
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlanRate> rates = new ArrayList<>();
+    private Set<PlanRate> planRates = new HashSet<>();
 
     @Column
     private Boolean active;
@@ -56,12 +59,12 @@ public class Plan implements Serializable {
         this.name = name;
     }
 
-    public List<PlanRate> getRates() {
-        return rates;
+    public Set<PlanRate> getRates() {
+        return planRates;
     }
 
-    public void setRates(List<PlanRate> rates) {
-        this.rates = rates;
+    public void setRates(Set<PlanRate> planRates) {
+        this.planRates = planRates;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -104,13 +107,13 @@ public class Plan implements Serializable {
             throw new IllegalArgumentException("Plan.name não pode ser vazio.");
         }
 
-        if (rates == null || rates.isEmpty()) {
+        if (planRates == null || planRates.isEmpty()) {
             throw new IllegalArgumentException("Plan deve possuir pelo menos uma tarifa (PlanRate).");
         }
 
         Set<VehicleType> types = EnumSet.noneOf(VehicleType.class);
 
-        for (PlanRate rate : rates) {
+        for (PlanRate rate : planRates) {
             if (rate.getVehicleType() == null) {
                 throw new IllegalArgumentException("PlanRate.vehicleType não pode ser nulo.");
             }

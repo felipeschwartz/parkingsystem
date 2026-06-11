@@ -6,9 +6,7 @@ import parkingsystem.felipeschwartz.com.github.model.enums.VehicleType;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table
@@ -39,7 +37,7 @@ public class ParkingSpace implements Serializable {
     private ParkingLot parkingLot;
 
     @OneToMany(mappedBy="parkingSpace")
-    private List<Reservation> reservation = new ArrayList<>();
+    private Set<Reservation> reservation = new HashSet<>();
 
     @Column
     private LocalDateTime createdAt;
@@ -116,11 +114,11 @@ public class ParkingSpace implements Serializable {
         this.parkingLot = parkingLot;
     }
 
-    public List<Reservation> getReservation() {
+    public Set<Reservation> getReservation() {
         return reservation;
     }
 
-    public void setReservation(List<Reservation> reservation) {
+    public void setReservation(Set<Reservation> reservation) {
         this.reservation = reservation;
     }
 

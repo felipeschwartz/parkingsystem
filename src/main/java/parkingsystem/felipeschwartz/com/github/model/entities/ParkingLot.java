@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "parking_lot")
@@ -29,6 +31,9 @@ public class ParkingLot implements Serializable {
 
     @Column
     private Boolean active;
+
+    @OneToMany (mappedBy = "parkingLot")
+    private Set<ParkingSpace> parkingSpaces = new HashSet<>();
 
     @Column
     private Integer carSpaces;
@@ -106,6 +111,15 @@ public class ParkingLot implements Serializable {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public Set<ParkingSpace> getParkingSpaces() {
+
+        return parkingSpaces;
+    }
+
+    public void setParkingSpaces(Set<ParkingSpace> parkingSpaces) {
+        this.parkingSpaces = parkingSpaces;
     }
 
     public Integer getCarSpaces() {

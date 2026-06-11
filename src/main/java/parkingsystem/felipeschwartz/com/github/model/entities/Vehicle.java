@@ -1,11 +1,10 @@
 package parkingsystem.felipeschwartz.com.github.model.entities;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import parkingsystem.felipeschwartz.com.github.model.enums.VehicleType;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table
@@ -31,11 +30,13 @@ public class Vehicle implements Serializable {
     )
     private Owner owner;
 
-    @OneToMany(mappedBy = "vehicle")
-    private List<SubscriptionContract> subscriptionContracts = new ArrayList<>();
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<SubscriptionContract> subscriptionContracts = new HashSet<>();
 
-    @OneToMany(mappedBy = "vehicle")
-    private List<ParkingSession> sessions = new ArrayList<>();
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ParkingSession> sessions = new HashSet<>();
 
     @Column
     private LocalDateTime createdAt;
@@ -85,19 +86,19 @@ public class Vehicle implements Serializable {
         this.owner = owner;
     }
 
-    public List<SubscriptionContract> getSubscriptionContracts() {
+    public Set<SubscriptionContract> getSubscriptionContracts() {
         return subscriptionContracts;
     }
 
-    public void setSubscriptionContracts(List<SubscriptionContract> subscriptionContracts) {
+    public void setSubscriptionContracts(Set<SubscriptionContract> subscriptionContracts) {
         this.subscriptionContracts = subscriptionContracts;
     }
 
-    public List<ParkingSession> getSessions() {
+    public Set<ParkingSession> getSessions() {
         return sessions;
     }
 
-    public void setSessions(List<ParkingSession> sessions) {
+    public void setSessions(Set<ParkingSession> sessions) {
         this.sessions = sessions;
     }
 

@@ -1,10 +1,13 @@
 package parkingsystem.felipeschwartz.com.github.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "owner")
@@ -22,6 +25,10 @@ public abstract class Owner implements Serializable {
 
     @Column
     private String email;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Vehicle> vehicles = new HashSet<>();
 
     @Column
     private LocalDateTime createdAt;
@@ -59,6 +66,14 @@ public abstract class Owner implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Set<Vehicle> getVehicles() {
+        return vehicles;
+    }
+
+    public void setVehicles(Set<Vehicle> vehicles) {
+        this.vehicles = vehicles;
     }
 
     public LocalDateTime getCreatedAt() {

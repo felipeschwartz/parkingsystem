@@ -20,7 +20,7 @@ public class Reservation implements Serializable {
     private Vehicle vehicle;
 
     @ManyToOne
-    @JoinColumn(name = "parking_space_id")
+    @JoinColumn(name = "parking_space_id", nullable = false, foreignKey = @ForeignKey(name = "fk_reservation_parking_space"))
     private ParkingSpace parkingSpace;
 
     @Column

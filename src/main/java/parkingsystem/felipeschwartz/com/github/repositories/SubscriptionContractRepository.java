@@ -3,17 +3,21 @@ package parkingsystem.felipeschwartz.com.github.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import parkingsystem.felipeschwartz.com.github.model.entities.SubscriptionContract;
+import parkingsystem.felipeschwartz.com.github.model.entities.Vehicle;
 import parkingsystem.felipeschwartz.com.github.model.enums.SubscripionStatus;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface SubscriptionContractRepository extends JpaRepository<SubscriptionContract, Long> {
 
     // Query method simples: busca por veículo e status (sem lógica de vigência)
     List<SubscriptionContract> findByVehicleIdAndStatusOrderByStartDateDesc(Long vehicleId, SubscripionStatus status);
+    Optional<SubscriptionContract> findByVehicleAndStatus(Vehicle vehicle, SubscripionStatus status);
 
 
     // @Query: contrato ATIVO e vigente em uma data (cobre endDate null)
