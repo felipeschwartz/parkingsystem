@@ -41,6 +41,9 @@ public class ParkingSession implements Serializable {
     )
     private ParkingSpace parkingSpace;
 
+    @OneToOne(mappedBy = "parkingSession", cascade = CascadeType.ALL)
+    private Payment payment;
+
     @Column
     private LocalDateTime entryTime;
 

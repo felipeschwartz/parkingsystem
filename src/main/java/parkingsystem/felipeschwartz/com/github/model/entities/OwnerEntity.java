@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@DiscriminatorValue("entity")
+@Table(name = "owner_entities")
 public class OwnerEntity extends Owner implements Serializable {
     private static final long serialVersionUID = 1L;
 

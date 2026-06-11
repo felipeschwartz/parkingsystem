@@ -1,16 +1,13 @@
 package parkingsystem.felipeschwartz.com.github.model.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
-@DiscriminatorValue("individual")
+@Table(name = "owner_individuals")
 public class OwnerIndividual extends Owner implements Serializable {
     private static final long serialVersionUID = 1L;
 
