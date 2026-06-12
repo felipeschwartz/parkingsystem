@@ -189,4 +189,11 @@ public class SubscriptionContract implements Serializable {
 
         this.endDate = newEndDate;
     }
+
+    public boolean isActive() {
+        if (status != SubscripionStatus.ACTIVE) {
+            return false;
+        }
+        return true;
+    }
 }

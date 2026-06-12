@@ -1,47 +1,31 @@
-package parkingsystem.felipeschwartz.com.github.model.entities;
+package parkingsystem.felipeschwartz.com.github.data.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-
+import org.springframework.hateoas.RepresentationModel;
+import parkingsystem.felipeschwartz.com.github.model.entities.Address;
+import parkingsystem.felipeschwartz.com.github.model.entities.Vehicle;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
-@Table(name = "owner")
-@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Owner implements Serializable {
+
+public abstract class OwnerDTO extends RepresentationModel<OwnerDTO> implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column
     private String phone;
-
-    @Column
     private String email;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Vehicle> vehicles = new HashSet<>();
-
-    @Embedded
     private Address address;
-
-    @Column
     private LocalDateTime createdAt;
-
-    @Column
     private LocalDateTime updatedAt;
 
-    protected Owner() {
+    protected OwnerDTO() {
     }
 
-    public Owner(Long id, String phone, String email, Address address) {
+    public OwnerDTO(Long id, String phone, String email, Address address) {
         this.id = id;
         this.phone = phone;
         this.email = email;
@@ -98,7 +82,7 @@ public abstract class Owner implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Owner owner)) return false;
+        if (!(o instanceof OwnerDTO owner)) return false;
         return Objects.equals(getId(), owner.getId());
     }
 

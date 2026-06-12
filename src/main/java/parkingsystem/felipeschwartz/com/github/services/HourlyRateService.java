@@ -15,18 +15,16 @@ public class HourlyRateService {
         this.hourlyRateRepository = hourlyRateRepository;
     }
 
-
-
     public List<HourlyRate> findAll() {
         return hourlyRateRepository.findAll();
     }
 
-    public HourlyRate create(HourlyRate hourlyRate) {
-        return hourlyRateRepository.save(hourlyRate);
-    }
-
     public HourlyRate findById(Long hourlyRateId) {
         return hourlyRateRepository.findById(hourlyRateId).orElseThrow(() -> new RuntimeException("No records found for this ID"));
+    }
+
+    public HourlyRate create(HourlyRate hourlyRate) {
+        return hourlyRateRepository.save(hourlyRate);
     }
 
     public HourlyRate update(HourlyRate hourlyRate) {

@@ -22,19 +22,17 @@ public class OwnerEntity extends Owner implements Serializable {
     @Column
     private String fantasyName;
 
-    @Embedded
-    private Address address;
 
-    protected OwnerEntity() {
+
+    public OwnerEntity() {
     }
 
-    public OwnerEntity(String phone, String email, String cnpj, String billingContact, String corporateName, String fantasyName, Address address) {
-        super(phone, email);
+    public OwnerEntity(Long id, String phone, String email, String cnpj, String billingContact, String corporateName, String fantasyName, Address address) {
+        super(id, phone, email, address);
         this.cnpj = cnpj;
         this.billingContact = billingContact;
         this.corporateName = corporateName;
         this.fantasyName = fantasyName;
-        this.address = address;
     }
 
     public String getCnpj() {
@@ -69,11 +67,5 @@ public class OwnerEntity extends Owner implements Serializable {
         this.fantasyName = fantasyName;
     }
 
-    public Address getAddress() {
-        return address;
-    }
 
-    public void setAddress(Address address) {
-        this.address = address;
-    }
 }

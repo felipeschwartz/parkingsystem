@@ -218,6 +218,15 @@ public class ParkingSession implements Serializable {
     }
 
     public BigDecimal calculateAmount(BigDecimal ratePerHour) {
+
+        boolean hasActiveContract = vehicle.getSubscriptionContracts().stream().anyMatch(SubscriptionContract::isActive);
+
+        if(hasActiveContract) {
+            this.amountCharged = BigDecimal.ZERO;
+            this.updatedAt = LocalDateTime.now();
+            return BigDecimal.ZERO;
+        }
+
         Objects.requireNonNull(ratePerHour, "ratePerHour can not be null");
         if (ratePerHour.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("ratePerHour can not be negative");

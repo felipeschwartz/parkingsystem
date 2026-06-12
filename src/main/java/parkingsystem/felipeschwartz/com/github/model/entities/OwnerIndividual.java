@@ -23,19 +23,16 @@ public class OwnerIndividual extends Owner implements Serializable {
     @Column
     private LocalDate birthDate;
 
-    @Embedded
-    private Address address;
 
     public OwnerIndividual() {
     }
 
-    public OwnerIndividual(String phone, String email, String cpf, String firstName, String lastName, LocalDate birthDate, Address address) {
-        super(phone, email);
+    public OwnerIndividual(Long id, String phone, String email, String cpf, String firstName, String lastName, LocalDate birthDate, Address address) {
+        super(id, phone, email, address);
         this.cpf = cpf;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
-        this.address = address;
     }
 
     public String getCpf() {
@@ -70,12 +67,5 @@ public class OwnerIndividual extends Owner implements Serializable {
         this.birthDate = birthDate;
     }
 
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
 
 }

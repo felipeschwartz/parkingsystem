@@ -1,47 +1,36 @@
-package parkingsystem.felipeschwartz.com.github.model.entities;
+package parkingsystem.felipeschwartz.com.github.data.dto;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import org.springframework.hateoas.RepresentationModel;
+import parkingsystem.felipeschwartz.com.github.model.entities.ParkingSession;
 import parkingsystem.felipeschwartz.com.github.model.enums.PaymentMethod;
 import parkingsystem.felipeschwartz.com.github.model.enums.PaymentStatus;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
-public class Payment {
-    @Id
+public class PaymentDTO extends RepresentationModel<PaymentDTO> implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private Long id;
-
-    @OneToOne
-    @JoinColumn(name = "parking_session_id")
     private ParkingSession parkingSession;
-
-    @Column
     private BigDecimal amount;
-
-    @Column(name = "payment_date")
     private LocalDateTime paymentDate;
-
-    @Column(name = "payment_method")
     private PaymentMethod paymentMethod;
-
-    @Column(name = "payment_status")
     private PaymentStatus paymentStatus;
-
-    @Column
     private String reference;
-
-    @Column(name = "created_date")
     private LocalDateTime createdDate;
-
-    @Column(name = "updated_date")
     private LocalDateTime updatedDate;
 
-    public Payment() {
+    public PaymentDTO() {
     }
 
-    public Payment(Long id, ParkingSession parkingSession, BigDecimal amount, LocalDateTime paymentDate, PaymentMethod paymentMethod, PaymentStatus paymentStatus, String reference, LocalDateTime createdDate, LocalDateTime updatedDate) {
+    public PaymentDTO(Long id, ParkingSession parkingSession, BigDecimal amount, LocalDateTime paymentDate, PaymentMethod paymentMethod, PaymentStatus paymentStatus, String reference, LocalDateTime createdDate, LocalDateTime updatedDate) {
         this.id = id;
         this.parkingSession = parkingSession;
         this.amount = amount;
@@ -128,12 +117,13 @@ public class Payment {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Payment payment = (Payment) o;
-        return Objects.equals(getId(), payment.getId());
+        if (!super.equals(o)) return false;
+        PaymentDTO that = (PaymentDTO) o;
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return Objects.hash(super.hashCode(), getId());
     }
 }
