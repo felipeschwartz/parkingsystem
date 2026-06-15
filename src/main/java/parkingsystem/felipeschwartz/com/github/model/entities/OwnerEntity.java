@@ -1,16 +1,14 @@
 package parkingsystem.felipeschwartz.com.github.model.entities;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
-import java.util.Objects;
 
 @Entity
 @Table(name = "owner_entities")
 public class OwnerEntity extends Owner implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Column
+    @Column(nullable = false, unique = true, length = 14)
     private String cnpj;
 
     @Column

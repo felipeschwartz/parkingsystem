@@ -72,6 +72,14 @@ public abstract class Owner implements Serializable {
         this.email = email;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
     public Set<Vehicle> getVehicles() {
         return vehicles;
     }
@@ -105,5 +113,29 @@ public abstract class Owner implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = (this.createdAt == null) ? now : this.createdAt;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void addVehicle(Vehicle v) {
+        if (v == null) return;
+        vehicles.add(v);
+        v.setOwner(this);
+    }
+
+    public void removeVehicle(Vehicle v) {
+        if (v == null) return;
+        vehicles.remove(v);
+        v.setOwner(null);
     }
 }

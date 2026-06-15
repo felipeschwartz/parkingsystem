@@ -1,17 +1,15 @@
 package parkingsystem.felipeschwartz.com.github.model.entities;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
 @Table(name = "owner_individuals")
 public class OwnerIndividual extends Owner implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Column
+    @Column(nullable = false, unique = true, length = 11)
     private String cpf;
 
     @Column
@@ -66,6 +64,5 @@ public class OwnerIndividual extends Owner implements Serializable {
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
-
 
 }

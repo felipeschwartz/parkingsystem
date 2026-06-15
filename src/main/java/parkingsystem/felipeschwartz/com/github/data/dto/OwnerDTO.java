@@ -1,15 +1,14 @@
 package parkingsystem.felipeschwartz.com.github.data.dto;
 
-import jakarta.persistence.*;
 import org.springframework.hateoas.RepresentationModel;
 import parkingsystem.felipeschwartz.com.github.model.entities.Address;
 import parkingsystem.felipeschwartz.com.github.model.entities.Vehicle;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
 
 public abstract class OwnerDTO extends RepresentationModel<OwnerDTO> implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -32,53 +31,26 @@ public abstract class OwnerDTO extends RepresentationModel<OwnerDTO> implements 
         this.address = address;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 
-    public String getPhone() {
-        return phone;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+    public Set<Vehicle> getVehicles() { return vehicles; }
+    public void setVehicles(Set<Vehicle> vehicles) { this.vehicles = vehicles; }
 
-    public String getEmail() {
-        return email;
-    }
+    public Address getAddress() { return address; }
+    public void setAddress(Address address) { this.address = address; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public Set<Vehicle> getVehicles() {
-        return vehicles;
-    }
-
-    public void setVehicles(Set<Vehicle> vehicles) {
-        this.vehicles = vehicles;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
     @Override
     public boolean equals(Object o) {
