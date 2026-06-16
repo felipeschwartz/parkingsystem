@@ -5,7 +5,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import parkingsystem.felipeschwartz.com.github.model.entities.Owner;
 import parkingsystem.felipeschwartz.com.github.repositories.OwnerRepository;
-import parkingsystem.felipeschwartz.com.github.repositories.VehicleRepository;
 
 @Service
 public class AuthService {
