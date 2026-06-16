@@ -25,8 +25,9 @@ public class OwnerEntity extends Owner implements Serializable {
     public OwnerEntity() {
     }
 
-    public OwnerEntity(Long id, String phone, String email, String cnpj, String billingContact, String corporateName, String fantasyName, Address address) {
-        super(id, phone, email, address);
+    public OwnerEntity(Long id, String phone, String email, String cnpj, String billingContact, String corporateName,
+                       String fantasyName, Address address, String password) {
+        super(id, phone, email, address, password);
         this.cnpj = cnpj;
         this.billingContact = billingContact;
         this.corporateName = corporateName;

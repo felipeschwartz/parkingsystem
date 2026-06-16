@@ -61,7 +61,7 @@ public class OwnerService {
                 .orElseThrow(() -> new IllegalArgumentException("OwnerEntity not found for CNPJ: " + cnpj));
     }
 
-    // -------- CREATE (accepting entity) --------
+    // -------- CREATE --------
 
     @Transactional
     public OwnerIndividual createIndividual(OwnerIndividual individual) {
@@ -180,6 +180,9 @@ public class OwnerService {
         entity.setUpdatedAt(LocalDateTime.now());
         return ownerRepository.save(entity);
     }
+
+
+    // -------- DELETE --------
 
     @Transactional
     public void delete(Long ownerId) {

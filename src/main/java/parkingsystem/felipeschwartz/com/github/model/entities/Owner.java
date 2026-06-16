@@ -38,14 +38,18 @@ public abstract class Owner implements Serializable {
     @Column
     private LocalDateTime updatedAt;
 
+    @Column(nullable = false)
+    private String password;
+
     protected Owner() {
     }
 
-    public Owner(Long id, String phone, String email, Address address) {
+    public Owner(Long id, String phone, String email, Address address, String password) {
         this.id = id;
         this.phone = phone;
         this.email = email;
         this.address = address;
+        this.password = password;
     }
 
     public Long getId() {
@@ -102,6 +106,14 @@ public abstract class Owner implements Serializable {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

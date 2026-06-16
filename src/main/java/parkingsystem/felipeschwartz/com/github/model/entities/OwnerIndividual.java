@@ -25,8 +25,9 @@ public class OwnerIndividual extends Owner implements Serializable {
     public OwnerIndividual() {
     }
 
-    public OwnerIndividual(Long id, String phone, String email, String cpf, String firstName, String lastName, LocalDate birthDate, Address address) {
-        super(id, phone, email, address);
+    public OwnerIndividual(Long id, String phone, String email, String cpf, String firstName, String lastName,
+                           LocalDate birthDate, Address address, String password) {
+        super(id, phone, email, address, password);
         this.cpf = cpf;
         this.firstName = firstName;
         this.lastName = lastName;

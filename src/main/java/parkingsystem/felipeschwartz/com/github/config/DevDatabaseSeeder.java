@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import parkingsystem.felipeschwartz.com.github.model.entities.*;
@@ -19,8 +20,16 @@ import java.util.List;
 @Profile("dev")
 public class DevDatabaseSeeder implements CommandLineRunner {
 
+    private static final String DEFAULT_OWNER_PASSWORD = "owner123";
+
     @PersistenceContext
     private EntityManager em;
+
+    private final PasswordEncoder passwordEncoder;
+
+    public DevDatabaseSeeder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     @Transactional
@@ -30,6 +39,8 @@ public class DevDatabaseSeeder implements CommandLineRunner {
 
         LocalDateTime now = LocalDateTime.now();
         LocalDate today = LocalDate.now();
+
+        String encodedDefaultPassword = passwordEncoder.encode(DEFAULT_OWNER_PASSWORD);
 
         // ---------- Helpers de enums (evita depender de nomes específicos) ----------
         VehicleType[] vehicleTypes = VehicleType.values();
@@ -50,14 +61,14 @@ public class DevDatabaseSeeder implements CommandLineRunner {
 
         // ---------- Owners (3 Individuals + 3 Entities) ----------
         List<OwnerIndividual> individuals = new ArrayList<>();
-        individuals.add(newIndividual("11911110001", "pf1@teste.com", addr1, "11111111111", "Ana", "Silva", LocalDate.of(1994, 1, 10), now));
-        individuals.add(newIndividual("11911110002", "pf2@teste.com", addr2, "22222222222", "Bruno", "Souza", LocalDate.of(1990, 5, 20), now));
-        individuals.add(newIndividual("11911110003", "pf3@teste.com", addr3, "33333333333", "Carla", "Oliveira", LocalDate.of(1988, 9, 5), now));
+        individuals.add(newIndividual("11911110001", "pf1@teste.com", addr1, "11111111111", "Ana", "Silva", LocalDate.of(1994, 1, 10), encodedDefaultPassword, now));
+        individuals.add(newIndividual("11911110002", "pf2@teste.com", addr2, "22222222222", "Bruno", "Souza", LocalDate.of(1990, 5, 20), encodedDefaultPassword, now));
+        individuals.add(newIndividual("11911110003", "pf3@teste.com", addr3, "33333333333", "Carla", "Oliveira", LocalDate.of(1988, 9, 5), encodedDefaultPassword, now));
 
         List<OwnerEntity> entities = new ArrayList<>();
-        entities.add(newEntity("11333330001", "pj1@teste.com", addr4, "11111111000111", "Financeiro", "Empresa Alpha LTDA", "Alpha", now));
-        entities.add(newEntity("11333330002", "pj2@teste.com", addr5, "22222222000122", "Contas", "Empresa Beta SA", "Beta", now));
-        entities.add(newEntity("11333330003", "pj3@teste.com", addr6, "33333333000133", "Billing", "Empresa Gama ME", "Gama", now));
+        entities.add(newEntity("11333330001", "pj1@teste.com", addr4, "11111111000111", "Financeiro", "Empresa Alpha LTDA", "Alpha", encodedDefaultPassword, now));
+        entities.add(newEntity("11333330002", "pj2@teste.com", addr5, "22222222000122", "Contas", "Empresa Beta SA", "Beta", encodedDefaultPassword, now));
+        entities.add(newEntity("11333330003", "pj3@teste.com", addr6, "33333333000133", "Billing", "Empresa Gama ME", "Gama", encodedDefaultPassword, now));
 
         individuals.forEach(em::persist);
         entities.forEach(em::persist);
@@ -232,7 +243,7 @@ public class DevDatabaseSeeder implements CommandLineRunner {
     private OwnerIndividual newIndividual(
             String phone, String email, Address address,
             String cpf, String firstName, String lastName,
-            LocalDate birthDate, LocalDateTime now
+            LocalDate birthDate, String encodedPassword, LocalDateTime now
     ) {
         OwnerIndividual oi = new OwnerIndividual();
         oi.setPhone(phone);
@@ -242,6 +253,7 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         oi.setFirstName(firstName);
         oi.setLastName(lastName);
         oi.setBirthDate(birthDate);
+        oi.setPassword(encodedPassword);
         oi.setCreatedAt(now);
         oi.setUpdatedAt(now);
         return oi;
@@ -250,7 +262,7 @@ public class DevDatabaseSeeder implements CommandLineRunner {
     private OwnerEntity newEntity(
             String phone, String email, Address address,
             String cnpj, String billingContact, String corporateName,
-            String fantasyName, LocalDateTime now
+            String fantasyName, String encodedPassword, LocalDateTime now
     ) {
         OwnerEntity oe = new OwnerEntity();
         oe.setPhone(phone);
@@ -260,6 +272,7 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         oe.setBillingContact(billingContact);
         oe.setCorporateName(corporateName);
         oe.setFantasyName(fantasyName);
+        oe.setPassword(encodedPassword);
         oe.setCreatedAt(now);
         oe.setUpdatedAt(now);
         return oe;
