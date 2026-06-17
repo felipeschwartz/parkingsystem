@@ -22,10 +22,11 @@ public class Vehicle implements Serializable {
     @Column(nullable = false, length = 20)
     private VehicleType type;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(
             name = "owner_id",
-            nullable = false,
+            nullable = true,
             foreignKey = @ForeignKey(name = "fk_vehicle_owner")
     )
     private Owner owner;

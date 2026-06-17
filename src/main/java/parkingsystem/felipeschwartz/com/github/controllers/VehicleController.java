@@ -59,5 +59,7 @@ public class VehicleController {
         return ResponseEntity.noContent().build();
     }
 
-    
+    @GetMapping(value = "/licence_plate/{licence_plate}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Vehicle findByLicensePlate(@PathVariable String licence_plate) { return service.findByLicensePlate(licence_plate); }
+
 }
