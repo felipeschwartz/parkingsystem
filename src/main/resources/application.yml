@@ -15,12 +15,14 @@ spring:
     open-in-view: false
   profiles:
     active: dev
-  security:
-    user:
-      name: admin
-      password: admin
   flyway:
     enabled: false
+
+security:
+  jwt:
+    secret: parking-system-secret-key-felipe-schwartz-2026
+    expiration: 86400000
+
 logging:
   level:
     org.springframework.security: DEBUG
