@@ -1,5 +1,7 @@
 package parkingsystem.felipeschwartz.com.github.controllers;
 
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,8 +47,8 @@ public class OwnerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public OwnerEntity createEntity(@RequestBody OwnerEntity entity) {
-        return service.createEntity(entity);
+    public ResponseEntity<OwnerEntity> createEntity(@RequestBody @Valid OwnerEntity entity) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.createEntity(entity));
     }
 
     @PostMapping(
@@ -54,8 +56,8 @@ public class OwnerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public OwnerIndividual createIndividual(@RequestBody OwnerIndividual individual) {
-        return service.createIndividual(individual);
+    public ResponseEntity<OwnerIndividual> createIndividual(@RequestBody @Valid OwnerIndividual individual) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.createIndividual(individual));
     }
 
     @PutMapping(
@@ -63,8 +65,8 @@ public class OwnerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public OwnerIndividual updateIndividuals(@PathVariable Long id, @RequestBody OwnerIndividual updatedIndividual) {
-        return service.updateIndividual(id, updatedIndividual.getPhone(), updatedIndividual.getEmail(), updatedIndividual.getCpf(), updatedIndividual.getFirstName(), updatedIndividual.getLastName(), updatedIndividual.getBirthDate(), updatedIndividual.getAddress());
+    public OwnerIndividual updateIndividuals(@PathVariable Long id, @RequestBody @Valid OwnerIndividual updatedIndividual) {
+        return service.updateIndividual(id, updatedIndividual);
     }
 
     @PutMapping(
@@ -72,14 +74,14 @@ public class OwnerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public OwnerEntity updateEntities(@PathVariable Long id, @RequestBody OwnerEntity updatedEntity) {
-        return service.updateEntity(id, updatedEntity.getPhone(), updatedEntity.getEmail(),updatedEntity.getCnpj(), updatedEntity.getBillingContact(), updatedEntity.getCorporateName(), updatedEntity.getFantasyName(), updatedEntity.getAddress());
+    public OwnerEntity updateEntities(@PathVariable Long id, @RequestBody @Valid OwnerEntity updatedEntity) {
+        return service.updateEntity(id, updatedEntity);
     }
 
     @DeleteMapping(value = "/id/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         service.delete(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     

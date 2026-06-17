@@ -150,32 +150,32 @@ public class OwnerService {
     // -------- UPDATE --------
 
     @Transactional
-    public OwnerIndividual updateIndividual(Long id, String phone, String email, String cpf, String firstName, String lastName, LocalDate birthDate, Address address) {
+    public OwnerIndividual updateIndividual(Long id, OwnerIndividual updated) {
         OwnerIndividual individual = ownerIndividualRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Owner not found: " + id));
 
-        if (phone != null) individual.setPhone(phone);
-        if (email != null) individual.setEmail(email);
-        if (firstName != null) individual.setFirstName(firstName);
-        if (lastName != null) individual.setLastName(lastName);
-        if (birthDate != null) individual.setBirthDate(birthDate);
-        if (address != null) individual.setAddress(address);
+        if (updated.getPhone() != null) individual.setPhone(updated.getPhone());
+        if (updated.getEmail() != null) individual.setEmail(updated.getEmail());
+        if (updated.getFirstName() != null) individual.setFirstName(updated.getFirstName());
+        if (updated.getLastName() != null) individual.setLastName(updated.getLastName());
+        if (updated.getBirthDate() != null) individual.setBirthDate(updated.getBirthDate());
+        if (updated.getAddress() != null) individual.setAddress(updated.getAddress());
 
         individual.setUpdatedAt(LocalDateTime.now());
         return ownerRepository.save(individual);
     }
 
     @Transactional
-    public OwnerEntity updateEntity(Long id, String phone, String email, String cnpj, String billingContact, String corporateName, String fantasyName, Address address) {
+    public OwnerEntity updateEntity(Long id, OwnerEntity updated) {
         OwnerEntity entity = ownerEntityRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Owner not found: " + id));
 
-        if (phone != null) entity.setPhone(phone);
-        if (email != null) entity.setEmail(email);
-        if (billingContact != null) entity.setBillingContact(billingContact);
-        if (corporateName != null) entity.setCorporateName(corporateName);
-        if (fantasyName != null) entity.setFantasyName(fantasyName);
-        if (address != null) entity.setAddress(address);
+        if (updated.getPhone() != null) entity.setPhone(updated.getPhone());
+        if (updated.getEmail() != null) entity.setEmail(updated.getEmail());
+        if (updated.getBillingContact() != null) entity.setBillingContact(updated.getBillingContact());
+        if (updated.getCorporateName() != null) entity.setCorporateName(updated.getCorporateName());
+        if (updated.getFantasyName() != null) entity.setFantasyName(updated.getFantasyName());
+        if (updated.getAddress() != null) entity.setAddress(updated.getAddress());
 
         entity.setUpdatedAt(LocalDateTime.now());
         return ownerRepository.save(entity);
