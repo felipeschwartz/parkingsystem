@@ -1,10 +1,12 @@
 package parkingsystem.felipeschwartz.com.github.controllers;
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import parkingsystem.felipeschwartz.com.github.data.dto.OwnerDTO;
 import parkingsystem.felipeschwartz.com.github.model.entities.Owner;
 import parkingsystem.felipeschwartz.com.github.model.entities.OwnerEntity;
 import parkingsystem.felipeschwartz.com.github.model.entities.OwnerIndividual;
@@ -16,6 +18,7 @@ import java.util.List;
 @RequestMapping("/owner")
 public class OwnerController {
 
+    @Autowired
     private final OwnerService service;
 
     public OwnerController(OwnerService service) {
@@ -23,7 +26,7 @@ public class OwnerController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Owner> findAll() {
+    public List<OwnerDTO> findAll() {
         return service.findAll();
     }
 

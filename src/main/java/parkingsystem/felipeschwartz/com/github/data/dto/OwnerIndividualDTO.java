@@ -1,0 +1,47 @@
+package parkingsystem.felipeschwartz.com.github.data.dto;
+
+import jakarta.persistence.Column;
+
+import java.time.LocalDate;
+
+public class OwnerIndividualDTO extends OwnerDTO {
+    private String cpf;
+    private String firstName;
+    private String lastName;
+    private LocalDate birthDate;
+
+    public OwnerIndividualDTO() {
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+}

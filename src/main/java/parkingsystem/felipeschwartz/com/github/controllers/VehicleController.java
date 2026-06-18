@@ -1,6 +1,8 @@
 package parkingsystem.felipeschwartz.com.github.controllers;
 
 import jakarta.validation.Valid;
+import org.hibernate.boot.internal.Abstract;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequestMapping("/vehicle")
 public class VehicleController {
 
+    @Autowired
     private final VehicleService service;
 
     public VehicleController(VehicleService service) {

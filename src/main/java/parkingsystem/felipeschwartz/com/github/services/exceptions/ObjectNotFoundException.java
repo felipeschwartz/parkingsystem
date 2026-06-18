@@ -1,11 +1,11 @@
 package parkingsystem.felipeschwartz.com.github.services.exceptions;
 
-public class OwnerNotFoundException extends RuntimeException {
-    public OwnerNotFoundException(Long id) {
+public class ObjectNotFoundException extends RuntimeException {
+    public ObjectNotFoundException(Long id) {
         super("Owner not found by ID: " + id);
     }
 
-    public OwnerNotFoundException(String cod) {
+    public ObjectNotFoundException(String cod) {
         super("Owner not found by CPF/CNPJ: " + cod);
     }
 

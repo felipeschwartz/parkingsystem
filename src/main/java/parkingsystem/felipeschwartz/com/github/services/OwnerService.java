@@ -1,5 +1,6 @@
 package parkingsystem.felipeschwartz.com.github.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import parkingsystem.felipeschwartz.com.github.model.entities.Address;
@@ -9,17 +10,24 @@ import parkingsystem.felipeschwartz.com.github.model.entities.OwnerIndividual;
 import parkingsystem.felipeschwartz.com.github.repositories.OwnerEntityRepository;
 import parkingsystem.felipeschwartz.com.github.repositories.OwnerIndividualRepository;
 import parkingsystem.felipeschwartz.com.github.repositories.OwnerRepository;
+import parkingsystem.felipeschwartz.com.github.services.exceptions.ObjectNotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class OwnerService {
 
+    @Autowired
     private final OwnerRepository ownerRepository;
+
+    @Autowired
     private final OwnerIndividualRepository ownerIndividualRepository;
+
+    @Autowired
     private final OwnerEntityRepository ownerEntityRepository;
 
     public OwnerService(
@@ -39,26 +47,27 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public Owner findOwnerById(Long ownerId) {
-        return ownerRepository.findById(ownerId)
-                .orElseThrow(() -> new IllegalArgumentException("Owner not found: " + ownerId));
+        Optional<Owner> obj = ownerRepository.findById(ownerId);
+        return obj.orElseThrow(() -> new ObjectNotFoundException("Owner not found: " + ownerId));
+
     }
 
     @Transactional(readOnly = true)
     public OwnerIndividual findOwnerByCpf(String cpf) {
+        Optional<OwnerIndividual> obj = ownerIndividualRepository.findByCpf(cpf);
         if (cpf == null || cpf.isBlank()) {
             throw new IllegalArgumentException("CPF must not be blank.");
         }
-        return ownerIndividualRepository.findByCpf(cpf)
-                .orElseThrow(() -> new IllegalArgumentException("OwnerIndividual not found for CPF: " + cpf));
+        return obj.orElseThrow(() -> new ObjectNotFoundException("Owner not found: " + cpf));
     }
 
     @Transactional(readOnly = true)
     public OwnerEntity findOwnerByCnpj(String cnpj) {
+        Optional<OwnerEntity> obj = ownerEntityRepository.findByCnpj(cnpj);
         if (cnpj == null || cnpj.isBlank()) {
             throw new IllegalArgumentException("CNPJ must not be blank.");
         }
-        return ownerEntityRepository.findByCnpj(cnpj)
-                .orElseThrow(() -> new IllegalArgumentException("OwnerEntity not found for CNPJ: " + cnpj));
+        return obj.orElseThrow(() -> new ObjectNotFoundException("Owner not found: " + cnpj));
     }
 
     // -------- CREATE --------
