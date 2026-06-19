@@ -3,7 +3,11 @@ package parkingsystem.felipeschwartz.com.github.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import parkingsystem.felipeschwartz.com.github.model.entities.Address;
+import parkingsystem.felipeschwartz.com.github.data.dto.OwnerDTO;
+import parkingsystem.felipeschwartz.com.github.data.dto.OwnerEntityDTO;
+import parkingsystem.felipeschwartz.com.github.data.dto.OwnerIndividualDTO;
+import parkingsystem.felipeschwartz.com.github.mapper.OwnerEntityMapper;
+import parkingsystem.felipeschwartz.com.github.mapper.OwnerIndividualMapper;
 import parkingsystem.felipeschwartz.com.github.model.entities.Owner;
 import parkingsystem.felipeschwartz.com.github.model.entities.OwnerEntity;
 import parkingsystem.felipeschwartz.com.github.model.entities.OwnerIndividual;
@@ -12,22 +16,17 @@ import parkingsystem.felipeschwartz.com.github.repositories.OwnerIndividualRepos
 import parkingsystem.felipeschwartz.com.github.repositories.OwnerRepository;
 import parkingsystem.felipeschwartz.com.github.services.exceptions.ObjectNotFoundException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class OwnerService {
 
-    @Autowired
     private final OwnerRepository ownerRepository;
 
-    @Autowired
     private final OwnerIndividualRepository ownerIndividualRepository;
 
-    @Autowired
     private final OwnerEntityRepository ownerEntityRepository;
 
     public OwnerService(
@@ -40,40 +39,64 @@ public class OwnerService {
         this.ownerEntityRepository = ownerEntityRepository;
     }
 
+    @Autowired
+    private OwnerIndividualMapper individualMapper;
+
+    @Autowired
+    private OwnerEntityMapper entityMapper;
+
     @Transactional(readOnly = true)
-    public List<Owner> findAll() {
-        return ownerRepository.findAll();
+    public List<OwnerDTO> findAll() {
+        return ownerRepository.findAll()
+                .stream()
+                .map(owner -> {
+                    if (owner instanceof OwnerIndividual oi) {
+                        return (OwnerDTO) individualMapper.toDTO(oi);
+                    } else if (owner instanceof OwnerEntity oe) {
+                        return (OwnerDTO) entityMapper.toDTO(oe);
+                    }
+                    throw new IllegalStateException("Unknown owner type: " + owner.getClass());
+                })
+                .toList();
     }
 
     @Transactional(readOnly = true)
-    public Owner findOwnerById(Long ownerId) {
-        Optional<Owner> obj = ownerRepository.findById(ownerId);
-        return obj.orElseThrow(() -> new ObjectNotFoundException("Owner not found: " + ownerId));
+    public OwnerDTO findOwnerById(Long ownerId) {
+        Owner owner = ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new ObjectNotFoundException("Owner not found: " + ownerId));
 
+        if (owner instanceof OwnerIndividual oi) {
+            return individualMapper.toDTO(oi);
+        } else if (owner instanceof OwnerEntity oe) {
+            return entityMapper.toDTO(oe);
+        }
+        throw new IllegalStateException("Unknown owner type: " + owner.getClass());
     }
 
     @Transactional(readOnly = true)
-    public OwnerIndividual findOwnerByCpf(String cpf) {
-        Optional<OwnerIndividual> obj = ownerIndividualRepository.findByCpf(cpf);
+    public OwnerIndividualDTO findOwnerByCpf(String cpf) {
         if (cpf == null || cpf.isBlank()) {
             throw new IllegalArgumentException("CPF must not be blank.");
         }
-        return obj.orElseThrow(() -> new ObjectNotFoundException("Owner not found: " + cpf));
+        return ownerIndividualRepository.findByCpf(cpf)
+                .map(individualMapper::toDTO)
+                .orElseThrow(() -> new ObjectNotFoundException("Owner not found: " + cpf));
     }
 
     @Transactional(readOnly = true)
-    public OwnerEntity findOwnerByCnpj(String cnpj) {
-        Optional<OwnerEntity> obj = ownerEntityRepository.findByCnpj(cnpj);
+    public OwnerEntityDTO findOwnerByCnpj(String cnpj) {
         if (cnpj == null || cnpj.isBlank()) {
             throw new IllegalArgumentException("CNPJ must not be blank.");
         }
-        return obj.orElseThrow(() -> new ObjectNotFoundException("Owner not found: " + cnpj));
+        return ownerEntityRepository.findByCnpj(cnpj)
+                .map(entityMapper::toDTO)
+                .orElseThrow(() -> new ObjectNotFoundException("Owner not found: " + cnpj));
     }
 
     // -------- CREATE --------
 
     @Transactional
-    public OwnerIndividual createIndividual(OwnerIndividual individual) {
+    public OwnerIndividualDTO createIndividual(OwnerIndividual individual) {
         Objects.requireNonNull(individual, "individual must not be null.");
 
         String cpf = individual.getCpf();
@@ -88,11 +111,11 @@ public class OwnerService {
         individual.setCreatedAt(now);
         individual.setUpdatedAt(now);
 
-        return ownerIndividualRepository.save(individual);
+        return individualMapper.toDTO(ownerIndividualRepository.save(individual));
     }
 
     @Transactional
-    public OwnerEntity createEntity(OwnerEntity entity) {
+    public OwnerEntityDTO createEntity(OwnerEntity entity) {
         Objects.requireNonNull(entity, "entity must not be null.");
 
         String cnpj = entity.getCnpj();
@@ -107,59 +130,14 @@ public class OwnerService {
         entity.setCreatedAt(now);
         entity.setUpdatedAt(now);
 
-        return ownerEntityRepository.save(entity);
+        return entityMapper.toDTO(ownerEntityRepository.save(entity));
     }
 
-    // -------- CREATE (field-based) --------
-
-    @Transactional
-    public OwnerIndividual createIndividual(
-            String phone,
-            String email,
-            Address address,
-            String cpf,
-            String firstName,
-            String lastName,
-            LocalDate birthDate
-    ) {
-        OwnerIndividual oi = new OwnerIndividual();
-        oi.setPhone(phone);
-        oi.setEmail(email);
-        oi.setAddress(address);
-        oi.setCpf(cpf);
-        oi.setFirstName(firstName);
-        oi.setLastName(lastName);
-        oi.setBirthDate(birthDate);
-
-        return createIndividual(oi);
-    }
-
-    @Transactional
-    public OwnerEntity createEntity(
-            String phone,
-            String email,
-            Address address,
-            String cnpj,
-            String billingContact,
-            String corporateName,
-            String fantasyName
-    ) {
-        OwnerEntity oe = new OwnerEntity();
-        oe.setPhone(phone);
-        oe.setEmail(email);
-        oe.setAddress(address);
-        oe.setCnpj(cnpj);
-        oe.setBillingContact(billingContact);
-        oe.setCorporateName(corporateName);
-        oe.setFantasyName(fantasyName);
-
-        return createEntity(oe);
-    }
 
     // -------- UPDATE --------
 
     @Transactional
-    public OwnerIndividual updateIndividual(Long id, OwnerIndividual updated) {
+    public OwnerIndividualDTO updateIndividual(Long id, OwnerIndividual updated) {
         OwnerIndividual individual = ownerIndividualRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Owner not found: " + id));
 
@@ -171,11 +149,11 @@ public class OwnerService {
         if (updated.getAddress() != null) individual.setAddress(updated.getAddress());
 
         individual.setUpdatedAt(LocalDateTime.now());
-        return ownerRepository.save(individual);
+        return individualMapper.toDTO(ownerIndividualRepository.save(individual));
     }
 
     @Transactional
-    public OwnerEntity updateEntity(Long id, OwnerEntity updated) {
+    public OwnerEntityDTO updateEntity(Long id, OwnerEntity updated) {
         OwnerEntity entity = ownerEntityRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Owner not found: " + id));
 
@@ -187,7 +165,7 @@ public class OwnerService {
         if (updated.getAddress() != null) entity.setAddress(updated.getAddress());
 
         entity.setUpdatedAt(LocalDateTime.now());
-        return ownerRepository.save(entity);
+        return entityMapper.toDTO(ownerEntityRepository.save(entity));
     }
 
 

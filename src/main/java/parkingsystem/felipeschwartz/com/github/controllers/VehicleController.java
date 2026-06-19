@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import parkingsystem.felipeschwartz.com.github.data.dto.VehicleDTO;
 import parkingsystem.felipeschwartz.com.github.model.entities.Owner;
 import parkingsystem.felipeschwartz.com.github.model.entities.OwnerEntity;
 import parkingsystem.felipeschwartz.com.github.model.entities.OwnerIndividual;
@@ -20,7 +21,6 @@ import java.util.List;
 @RequestMapping("/vehicle")
 public class VehicleController {
 
-    @Autowired
     private final VehicleService service;
 
     public VehicleController(VehicleService service) {
@@ -28,12 +28,12 @@ public class VehicleController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Vehicle> findAll() {
+    public List<VehicleDTO> findAll() {
         return service.findAll();
     }
 
     @GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Vehicle findById(@PathVariable Long id) {
+    public VehicleDTO findById(@PathVariable Long id) {
         return service.findById(id);
     }
 
@@ -42,7 +42,7 @@ public class VehicleController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Vehicle> create(@RequestBody @Valid Vehicle vehicle) {
+    public ResponseEntity<VehicleDTO> create(@RequestBody @Valid Vehicle vehicle) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.create(vehicle));
     }
 
@@ -51,7 +51,7 @@ public class VehicleController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Vehicle update(@PathVariable Long id, @RequestBody @Valid Vehicle updatedVehicle) {
+    public VehicleDTO update(@PathVariable Long id, @RequestBody @Valid Vehicle updatedVehicle) {
         return service.update(id, updatedVehicle);
     }
 
@@ -63,6 +63,6 @@ public class VehicleController {
     }
 
     @GetMapping(value = "/licence_plate/{licence_plate}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Vehicle findByLicensePlate(@PathVariable String licence_plate) { return service.findByLicensePlate(licence_plate); }
+    public VehicleDTO findByLicensePlate(@PathVariable String licence_plate) { return service.findByLicensePlate(licence_plate); }
 
 }

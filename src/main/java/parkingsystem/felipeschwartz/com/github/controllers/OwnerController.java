@@ -1,13 +1,13 @@
 package parkingsystem.felipeschwartz.com.github.controllers;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import parkingsystem.felipeschwartz.com.github.data.dto.OwnerDTO;
-import parkingsystem.felipeschwartz.com.github.model.entities.Owner;
+import parkingsystem.felipeschwartz.com.github.data.dto.OwnerEntityDTO;
+import parkingsystem.felipeschwartz.com.github.data.dto.OwnerIndividualDTO;
 import parkingsystem.felipeschwartz.com.github.model.entities.OwnerEntity;
 import parkingsystem.felipeschwartz.com.github.model.entities.OwnerIndividual;
 import parkingsystem.felipeschwartz.com.github.services.OwnerService;
@@ -18,7 +18,6 @@ import java.util.List;
 @RequestMapping("/owner")
 public class OwnerController {
 
-    @Autowired
     private final OwnerService service;
 
     public OwnerController(OwnerService service) {
@@ -31,17 +30,17 @@ public class OwnerController {
     }
 
     @GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Owner findById(@PathVariable Long id) {
+    public OwnerDTO findById(@PathVariable Long id) {
         return service.findOwnerById(id);
     }
 
     @GetMapping(value = "/cpf/{cpf}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public OwnerIndividual findByCpf(@PathVariable String cpf) {
+    public OwnerIndividualDTO findByCpf(@PathVariable String cpf) {
         return service.findOwnerByCpf(cpf);
     }
 
     @GetMapping(value = "/cnpj/{cnpj}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public OwnerEntity findByCnpj(@PathVariable String cnpj) {
+    public OwnerEntityDTO findByCnpj(@PathVariable String cnpj) {
         return service.findOwnerByCnpj(cnpj);
     }
 
@@ -50,7 +49,7 @@ public class OwnerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OwnerEntity> createEntity(@RequestBody @Valid OwnerEntity entity) {
+    public ResponseEntity<OwnerEntityDTO> createEntity(@RequestBody @Valid OwnerEntity entity) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createEntity(entity));
     }
 
@@ -59,7 +58,7 @@ public class OwnerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OwnerIndividual> createIndividual(@RequestBody @Valid OwnerIndividual individual) {
+    public ResponseEntity<OwnerIndividualDTO> createIndividual(@RequestBody @Valid OwnerIndividual individual) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createIndividual(individual));
     }
 
@@ -68,7 +67,7 @@ public class OwnerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public OwnerIndividual updateIndividuals(@PathVariable Long id, @RequestBody @Valid OwnerIndividual updatedIndividual) {
+    public OwnerIndividualDTO updateIndividuals(@PathVariable Long id, @RequestBody @Valid OwnerIndividual updatedIndividual) {
         return service.updateIndividual(id, updatedIndividual);
     }
 
@@ -77,7 +76,7 @@ public class OwnerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public OwnerEntity updateEntities(@PathVariable Long id, @RequestBody @Valid OwnerEntity updatedEntity) {
+    public OwnerEntityDTO updateEntities(@PathVariable Long id, @RequestBody @Valid OwnerEntity updatedEntity) {
         return service.updateEntity(id, updatedEntity);
     }
 
@@ -86,6 +85,4 @@ public class OwnerController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
-
-    
 }
