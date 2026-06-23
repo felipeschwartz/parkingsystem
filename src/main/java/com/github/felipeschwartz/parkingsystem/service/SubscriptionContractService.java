@@ -37,7 +37,7 @@ public class SubscriptionContractService {
         );
 
         if (!overlaps.isEmpty()) {
-            throw new IllegalStateException("Já existe contrato ATIVO com período sobreposto para este veículo.");
+            throw new IllegalStateException("There is already an active contract with an overlapping period for this vehicle..");
         }
 
         // Garante status default
@@ -52,7 +52,7 @@ public class SubscriptionContractService {
     @Transactional
     public SubscriptionContract cancel(Long contractId) {
         SubscriptionContract contract = subscriptionContractRepository.findById(contractId)
-                .orElseThrow(() -> new IllegalArgumentException("Contrato não encontrado: " + contractId));
+                .orElseThrow(() -> new IllegalArgumentException("Contract not found: " + contractId));
 
         contract.setStatus(SubscripionStatus.CANCELLED);
         return subscriptionContractRepository.save(contract);
@@ -60,10 +60,10 @@ public class SubscriptionContractService {
 
     private void validateDates(LocalDate startDate, LocalDate endDate) {
         if (startDate == null) {
-            throw new IllegalArgumentException("startDate não pode ser nulo.");
+            throw new IllegalArgumentException("startDate cannot be null.");
         }
         if (endDate != null && endDate.isBefore(startDate)) {
-            throw new IllegalArgumentException("endDate não pode ser anterior a startDate.");
+            throw new IllegalArgumentException("endDate cannot be earlier than startDate.");
         }
     }
 

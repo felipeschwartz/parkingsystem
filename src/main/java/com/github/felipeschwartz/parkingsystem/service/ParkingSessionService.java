@@ -1,7 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import com.github.felipeschwartz.parkingsystem.model.enums.SubscripionStatus;
 import com.github.felipeschwartz.parkingsystem.repository.*;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.github.felipeschwartz.parkingsystem.model.entity.HourlyRate;
 import com.github.felipeschwartz.parkingsystem.model.entity.ParkingSession;
@@ -10,6 +10,7 @@ import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
 import com.github.felipeschwartz.parkingsystem.model.enums.SessionStatus;
 import com.github.felipeschwartz.parkingsystem.model.enums.SpaceStatus;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -38,7 +39,7 @@ public class ParkingSessionService {
     }
 
     // -------------------------
-    // OPEN - HOURLY (avulso)
+    // OPEN - HOURLY
     // -------------------------
     @Transactional
     public ParkingSession openHourlySession(Long parkingSpaceId,
@@ -49,27 +50,24 @@ public class ParkingSessionService {
         LocalDateTime when = (entryTime != null) ? entryTime : LocalDateTime.now();
 
         ParkingSpace space = spaceRepository.findByIdForUpdate(parkingSpaceId)
-                .orElseThrow(() -> new IllegalArgumentException("ParkingSpace não encontrado: " + parkingSpaceId));
+                .orElseThrow(() -> new IllegalArgumentException("ParkingSpace not found: " + parkingSpaceId));
 
         validateSpaceCanBeUsed(space, vehicleType);
 
-        // garante 1 OPEN por vaga (além do lock)
         if (sessionRepository.existsByParkingSpace_IdAndStatus(space.getId(), SessionStatus.OPEN)) {
-            throw new IllegalStateException("Já existe uma sessão OPEN para esta vaga.");
+            throw new IllegalStateException("There is already an OPEN session for this parking space.");
         }
 
         ParkingSession session = ParkingSession.forHourly(licensePlate, vehicleType, space, when);
 
-        // marca vaga como ocupada (se você usa status)
         space.setStatus(SpaceStatus.OCCUPIED);
-
-        // salva
         spaceRepository.save(space);
+
         return sessionRepository.save(session);
     }
 
     // -------------------------
-    // OPEN - SUBSCRIPTION (mensal)
+    // OPEN - SUBSCRIPTION
     // -------------------------
     @Transactional
     public ParkingSession openSubscriptionSession(Long parkingSpaceId,
@@ -79,30 +77,29 @@ public class ParkingSessionService {
         LocalDateTime when = (entryTime != null) ? entryTime : LocalDateTime.now();
 
         Vehicle vehicle = vehicleRepository.findById(vehicleId)
-                .orElseThrow(() -> new IllegalArgumentException("Vehicle não encontrado: " + vehicleId));
+                .orElseThrow(() -> new IllegalArgumentException("Vehicle not found: " + vehicleId));
 
         ParkingSpace space = spaceRepository.findByIdForUpdate(parkingSpaceId)
-                .orElseThrow(() -> new IllegalArgumentException("ParkingSpace não encontrado: " + parkingSpaceId));
+                .orElseThrow(() -> new IllegalArgumentException("ParkingSpace not found: " + parkingSpaceId));
 
         validateSpaceCanBeUsed(space, vehicle.getType());
 
         if (sessionRepository.existsByParkingSpace_IdAndStatus(space.getId(), SessionStatus.OPEN)) {
-            throw new IllegalStateException("Já existe uma sessão OPEN para esta vaga.");
+            throw new IllegalStateException("There is already an OPEN session for this parking space.");
         }
 
-        // opcional: bloquear se não tiver contrato ativo (se esta for sua regra)
         boolean hasActiveContract = subscriptionContractRepository.hasActiveContractForDate(
-                vehicle.getId(), when.toLocalDate()
+                vehicle.getId(), SubscripionStatus.ACTIVE, when.toLocalDate()
         );
         if (!hasActiveContract) {
-            throw new IllegalStateException("Veículo não possui contrato mensal ativo para hoje.");
+            throw new IllegalStateException("Vehicle does not have an active monthly contract for today.");
         }
 
         ParkingSession session = ParkingSession.forSubscription(vehicle, space, when);
 
         space.setStatus(SpaceStatus.OCCUPIED);
-
         spaceRepository.save(space);
+
         return sessionRepository.save(session);
     }
 
@@ -114,60 +111,57 @@ public class ParkingSessionService {
         LocalDateTime when = (exitTime != null) ? exitTime : LocalDateTime.now();
 
         ParkingSession session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new IllegalArgumentException("ParkingSession não encontrada: " + sessionId));
+                .orElseThrow(() -> new IllegalArgumentException("ParkingSession not found: " + sessionId));
 
         if (session.getStatus() != SessionStatus.OPEN) {
-            throw new IllegalStateException("Só é possível fechar sessão OPEN.");
+            throw new IllegalStateException("Only OPEN sessions can be closed.");
         }
 
         session.close(when);
 
-        // cobrança:
-        // - se for mensal com contrato ativo na data, cobra 0
-        // - senão cobra por hora
         BigDecimal amount = calculateAmountFor(session);
         session.setAmountCharged(amount);
 
-        // libera vaga
         ParkingSpace space = session.getParkingSpace();
         if (space != null) {
-            // aqui seria interessante travar a vaga também; mas normalmente não precisa no close
-            space.setStatus(SpaceStatus.AVALIABLE);
+            space.setStatus(SpaceStatus.AVAILABLE);
             spaceRepository.save(space);
         }
 
         return sessionRepository.save(session);
     }
 
+    // -------------------------
+    // HELPERS
+    // -------------------------
     private BigDecimal calculateAmountFor(ParkingSession session) {
-        // Se tem Vehicle e contrato ativo no dia de entrada, considera mensal (isento)
         if (session.getVehicle() != null) {
             LocalDate day = session.getEntryTime().toLocalDate();
             boolean hasContract = subscriptionContractRepository.hasActiveContractForDate(
-                    session.getVehicle().getId(), day
+                    session.getVehicle().getId(), SubscripionStatus.ACTIVE, day
             );
             if (hasContract) {
                 return BigDecimal.ZERO.setScale(2);
             }
         }
 
-        // Hourly
         HourlyRate rate = hourlyRateRepository
                 .findByVehicleTypeAndActiveTrue(session.getVehicleType())
-                .orElseThrow(() -> new IllegalStateException("Não existe HourlyRate ativo para " + session.getVehicleType()));
+                .orElseThrow(() -> new IllegalStateException(
+                        "No active HourlyRate found for vehicle type: " + session.getVehicleType()));
 
         return session.calculateAmount(rate.getRatePerHour());
     }
 
     private void validateSpaceCanBeUsed(ParkingSpace space, VehicleType vehicleType) {
         if (!Boolean.TRUE.equals(space.getActive())) {
-            throw new IllegalStateException("Vaga inativa.");
+            throw new IllegalStateException("Parking space is inactive.");
         }
-        if (space.getStatus() != SpaceStatus.AVALIABLE) {
-            throw new IllegalStateException("Vaga não está AVAILABLE.");
+        if (space.getStatus() != SpaceStatus.AVAILABLE) {
+            throw new IllegalStateException("Parking space is not AVAILABLE.");
         }
         if (space.getVehicleType() != vehicleType) {
-            throw new IllegalStateException("Tipo de veículo não permitido nesta vaga.");
+            throw new IllegalStateException("Vehicle type not allowed in this parking space.");
         }
     }
 }

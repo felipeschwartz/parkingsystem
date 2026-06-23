@@ -86,7 +86,7 @@ public class PlanService {
         }
 
         if (planRateRepository.existsByPlan_IdAndVehicleTypeAndDurationMonths(id, vehicleType, durationMonths)) {
-            throw new IllegalStateException("Já existe PlanRate para este plan com o mesmo vehicleType e durationMonths.");
+            throw new IllegalStateException("A PlanRate already exists for this plan with the same vehicleType and durationMonths..");
         }
 
         PlanRate rate = new PlanRate();
@@ -111,16 +111,16 @@ public class PlanService {
                                Boolean active) {
 
         PlanRate rate = planRateRepository.findById(rateId)
-                .orElseThrow(() -> new IllegalArgumentException("PlanRate não encontrado: " + rateId));
+                .orElseThrow(() -> new IllegalArgumentException("PlanRate not found: " + rateId));
 
         if (monthlyPrice != null) {
-            if (monthlyPrice.compareTo(BigDecimal.ZERO) < 0) throw new IllegalArgumentException("price não pode ser negativo.");
+            if (monthlyPrice.compareTo(BigDecimal.ZERO) < 0) throw new IllegalArgumentException("price cannot be negative.");
             rate.setMonthlyPrice(monthlyPrice);
         }
 
         if (discountPercent != null) {
             if (discountPercent.compareTo(BigDecimal.ZERO) < 0 || discountPercent.compareTo(BigDecimal.valueOf(100)) > 0) {
-                throw new IllegalArgumentException("discountPercent deve estar entre 0 e 100.");
+                throw new IllegalArgumentException("discountPercent must be between 0 and 100.");
             }
             rate.setDiscountPercent(discountPercent);
         }
@@ -136,7 +136,7 @@ public class PlanService {
     @Transactional
     public void deactivateRate(Long rateId) {
         PlanRate rate = planRateRepository.findById(rateId)
-                .orElseThrow(() -> new IllegalArgumentException("PlanRate não encontrado: " + rateId));
+                .orElseThrow(() -> new IllegalArgumentException("PlanRate not found: " + rateId));
 
         rate.setActive(false);
         rate.setUpdatedAt(LocalDateTime.now());
@@ -149,7 +149,7 @@ public class PlanService {
     @Transactional(readOnly = true)
     public Plan getPlanOrThrow(Long planId) {
         return planRepository.findById(planId)
-                .orElseThrow(() -> new IllegalArgumentException("Plan não encontrado: " + planId));
+                .orElseThrow(() -> new IllegalArgumentException("Plan not found: " + planId));
     }
 
 }

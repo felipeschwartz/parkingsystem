@@ -1,50 +1,28 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
-import jakarta.persistence.*;
-import com.github.felipeschwartz.parkingsystem.model.entity.ParkingSpace;
-import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
 import com.github.felipeschwartz.parkingsystem.model.enums.ReservationStatus;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
-@Table
 public class ReservationDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    private Vehicle vehicle;
-
-    @ManyToOne
-    @JoinColumn(name = "parking_space_id", nullable = false, foreignKey = @ForeignKey(name = "fk_reservation_parking_space"))
-    private ParkingSpace parkingSpace;
-
-    @Column
+    private VehicleDTO vehicle;
+    private ParkingSpaceDTO parkingSpace;
     private LocalDateTime startTime;
-
-    @Column
     private LocalDateTime endTime;
-
-    @Enumerated
     private ReservationStatus status;
-
-    @Column
     private LocalDateTime createdAt;
-
-    @Column
     private LocalDateTime updatedAt;
 
 
     public ReservationDTO() {
     }
 
-    public ReservationDTO(Long id, Vehicle vehicle, ParkingSpace parkingSpace, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status) {
+    public ReservationDTO(Long id, VehicleDTO vehicle, ParkingSpaceDTO parkingSpace, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status) {
         this.id = id;
         this.vehicle = vehicle;
         this.parkingSpace = parkingSpace;
@@ -61,19 +39,19 @@ public class ReservationDTO implements Serializable {
         this.id = id;
     }
 
-    public Vehicle getVehicle() {
+    public VehicleDTO getVehicle() {
         return vehicle;
     }
 
-    public void setVehicle(Vehicle vehicle) {
+    public void setVehicle(VehicleDTO vehicle) {
         this.vehicle = vehicle;
     }
 
-    public ParkingSpace getParkingSpace() {
+    public ParkingSpaceDTO getParkingSpace() {
         return parkingSpace;
     }
 
-    public void setParkingSpace(ParkingSpace parkingSpace) {
+    public void setParkingSpace(ParkingSpaceDTO parkingSpace) {
         this.parkingSpace = parkingSpace;
     }
 

@@ -1,13 +1,12 @@
 package com.github.felipeschwartz.parkingsystem.service.exceptions;
 
 public class ObjectNotFoundException extends RuntimeException {
-    public ObjectNotFoundException(Long id) {
-        super("Owner not found by ID: " + id);
+
+    public ObjectNotFoundException(String entityName, Long id) {
+        super(entityName + " not found by ID: " + id);
     }
 
-    public ObjectNotFoundException(String cod) {
-        super("Owner not found by CPF/CNPJ: " + cod);
+    public ObjectNotFoundException(String entityName, String licensePlate) {
+        super(entityName + " not found: " + licensePlate);
     }
-
-
 }

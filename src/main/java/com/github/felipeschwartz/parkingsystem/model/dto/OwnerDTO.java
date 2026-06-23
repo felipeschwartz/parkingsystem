@@ -10,21 +10,21 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public abstract class OwnerDTO extends RepresentationModel<OwnerDTO> implements Serializable {
+public abstract class OwnerDTO<T extends OwnerDTO<T>> extends RepresentationModel<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
     private String phone;
     private String email;
-    private Set<Vehicle> vehicles = new HashSet<>();
-    private Address address;
+    private Set<VehicleDTO> vehicles = new HashSet<>();
+    private AddressDTO address;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     protected OwnerDTO() {
     }
 
-    public OwnerDTO(Long id, String phone, String email, Address address) {
+    public OwnerDTO(Long id, String phone, String email, AddressDTO address) {
         this.id = id;
         this.phone = phone;
         this.email = email;
@@ -40,11 +40,11 @@ public abstract class OwnerDTO extends RepresentationModel<OwnerDTO> implements 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public Set<Vehicle> getVehicles() { return vehicles; }
-    public void setVehicles(Set<Vehicle> vehicles) { this.vehicles = vehicles; }
+    public Set<VehicleDTO> getVehicles() { return vehicles; }
+    public void setVehicles(Set<VehicleDTO> vehicles) { this.vehicles = vehicles; }
 
-    public Address getAddress() { return address; }
-    public void setAddress(Address address) { this.address = address; }
+    public AddressDTO getAddress() { return address; }
+    public void setAddress(AddressDTO address) { this.address = address; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

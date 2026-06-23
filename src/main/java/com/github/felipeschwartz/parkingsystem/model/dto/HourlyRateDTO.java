@@ -1,39 +1,20 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
-import jakarta.persistence.*;
-import com.github.felipeschwartz.parkingsystem.model.converter.VehicleTypeConverter;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
-
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
-@Table
 public class HourlyRateDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-
-    @Column(name = "vehicle_type", nullable = false, length = 20)
-    @Convert(converter = VehicleTypeConverter.class)
     private VehicleType vehicleType;
-
-    @Column(name = "rate_per_hour",  nullable = false,  length = 6)
     private BigDecimal ratePerHour;
-
-    @Column
     private Boolean active;
-
-    @Column
     private LocalDateTime createdAt;
-
-    @Column
     private LocalDateTime updatedAt;
 
     public HourlyRateDTO() {

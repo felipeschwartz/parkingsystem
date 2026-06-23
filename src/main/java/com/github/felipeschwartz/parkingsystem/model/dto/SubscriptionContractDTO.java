@@ -15,18 +15,18 @@ public class SubscriptionContractDTO extends RepresentationModel<SubscriptionCon
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private Vehicle vehicle;
-    private Plan plan;
+    private VehicleDTO vehicle;
+    private PlanDTO plan;
     private LocalDate startDate;
     private LocalDate endDate;
     private SubscripionStatus status = SubscripionStatus.ACTIVE;
-    private Owner owner;
+    private OwnerSummaryDTO owner;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public SubscriptionContractDTO() {}
 
-    public SubscriptionContractDTO(Long id, Vehicle vehicle, Plan plan, LocalDate startDate, LocalDate endDate, SubscripionStatus status, Owner owner) {
+    public SubscriptionContractDTO(Long id, VehicleDTO vehicle, PlanDTO plan, LocalDate startDate, LocalDate endDate, SubscripionStatus status, OwnerSummaryDTO owner) {
         this.id = id;
         this.vehicle = vehicle;
         this.plan = plan;
@@ -44,11 +44,11 @@ public class SubscriptionContractDTO extends RepresentationModel<SubscriptionCon
         this.id = id;
     }
 
-    public Plan getPlan() {
+    public PlanDTO getPlan() {
         return plan;
     }
 
-    public void setPlan(Plan plan) {
+    public void setPlan(PlanDTO plan) {
         this.plan = plan;
     }
 
@@ -76,19 +76,19 @@ public class SubscriptionContractDTO extends RepresentationModel<SubscriptionCon
         this.endDate = endDate;
     }
 
-    public Owner getOwner() {
+    public OwnerSummaryDTO getOwner() {
         return owner;
     }
 
-    public void setOwner(Owner owner) {
+    public void setOwner(OwnerSummaryDTO owner) {
         this.owner = owner;
     }
 
-    public Vehicle getVehicle() {
+    public VehicleDTO getVehicle() {
         return vehicle;
     }
 
-    public void setVehicle(Vehicle vehicle) {
+    public void setVehicle(VehicleDTO vehicle) {
         this.vehicle = vehicle;
     }
 

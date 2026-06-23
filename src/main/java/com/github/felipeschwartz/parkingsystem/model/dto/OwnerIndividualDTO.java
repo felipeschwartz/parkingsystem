@@ -2,7 +2,7 @@ package com.github.felipeschwartz.parkingsystem.model.dto;
 
 import java.time.LocalDate;
 
-public class OwnerIndividualDTO extends OwnerDTO {
+public class OwnerIndividualDTO extends OwnerDTO<OwnerIndividualDTO> {
     private String cpf;
     private String firstName;
     private String lastName;

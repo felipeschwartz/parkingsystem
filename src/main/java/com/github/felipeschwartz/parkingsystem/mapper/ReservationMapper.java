@@ -1,0 +1,18 @@
+package com.github.felipeschwartz.parkingsystem.mapper;
+
+import com.github.felipeschwartz.parkingsystem.model.dto.ReservationDTO;
+import com.github.felipeschwartz.parkingsystem.model.entity.Reservation;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
+        uses = { VehicleMapper.class, ParkingSpaceMapper.class }
+)
+public interface ReservationMapper {
+
+    ReservationDTO toDTO(Reservation entity);
+
+    @Mapping(target = "id", ignore = true)
+    Reservation toEntity(ReservationDTO dto);
+}

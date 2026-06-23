@@ -15,11 +15,11 @@ public class ParkingLotDTO extends RepresentationModel<ParkingLotDTO> implements
 
     private Long id;
     private String parkingLotName;
-    private Address address;
+    private AddressDTO address;
     private String phoneNumber;
     private Integer totalSpaces;
     private Boolean active;
-    private Set<ParkingSpace> parkingSpaces = new HashSet<>();
+    private Set<ParkingSpaceDTO> parkingSpaces = new HashSet<>();
     private Integer carSpaces;
     private Integer motorcycleSpaces;
     private Integer truckSpaces;
@@ -29,7 +29,7 @@ public class ParkingLotDTO extends RepresentationModel<ParkingLotDTO> implements
     public ParkingLotDTO() {
     }
 
-    public ParkingLotDTO(Long id, String parkingLotName, Address address, String phoneNumber, Integer totalSpaces, Boolean active, Integer carSpaces, Integer motorcycleSpaces, Integer truckSpaces) {
+    public ParkingLotDTO(Long id, String parkingLotName, AddressDTO address, String phoneNumber, Integer totalSpaces, Boolean active, Integer carSpaces, Integer motorcycleSpaces, Integer truckSpaces) {
         this.id = id;
         this.parkingLotName = parkingLotName;
         this.address = address;
@@ -57,11 +57,11 @@ public class ParkingLotDTO extends RepresentationModel<ParkingLotDTO> implements
         this.parkingLotName = parkingLotName;
     }
 
-    public Address getAddress() {
+    public AddressDTO getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(AddressDTO address) {
         this.address = address;
     }
 
@@ -89,12 +89,12 @@ public class ParkingLotDTO extends RepresentationModel<ParkingLotDTO> implements
         this.active = active;
     }
 
-    public Set<ParkingSpace> getParkingSpaces() {
+    public Set<ParkingSpaceDTO> getParkingSpaces() {
 
         return parkingSpaces;
     }
 
-    public void setParkingSpaces(Set<ParkingSpace> parkingSpaces) {
+    public void setParkingSpaces(Set<ParkingSpaceDTO> parkingSpaces) {
         this.parkingSpaces = parkingSpaces;
     }
 

@@ -61,5 +61,6 @@ public interface SubscriptionContractRepository extends JpaRepository<Subscripti
           and :today between sc.startDate and sc.endDate
     """)
     boolean hasActiveContractForDate(@Param("vehicleId") Long vehicleId,
+                                     @Param("subscription_status")  SubscripionStatus status,
                                      @Param("today") LocalDate today);
 }

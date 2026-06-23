@@ -96,7 +96,7 @@ public class VehicleService {
     @Transactional(readOnly = true)
     public VehicleDTO findByLicensePlate(String licensePlate) {
         Vehicle vehicle = vehicleRepository.findVehicleByLicensePlate(licensePlate)
-                .orElseThrow(() -> new ObjectNotFoundException(licensePlate));
+                .orElseThrow(() -> new ObjectNotFoundException("Vehicle ", licensePlate));
 
         return vehicleMapper.toDTO(vehicle);
     }
@@ -106,7 +106,7 @@ public class VehicleService {
 
     private Vehicle findVehicleEntityByLicensePlate(String licensePlate) {
         return vehicleRepository.findVehicleByLicensePlate(licensePlate)
-                .orElseThrow(() -> new ObjectNotFoundException(licensePlate));
+                .orElseThrow(() -> new ObjectNotFoundException("Vehicle ", licensePlate));
     }
 
     /*

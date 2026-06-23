@@ -28,28 +28,16 @@ public class OwnerService {
     private final OwnerRepository ownerRepository;
     private final OwnerIndividualRepository ownerIndividualRepository;
     private final OwnerEntityRepository ownerEntityRepository;
-    private final OwnerEntityMapper ownerEntityMapper;
-    private final OwnerIndividualMapper ownerIndividualMapper;
+    private final OwnerEntityMapper entityMapper;
+    private final OwnerIndividualMapper individualMapper;
 
-    public OwnerService(
-            OwnerRepository ownerRepository,
-            OwnerIndividualRepository ownerIndividualRepository,
-            OwnerEntityRepository ownerEntityRepository,
-            OwnerEntityMapper ownerEntityMapper,
-            OwnerIndividualMapper ownerIndividualMapper
-    ) {
+    public OwnerService(OwnerRepository ownerRepository, OwnerIndividualRepository ownerIndividualRepository, OwnerEntityRepository ownerEntityRepository, OwnerEntityMapper entityMapper, OwnerIndividualMapper individualMapper) {
         this.ownerRepository = ownerRepository;
         this.ownerIndividualRepository = ownerIndividualRepository;
         this.ownerEntityRepository = ownerEntityRepository;
-        this.ownerEntityMapper = ownerEntityMapper;
-        this.ownerIndividualMapper = ownerIndividualMapper;
+        this.entityMapper = entityMapper;
+        this.individualMapper = individualMapper;
     }
-
-    @Autowired
-    private OwnerIndividualMapper individualMapper;
-
-    @Autowired
-    private OwnerEntityMapper entityMapper;
 
     @Transactional(readOnly = true)
     public List<OwnerDTO> findAll() {
@@ -180,7 +168,7 @@ public class OwnerService {
     @Transactional
     public void delete(Long ownerId) {
         if (!ownerRepository.existsById(ownerId)) {
-            throw new ObjectNotFoundException("Owner not found: " + ownerId);
+            throw new ObjectNotFoundException("Owner", ownerId);
         }
         ownerRepository.deleteById(ownerId);
     }

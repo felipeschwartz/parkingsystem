@@ -1,10 +1,8 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
-import org.springframework.hateoas.RepresentationModel;
-import com.github.felipeschwartz.parkingsystem.model.entity.Owner;
-import com.github.felipeschwartz.parkingsystem.model.entity.ParkingSession;
-import com.github.felipeschwartz.parkingsystem.model.entity.SubscriptionContract;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
+import org.springframework.hateoas.RepresentationModel;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -18,16 +16,16 @@ public class VehicleDTO extends RepresentationModel<VehicleDTO> implements Seria
     private Long id;
     private String licensePlate;
     private VehicleType type;
-    private Owner owner;
-    private Set<SubscriptionContract> subscriptionContracts = new HashSet<>();
-    private Set<ParkingSession> sessions = new HashSet<>();
+    private OwnerSummaryDTO owner;
+    private Set<SubscriptionContractDTO> subscriptionContracts = new HashSet<>();
+    private Set<ParkingSessionDTO> sessions = new HashSet<>();
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public VehicleDTO() {
     }
 
-    public VehicleDTO(Long id, String licensePlate, VehicleType type, Owner owner) {
+    public VehicleDTO(Long id, String licensePlate, VehicleType type, OwnerSummaryDTO owner) {
         this.id = id;
         this.licensePlate = licensePlate;
         this.type = type;
@@ -58,27 +56,27 @@ public class VehicleDTO extends RepresentationModel<VehicleDTO> implements Seria
         this.type = type;
     }
 
-    public Owner getOwner() {
+    public OwnerSummaryDTO getOwner() {
         return owner;
     }
 
-    public void setOwner(Owner owner) {
+    public void setOwner(OwnerSummaryDTO owner) {
         this.owner = owner;
     }
 
-    public Set<SubscriptionContract> getSubscriptionContracts() {
+    public Set<SubscriptionContractDTO> getSubscriptionContracts() {
         return subscriptionContracts;
     }
 
-    public void setSubscriptionContracts(Set<SubscriptionContract> subscriptionContracts) {
+    public void setSubscriptionContracts(Set<SubscriptionContractDTO> subscriptionContracts) {
         this.subscriptionContracts = subscriptionContracts;
     }
 
-    public Set<ParkingSession> getSessions() {
+    public Set<ParkingSessionDTO> getSessions() {
         return sessions;
     }
 
-    public void setSessions(Set<ParkingSession> sessions) {
+    public void setSessions(Set<ParkingSessionDTO> sessions) {
         this.sessions = sessions;
     }
 

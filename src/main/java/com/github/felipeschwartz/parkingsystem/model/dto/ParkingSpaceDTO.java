@@ -20,15 +20,15 @@ public class ParkingSpaceDTO extends RepresentationModel<ParkingSpaceDTO> implem
     private VehicleType vehicleType;
     private SpaceStatus status;
     private Boolean active;
-    private ParkingLot parkingLot;
-    private Set<Reservation> reservation = new HashSet<>();
+    private ParkingLotSummaryDTO parkingLot;
+    private Set<ReservationDTO> reservation = new HashSet<>();
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public ParkingSpaceDTO() {
     }
 
-    public ParkingSpaceDTO(Long id, String floor, String position, VehicleType vehicleType, SpaceStatus status, Boolean active, ParkingLot parkingLot) {
+    public ParkingSpaceDTO(Long id, String floor, String position, VehicleType vehicleType, SpaceStatus status, Boolean active, ParkingLotSummaryDTO parkingLot) {
         this.id = id;
         this.floor = floor;
         this.position = position;
@@ -86,19 +86,19 @@ public class ParkingSpaceDTO extends RepresentationModel<ParkingSpaceDTO> implem
         this.active = active;
     }
 
-    public ParkingLot getParkingLot() {
+    public ParkingLotSummaryDTO getParkingLot() {
         return parkingLot;
     }
 
-    public void setParkingLot(ParkingLot parkingLot) {
+    public void setParkingLot(ParkingLotSummaryDTO parkingLot) {
         this.parkingLot = parkingLot;
     }
 
-    public Set<Reservation> getReservation() {
+    public Set<ReservationDTO> getReservation() {
         return reservation;
     }
 
-    public void setReservation(Set<Reservation> reservation) {
+    public void setReservation(Set<ReservationDTO> reservation) {
         this.reservation = reservation;
     }
 

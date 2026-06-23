@@ -1,9 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
 import org.springframework.hateoas.RepresentationModel;
-import com.github.felipeschwartz.parkingsystem.model.entity.ParkingSpace;
-import com.github.felipeschwartz.parkingsystem.model.entity.Payment;
-import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
 import com.github.felipeschwartz.parkingsystem.model.enums.SessionStatus;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
 import java.io.Serializable;
@@ -15,11 +12,11 @@ public class ParkingSessionDTO extends RepresentationModel<ParkingSessionDTO> im
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private Vehicle vehicle;
+    private VehicleDTO vehicle;
     private String licensePlate;
     private VehicleType vehicleType;
-    private ParkingSpace parkingSpace;
-    private Payment payment;
+    private ParkingSpaceDTO parkingSpace;
+    private PaymentDTO payment;
     private LocalDateTime entryTime;
     private LocalDateTime exitTime;
     private SessionStatus status;
@@ -30,17 +27,19 @@ public class ParkingSessionDTO extends RepresentationModel<ParkingSessionDTO> im
     public ParkingSessionDTO() {
     }
 
-    public ParkingSessionDTO(Long id, Vehicle vehicle, ParkingSpace parkingSpace,
-                             LocalDateTime entryTime, LocalDateTime exitTime,
-                             SessionStatus status, BigDecimal amountCharged) {
+    public ParkingSessionDTO(Long id, VehicleDTO vehicle, String licensePlate, VehicleType vehicleType, ParkingSpaceDTO parkingSpace, PaymentDTO payment, LocalDateTime entryTime, LocalDateTime exitTime, SessionStatus status, BigDecimal amountCharged, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.vehicle = vehicle;
+        this.licensePlate = licensePlate;
+        this.vehicleType = vehicleType;
         this.parkingSpace = parkingSpace;
+        this.payment = payment;
         this.entryTime = entryTime;
         this.exitTime = exitTime;
         this.status = status;
         this.amountCharged = amountCharged;
-
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Long getId() {
@@ -51,30 +50,44 @@ public class ParkingSessionDTO extends RepresentationModel<ParkingSessionDTO> im
         this.id = id;
     }
 
-    public Vehicle getVehicle() {
+    public VehicleDTO getVehicle() {
         return vehicle;
     }
 
-    public void setVehicle(Vehicle vehicle) {
+    public void setVehicle(VehicleDTO vehicle) {
         this.vehicle = vehicle;
-        if (vehicle != null) {
-            this.licensePlate = vehicle.getLicensePlate();
-            this.vehicleType = vehicle.getType();
-        }
     }
 
-    public String getLicensePlate() { return licensePlate; }
-    public void setLicensePlate(String licensePlate) { this.licensePlate = licensePlate; }
+    public String getLicensePlate() {
+        return licensePlate;
+    }
 
-    public VehicleType getVehicleType() { return vehicleType; }
-    public void setVehicleType(VehicleType vehicleType) { this.vehicleType = vehicleType; }
+    public void setLicensePlate(String licensePlate) {
+        this.licensePlate = licensePlate;
+    }
 
-    public ParkingSpace getParkingSpace() {
+    public VehicleType getVehicleType() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(VehicleType vehicleType) {
+        this.vehicleType = vehicleType;
+    }
+
+    public ParkingSpaceDTO getParkingSpace() {
         return parkingSpace;
     }
 
-    public void setParkingSpace(ParkingSpace parkingSpace) {
+    public void setParkingSpace(ParkingSpaceDTO parkingSpace) {
         this.parkingSpace = parkingSpace;
+    }
+
+    public PaymentDTO getPayment() {
+        return payment;
+    }
+
+    public void setPayment(PaymentDTO payment) {
+        this.payment = payment;
     }
 
     public LocalDateTime getEntryTime() {
