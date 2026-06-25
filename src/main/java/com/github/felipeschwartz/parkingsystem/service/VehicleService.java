@@ -2,6 +2,8 @@ package com.github.felipeschwartz.parkingsystem.service;
 
 import com.github.felipeschwartz.parkingsystem.model.entity.SubscriptionContract;
 import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ import java.util.Objects;
 @Service
 public class VehicleService {
 
+    private Logger logger = LoggerFactory.getLogger(VehicleService.class.getName());
+
     private final VehicleRepository vehicleRepository;
     private final SubscriptionContractRepository contractRepository;
     private final VehicleMapper vehicleMapper;
@@ -31,16 +35,15 @@ public class VehicleService {
     }
 
 
-
-
     @Transactional(readOnly = true)
     public List<VehicleDTO> findAll() {
-
+        logger.info("Finding all Vehicles!");
         return vehicleRepository.findAll().stream().map(vehicleMapper::toDTO).toList();
     }
 
     @Transactional(readOnly = true)
     public VehicleDTO findById(Long id) {
+        logger.info("Finding one Vehicle!");
         Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Vehicle not found: ", id));
         return vehicleMapper.toDTO(vehicle);
@@ -52,6 +55,7 @@ public class VehicleService {
 
     @Transactional
     public VehicleDTO create(Vehicle vehicle) {
+        logger.info("Creating one Vehicle!");
         Objects.requireNonNull(vehicle, "vehicle must not be null.");
 
         String licencePlate = vehicle.getLicensePlate();
@@ -73,6 +77,7 @@ public class VehicleService {
 
     @Transactional
     public VehicleDTO update(Long id, Vehicle updated) {
+        logger.info("Updating one Vehicle!");
         Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Vehicle not found: ", id));
 
@@ -88,6 +93,7 @@ public class VehicleService {
 
     @Transactional
     public void delete(Long id) {
+        logger.info("Deleting one Vehicle!");
         Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Vehicle not found: ", id));
         vehicleRepository.delete(vehicle);
@@ -99,6 +105,7 @@ public class VehicleService {
      */
     @Transactional(readOnly = true)
     public VehicleDTO findByLicensePlate(String licensePlate) {
+        logger.info("Finding one Vehicle by Licence Plate!");
         Vehicle vehicle = vehicleRepository.findVehicleByLicensePlate(licensePlate)
                 .orElseThrow(() -> new ObjectNotFoundException("Vehicle ", licensePlate));
 
@@ -119,6 +126,7 @@ public class VehicleService {
      */
     @Transactional(readOnly = true)
     public boolean hasActiveContract(String licensePlate) {
+        logger.info("Verifying if a Vehicle has an active Contract!");
         Vehicle vehicle = findVehicleEntityByLicensePlate(licensePlate);
         return contractRepository
                 .findByVehicleAndStatus(vehicle, SubscripionStatus.ACTIVE)
@@ -131,6 +139,7 @@ public class VehicleService {
      */
     @Transactional(readOnly = true)
     public SubscriptionContract findActiveContract(String licensePlate) {
+        logger.info("Finding an active Contract!");
         Vehicle vehicle = findVehicleEntityByLicensePlate(licensePlate); // já é Vehicle, não Optional
         return contractRepository
                 .findByVehicleAndStatus(vehicle, SubscripionStatus.ACTIVE)

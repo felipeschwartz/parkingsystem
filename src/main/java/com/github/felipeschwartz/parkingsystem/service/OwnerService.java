@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import com.github.felipeschwartz.parkingsystem.mapper.AddressMapper;
 import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,18 +34,20 @@ public class OwnerService {
     private final OwnerEntityRepository ownerEntityRepository;
     private final OwnerEntityMapper entityMapper;
     private final OwnerIndividualMapper individualMapper;
+    private final AddressMapper addressMapper;
 
-    public OwnerService(OwnerRepository ownerRepository, OwnerIndividualRepository ownerIndividualRepository, OwnerEntityRepository ownerEntityRepository, OwnerEntityMapper entityMapper, OwnerIndividualMapper individualMapper) {
+    public OwnerService(OwnerRepository ownerRepository, OwnerIndividualRepository ownerIndividualRepository, OwnerEntityRepository ownerEntityRepository, OwnerEntityMapper entityMapper, OwnerIndividualMapper individualMapper, AddressMapper addressMapper) {
         this.ownerRepository = ownerRepository;
         this.ownerIndividualRepository = ownerIndividualRepository;
         this.ownerEntityRepository = ownerEntityRepository;
         this.entityMapper = entityMapper;
         this.individualMapper = individualMapper;
+        this.addressMapper = addressMapper;
     }
 
     @Transactional(readOnly = true)
     public List<OwnerDTO> findAll() {
-        logger.info("Finding all People!");
+        logger.info("Finding all Owners!");
         return ownerRepository.findAll()
                 .stream()
                 .map(owner -> {
@@ -60,6 +63,7 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public Optional<OwnerDTO> findOwnerById(Long ownerId) {
+        logger.info("Finding one Owner!");
         return ownerRepository.findById(ownerId)
                 .map(owner -> {
                     if (owner instanceof OwnerIndividual oi) {
@@ -73,12 +77,14 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public Optional<OwnerIndividualDTO> findOwnerByCpf(String cpf) {
+        logger.info("Finding one Owner by CPF!");
         return ownerIndividualRepository.findByCpf(cpf)
                 .map(individualMapper::toDTO);
     }
 
     @Transactional(readOnly = true)
     public Optional<OwnerEntityDTO> findOwnerByCnpj(String cnpj) {
+        logger.info("Finding one Owner by CNPJ!");
         return ownerEntityRepository.findByCnpj(cnpj)
                 .map(entityMapper::toDTO);
     }
@@ -87,6 +93,7 @@ public class OwnerService {
 
     @Transactional
     public OwnerIndividualDTO createIndividual(OwnerIndividual individual) {
+        logger.info("Creating one Individual Owner!");
         Objects.requireNonNull(individual, "individual must not be null.");
 
         String cpf = individual.getCpf();
@@ -108,6 +115,7 @@ public class OwnerService {
 
     @Transactional
     public OwnerEntityDTO createEntity(OwnerEntity entity) {
+        logger.info("Creating one Entity Owner!");
         Objects.requireNonNull(entity, "entity must not be null.");
 
         String cnpj = entity.getCnpj();
@@ -132,6 +140,7 @@ public class OwnerService {
 
     @Transactional
     public Optional<OwnerIndividualDTO> updateIndividual(Long id, OwnerIndividualDTO updated) {
+        logger.info("Updating one Individual Owner!");
         return ownerIndividualRepository.findById(id)
                 .map(individual -> {
                     if (updated.getPhone() != null) individual.setPhone(updated.getPhone());
@@ -139,7 +148,7 @@ public class OwnerService {
                     if (updated.getFirstName() != null) individual.setFirstName(updated.getFirstName());
                     if (updated.getLastName() != null) individual.setLastName(updated.getLastName());
                     if (updated.getBirthDate() != null) individual.setBirthDate(updated.getBirthDate());
-                    if (updated.getAddress() != null) individual.setAddress(updated.getAddress());
+                    if (updated.getAddress() != null) individual.setAddress(addressMapper.toEntity(updated.getAddress()));
                     OwnerIndividual updatedOwner = ownerIndividualRepository.save(individual);
                     return individualMapper.toDTO(updatedOwner);
                 });
@@ -147,6 +156,7 @@ public class OwnerService {
 
     @Transactional
     public Optional<OwnerEntityDTO> updateEntity(Long id, OwnerEntityDTO updated) {
+        logger.info("Updating one Entity Owner!");
         return ownerEntityRepository.findById(id)
                 .map(entity -> {
                     if (updated.getPhone() != null) entity.setPhone(updated.getPhone());
@@ -154,7 +164,7 @@ public class OwnerService {
                     if (updated.getBillingContact() != null) entity.setBillingContact(updated.getBillingContact());
                     if (updated.getCorporateName() != null) entity.setCorporateName(updated.getCorporateName());
                     if (updated.getFantasyName() != null) entity.setFantasyName(updated.getFantasyName());
-                    if (updated.getAddress() != null) entity.setAddress(updated.getAddress());
+                    if (updated.getAddress() != null) entity.setAddress(addressMapper.toEntity(updated.getAddress()));
                     OwnerEntity updatedOwner = ownerEntityRepository.save(entity);
                     return entityMapper.toDTO(updatedOwner);
                 });
@@ -165,6 +175,7 @@ public class OwnerService {
 
     @Transactional
     public void delete(Long ownerId) {
+        logger.info("Deleting one Owner!");
         if (!ownerRepository.existsById(ownerId)) {
             throw new ObjectNotFoundException("Owner", ownerId);
         }
