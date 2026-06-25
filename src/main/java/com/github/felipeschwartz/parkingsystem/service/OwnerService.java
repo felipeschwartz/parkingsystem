@@ -1,6 +1,8 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
 import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ import java.util.Optional;
 @Service
 public class OwnerService {
 
+    private Logger logger = LoggerFactory.getLogger(OwnerService.class.getName());
     private final OwnerRepository ownerRepository;
     private final OwnerIndividualRepository ownerIndividualRepository;
     private final OwnerEntityRepository ownerEntityRepository;
@@ -41,6 +44,7 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public List<OwnerDTO> findAll() {
+        logger.info("Finding all People!");
         return ownerRepository.findAll()
                 .stream()
                 .map(owner -> {
@@ -93,9 +97,6 @@ public class OwnerService {
             throw new IllegalArgumentException("An OwnerIndividual with this CPF already exists.");
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        individual.setCreatedAt(now);
-        individual.setUpdatedAt(now);
 
         if (individual.getVehicles() != null && !individual.getVehicles().isEmpty()) {
             for (Vehicle vehicle : individual.getVehicles()) {
@@ -117,9 +118,6 @@ public class OwnerService {
             throw new IllegalArgumentException("An OwnerEntity with this CNPJ already exists.");
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        entity.setCreatedAt(now);
-        entity.setUpdatedAt(now);
 
         if (entity.getVehicles() != null && !entity.getVehicles().isEmpty()) {
             for (Vehicle vehicle : entity.getVehicles()) {

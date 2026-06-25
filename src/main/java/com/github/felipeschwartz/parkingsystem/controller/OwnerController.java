@@ -76,7 +76,7 @@ public class OwnerController {
     public ResponseEntity<OwnerIndividualDTO> createIndividual(@RequestBody @Valid OwnerIndividual individual) {
         OwnerIndividualDTO createdIndividual = service.createIndividual(individual);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id")
+                .path("/{id}")
                 .buildAndExpand(createdIndividual.getId())
                 .toUri();
         return ResponseEntity.created(location).body(createdIndividual);

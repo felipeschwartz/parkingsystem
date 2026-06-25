@@ -21,15 +21,17 @@ public class VehicleService {
 
     private final VehicleRepository vehicleRepository;
     private final SubscriptionContractRepository contractRepository;
+    private final VehicleMapper vehicleMapper;
 
     public VehicleService(VehicleRepository vehicleRepository,
-                          SubscriptionContractRepository contractRepository) {
+                          SubscriptionContractRepository contractRepository, VehicleMapper vehicleMapper) {
         this.vehicleRepository = vehicleRepository;
         this.contractRepository = contractRepository;
+        this.vehicleMapper = vehicleMapper;
     }
 
-    @Autowired
-    private VehicleMapper vehicleMapper;
+
+
 
     @Transactional(readOnly = true)
     public List<VehicleDTO> findAll() {
@@ -40,7 +42,7 @@ public class VehicleService {
     @Transactional(readOnly = true)
     public VehicleDTO findById(Long id) {
         Vehicle vehicle = vehicleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Owner not found: " + id));
+                .orElseThrow(() -> new ObjectNotFoundException("Vehicle not found: ", id));
         return vehicleMapper.toDTO(vehicle);
 
     }
@@ -72,7 +74,7 @@ public class VehicleService {
     @Transactional
     public VehicleDTO update(Long id, Vehicle updated) {
         Vehicle vehicle = vehicleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Vehicle not found: " + id));
+                .orElseThrow(() -> new ObjectNotFoundException("Vehicle not found: ", id));
 
         if (updated.getLicensePlate() != null) vehicle.setLicensePlate(updated.getLicensePlate());
         if (updated.getType() != null) vehicle.setType(updated.getType());
@@ -82,10 +84,12 @@ public class VehicleService {
         return vehicleMapper.toDTO(vehicleRepository.save(vehicle));
     }
 
+    // -------- DELETE --------
+
     @Transactional
     public void delete(Long id) {
         Vehicle vehicle = vehicleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Owner not found: " + id));
+                .orElseThrow(() -> new ObjectNotFoundException("Vehicle not found: ", id));
         vehicleRepository.delete(vehicle);
     }
 

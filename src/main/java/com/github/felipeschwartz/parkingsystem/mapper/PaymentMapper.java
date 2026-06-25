@@ -1,9 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.mapper;
 
 import com.github.felipeschwartz.parkingsystem.model.dto.PaymentDTO;
-import com.github.felipeschwartz.parkingsystem.model.dto.ReservationDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.Payment;
-import com.github.felipeschwartz.parkingsystem.model.entity.Reservation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -13,8 +11,8 @@ import org.mapstruct.MappingConstants;
 )
 public interface PaymentMapper {
 
-    PaymentDTO toDTO(Reservation entity);
+    PaymentDTO toDTO(Payment entity);
 
     @Mapping(target = "id", ignore = true)
-    Payment toEntity(ReservationDTO dto);
+    Payment toEntity(PaymentDTO dto);
 }

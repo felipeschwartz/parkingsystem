@@ -11,7 +11,7 @@ import org.mapstruct.MappingConstants;
         uses = { AddressMapper.class, VehicleMapper.class }
 )
 public interface OwnerEntityMapper {
-    OwnerEntityDTO toDTO(OwnerEntity owner);
+    OwnerEntityDTO toDTO(OwnerEntity entity);
 
     @Mapping(target = "id", ignore = true)
     OwnerEntity toEntity(OwnerEntityDTO dto);

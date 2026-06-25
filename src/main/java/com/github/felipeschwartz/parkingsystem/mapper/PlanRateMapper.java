@@ -1,7 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.mapper;
 
-import com.github.felipeschwartz.parkingsystem.model.dto.ParkingLotDTO;
-import com.github.felipeschwartz.parkingsystem.model.entity.ParkingLot;
+import com.github.felipeschwartz.parkingsystem.model.dto.PlanRateDTO;
+import com.github.felipeschwartz.parkingsystem.model.entity.PlanRate;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -12,8 +12,8 @@ import org.mapstruct.MappingConstants;
 )
 public interface PlanRateMapper {
 
-    ParkingLotDTO toDTO(ParkingLot entity);
+    PlanRateDTO toDTO(PlanRate entity);
 
     @Mapping(target = "id", ignore = true)
-    ParkingLot toEntity(ParkingLotDTO dto);
+    PlanRate toEntity(PlanRateDTO dto);
 }

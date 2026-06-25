@@ -19,8 +19,7 @@ public interface SubscriptionContractRepository extends JpaRepository<Subscripti
     List<SubscriptionContract> findByVehicleIdAndStatusOrderByStartDateDesc(Long vehicleId, SubscripionStatus status);
     Optional<SubscriptionContract> findByVehicleAndStatus(Vehicle vehicle, SubscripionStatus status);
 
-
-    // @Query: contrato ATIVO e vigente em uma data (cobre endDate null)
+    // @Query: contrato ATIVO e vigente numa data (cobre endDate null)
     @Query("""
            select sc
            from SubscriptionContract sc
@@ -36,7 +35,7 @@ public interface SubscriptionContractRepository extends JpaRepository<Subscripti
             @Param("date") LocalDate date
     );
 
-    // @Query: detectar sobreposição de período (para impedir contratos duplicados)
+    // @Query: detetar sobreposição de período (para impedir contratos duplicados)
     @Query("""
            select sc
            from SubscriptionContract sc
@@ -52,13 +51,13 @@ public interface SubscriptionContractRepository extends JpaRepository<Subscripti
             @Param("endDate") LocalDate endDate
     );
 
-
     @Query("""
         select (count(sc) > 0)
         from SubscriptionContract sc
         where sc.vehicle.id = :vehicleId
-          and sc.status = 'ACTIVE'
-          and :today between sc.startDate and sc.endDate
+          and sc.status = :subscription_status
+          and sc.startDate <= :today
+          and (sc.endDate is null or sc.endDate >= :today)
     """)
     boolean hasActiveContractForDate(@Param("vehicleId") Long vehicleId,
                                      @Param("subscription_status")  SubscripionStatus status,
