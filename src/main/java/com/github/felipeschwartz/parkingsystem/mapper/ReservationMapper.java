@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
-        uses = { VehicleMapper.class, ParkingSpaceMapper.class }
+        uses = { VehicleSummaryMapper.class, ParkingSpaceSummaryMapper.class }
 )
 public interface ReservationMapper {
 

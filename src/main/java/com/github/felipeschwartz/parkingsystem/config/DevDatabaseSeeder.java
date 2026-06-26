@@ -223,9 +223,9 @@ public class DevDatabaseSeeder implements CommandLineRunner {
 
         // ---------- Payments (3) ----------
         // Payment NÃO tem @GeneratedValue no seu código; então setamos IDs manualmente.
-        Payment p1 = new Payment(1L, s1, new BigDecimal("0.00"), now.minusHours(1), pick(paymentMethods, 0), pick(paymentStatuses, 0), "PAY-0001", now, now);
-        Payment p2 = new Payment(2L, s2, new BigDecimal("0.00"), now.minusHours(2), pick(paymentMethods, 0), pick(paymentStatuses, 0), "PAY-0002", now, now);
-        Payment p3 = new Payment(3L, s3, new BigDecimal("15.00"), now, pick(paymentMethods, 0), pick(paymentStatuses, 0), "PAY-0003", now, now);
+        Payment p1 = new Payment(null, s1, new BigDecimal("0.00"), now.minusHours(1), pick(paymentMethods, 0), pick(paymentStatuses, 0), "PAY-0001", now, now);
+        Payment p2 = new Payment(null, s2, new BigDecimal("0.00"), now.minusHours(2), pick(paymentMethods, 0), pick(paymentStatuses, 0), "PAY-0002", now, now);
+        Payment p3 = new Payment(null, s3, new BigDecimal("15.00"), now, pick(paymentMethods, 0), pick(paymentStatuses, 0), "PAY-0003", now, now);
 
         em.persist(p1);
         em.persist(p2);

@@ -4,8 +4,12 @@ import com.github.felipeschwartz.parkingsystem.model.dto.VehicleSummaryDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface VehicleSummaryMapper {
-    VehicleSummaryDTO toSummaryDTO(Vehicle entity);
+
+    @Named("vehicleToSummary")
+    VehicleSummaryDTO toSummary(Vehicle entity);
+
 }

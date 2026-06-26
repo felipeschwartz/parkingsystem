@@ -1,8 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
 import org.springframework.hateoas.RepresentationModel;
-import com.github.felipeschwartz.parkingsystem.model.entity.PlanRate;
-import com.github.felipeschwartz.parkingsystem.model.entity.SubscriptionContract;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;

@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import com.github.felipeschwartz.parkingsystem.model.dto.VehicleDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
 import com.github.felipeschwartz.parkingsystem.service.VehicleService;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -37,7 +39,12 @@ public class VehicleController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<VehicleDTO> create(@RequestBody @Valid Vehicle vehicle) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(vehicle));
+        VehicleDTO createdVehicle = service.create(vehicle);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/id/{id}")
+                .buildAndExpand(createdVehicle.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(createdVehicle);
     }
 
     @PutMapping(

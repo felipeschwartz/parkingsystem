@@ -36,8 +36,8 @@ public class OwnerController {
     @GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OwnerDTO> findById(@PathVariable Long id) {
         return service.findOwnerById(id)
-                .map(ownerDTO -> new ResponseEntity<>(ownerDTO, HttpStatus.OK)) // Se presente, 200 OK
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND)); // Se vazio, 404 Not Found
+                .map(ownerDTO -> new ResponseEntity<>(ownerDTO, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping(value = "/cpf/{cpf}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -65,7 +65,7 @@ public class OwnerController {
                 .path("/{id}")
                 .buildAndExpand(createdEntity.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(createdEntity); // Retorna 201 Created com Location
+        return ResponseEntity.created(location).body(createdEntity);
     }
 
     @PostMapping(
@@ -76,7 +76,7 @@ public class OwnerController {
     public ResponseEntity<OwnerIndividualDTO> createIndividual(@RequestBody @Valid OwnerIndividual individual) {
         OwnerIndividualDTO createdIndividual = service.createIndividual(individual);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
+                .path("/{id}") // CORRIGIDO: Adicionado o fechamento da chave
                 .buildAndExpand(createdIndividual.getId())
                 .toUri();
         return ResponseEntity.created(location).body(createdIndividual);

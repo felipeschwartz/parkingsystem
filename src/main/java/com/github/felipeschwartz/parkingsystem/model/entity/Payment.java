@@ -1,8 +1,8 @@
 package com.github.felipeschwartz.parkingsystem.model.entity;
 
-import jakarta.persistence.*;
 import com.github.felipeschwartz.parkingsystem.model.enums.PaymentMethod;
 import com.github.felipeschwartz.parkingsystem.model.enums.PaymentStatus;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

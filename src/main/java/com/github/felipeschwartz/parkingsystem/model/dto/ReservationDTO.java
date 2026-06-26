@@ -10,7 +10,7 @@ public class ReservationDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private VehicleDTO vehicle;
+    private VehicleSummaryDTO vehicle;
     private ParkingSpaceDTO parkingSpace;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -22,7 +22,7 @@ public class ReservationDTO implements Serializable {
     public ReservationDTO() {
     }
 
-    public ReservationDTO(Long id, VehicleDTO vehicle, ParkingSpaceDTO parkingSpace, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status) {
+    public ReservationDTO(Long id, VehicleSummaryDTO vehicle, ParkingSpaceDTO parkingSpace, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status) {
         this.id = id;
         this.vehicle = vehicle;
         this.parkingSpace = parkingSpace;
@@ -39,11 +39,11 @@ public class ReservationDTO implements Serializable {
         this.id = id;
     }
 
-    public VehicleDTO getVehicle() {
+    public VehicleSummaryDTO getVehicle() {
         return vehicle;
     }
 
-    public void setVehicle(VehicleDTO vehicle) {
+    public void setVehicle(VehicleSummaryDTO vehicle) {
         this.vehicle = vehicle;
     }
 

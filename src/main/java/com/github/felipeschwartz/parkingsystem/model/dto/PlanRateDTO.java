@@ -1,8 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
-import com.github.felipeschwartz.parkingsystem.model.entity.Plan;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
-import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -14,7 +12,7 @@ public class PlanRateDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private PlanDTO plan;
+    private PlanSummaryDTO plan;
     private VehicleType vehicleType;
     private Integer durationMonths;
     private BigDecimal monthlyPrice;
@@ -26,7 +24,7 @@ public class PlanRateDTO implements Serializable {
     public PlanRateDTO() {
     }
 
-    public PlanRateDTO(Long id, PlanDTO plan, VehicleType vehicleType, Integer durationMonths, BigDecimal monthlyPrice, BigDecimal discountPercent, Boolean active) {
+    public PlanRateDTO(Long id, PlanSummaryDTO plan, VehicleType vehicleType, Integer durationMonths, BigDecimal monthlyPrice, BigDecimal discountPercent, Boolean active) {
         this.id = id;
         this.plan = plan;
         this.vehicleType = vehicleType;
@@ -44,11 +42,11 @@ public class PlanRateDTO implements Serializable {
         this.id = id;
     }
 
-    public PlanDTO getPlan() {
+    public PlanSummaryDTO getPlan() {
         return plan;
     }
 
-    public void setPlan(PlanDTO plan) {
+    public void setPlan(PlanSummaryDTO plan) {
         this.plan = plan;
     }
 

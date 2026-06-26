@@ -1,5 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import com.github.felipeschwartz.parkingsystem.mapper.ParkingSessionMapper;
+import com.github.felipeschwartz.parkingsystem.model.dto.ParkingSessionDTO;
 import com.github.felipeschwartz.parkingsystem.model.enums.SubscripionStatus;
 import com.github.felipeschwartz.parkingsystem.repository.*;
 import org.springframework.stereotype.Service;
@@ -10,11 +12,14 @@ import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
 import com.github.felipeschwartz.parkingsystem.model.enums.SessionStatus;
 import com.github.felipeschwartz.parkingsystem.model.enums.SpaceStatus;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
+import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors; // Importar Collectors
 
 @Service
 public class ParkingSessionService {
@@ -23,34 +28,36 @@ public class ParkingSessionService {
     private final VehicleRepository vehicleRepository;
     private final HourlyRateRepository hourlyRateRepository;
     private final SubscriptionContractRepository subscriptionContractRepository;
+    private final ParkingSessionMapper sessionMapper; 
 
     public ParkingSessionService(
             ParkingSessionRepository sessionRepository,
             ParkingSpaceRepository spaceRepository,
             VehicleRepository vehicleRepository,
             HourlyRateRepository hourlyRateRepository,
-            SubscriptionContractRepository subscriptionContractRepository
+            SubscriptionContractRepository subscriptionContractRepository,
+            ParkingSessionMapper sessionMapper
     ) {
         this.sessionRepository = sessionRepository;
         this.spaceRepository = spaceRepository;
         this.vehicleRepository = vehicleRepository;
         this.hourlyRateRepository = hourlyRateRepository;
         this.subscriptionContractRepository = subscriptionContractRepository;
+        this.sessionMapper = sessionMapper; 
     }
 
-    // -------------------------
     // OPEN - HOURLY
-    // -------------------------
+    
     @Transactional
-    public ParkingSession openHourlySession(Long parkingSpaceId,
-                                            String licensePlate,
-                                            VehicleType vehicleType,
-                                            LocalDateTime entryTime) {
+    public ParkingSessionDTO openHourlySession(Long parkingSpaceId, 
+                                               String licensePlate,
+                                               VehicleType vehicleType,
+                                               LocalDateTime entryTime) {
 
         LocalDateTime when = (entryTime != null) ? entryTime : LocalDateTime.now();
 
         ParkingSpace space = spaceRepository.findByIdForUpdate(parkingSpaceId)
-                .orElseThrow(() -> new IllegalArgumentException("ParkingSpace not found: " + parkingSpaceId));
+                .orElseThrow(() -> new ObjectNotFoundException("ParkingSpace", parkingSpaceId));
 
         validateSpaceCanBeUsed(space, vehicleType);
 
@@ -63,24 +70,23 @@ public class ParkingSessionService {
         space.setStatus(SpaceStatus.OCCUPIED);
         spaceRepository.save(space);
 
-        return sessionRepository.save(session);
+        return sessionMapper.toDTO(sessionRepository.save(session)); 
     }
 
-    // -------------------------
     // OPEN - SUBSCRIPTION
-    // -------------------------
+    
     @Transactional
-    public ParkingSession openSubscriptionSession(Long parkingSpaceId,
-                                                  Long vehicleId,
-                                                  LocalDateTime entryTime) {
+    public ParkingSessionDTO openSubscriptionSession(Long parkingSpaceId, 
+                                                     Long vehicleId,
+                                                     LocalDateTime entryTime) {
 
         LocalDateTime when = (entryTime != null) ? entryTime : LocalDateTime.now();
 
         Vehicle vehicle = vehicleRepository.findById(vehicleId)
-                .orElseThrow(() -> new IllegalArgumentException("Vehicle not found: " + vehicleId));
+                .orElseThrow(() -> new ObjectNotFoundException("Vehicle", vehicleId));
 
         ParkingSpace space = spaceRepository.findByIdForUpdate(parkingSpaceId)
-                .orElseThrow(() -> new IllegalArgumentException("ParkingSpace not found: " + parkingSpaceId));
+                .orElseThrow(() -> new ObjectNotFoundException("ParkingSpace", parkingSpaceId));
 
         validateSpaceCanBeUsed(space, vehicle.getType());
 
@@ -100,18 +106,17 @@ public class ParkingSessionService {
         space.setStatus(SpaceStatus.OCCUPIED);
         spaceRepository.save(space);
 
-        return sessionRepository.save(session);
+        return sessionMapper.toDTO(sessionRepository.save(session)); 
     }
 
-    // -------------------------
     // CLOSE
-    // -------------------------
+
     @Transactional
-    public ParkingSession closeSession(Long sessionId, LocalDateTime exitTime) {
+    public ParkingSessionDTO closeSession(Long sessionId, LocalDateTime exitTime) { 
         LocalDateTime when = (exitTime != null) ? exitTime : LocalDateTime.now();
 
         ParkingSession session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new IllegalArgumentException("ParkingSession not found: " + sessionId));
+                .orElseThrow(() -> new ObjectNotFoundException("ParkingSession", sessionId));
 
         if (session.getStatus() != SessionStatus.OPEN) {
             throw new IllegalStateException("Only OPEN sessions can be closed.");
@@ -128,12 +133,41 @@ public class ParkingSessionService {
             spaceRepository.save(space);
         }
 
-        return sessionRepository.save(session);
+        return sessionMapper.toDTO(sessionRepository.save(session)); 
     }
 
-    // -------------------------
+    // READ (Novos métodos)
+
+    @Transactional(readOnly = true)
+    public ParkingSessionDTO findById(Long sessionId) { 
+        return sessionRepository.findById(sessionId)
+                .map(sessionMapper::toDTO) 
+                .orElseThrow(() -> new ObjectNotFoundException("ParkingSession", sessionId));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ParkingSessionDTO> findAll() { // Retorna lista de DTOs
+        return sessionRepository.findAll().stream()
+                .map(sessionMapper::toDTO) 
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ParkingSessionDTO> findOpenSessionsByParkingSpace(Long parkingSpaceId) { // Retorna lista de DTOs
+        return sessionRepository.findByParkingSpaceIdAndStatus(parkingSpaceId, SessionStatus.OPEN).stream()
+                .map(sessionMapper::toDTO) 
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ParkingSessionDTO> findSessionsByVehicle(Long vehicleId) { // Retorna lista de DTOs
+        return sessionRepository.findByVehicleId(vehicleId).stream()
+                .map(sessionMapper::toDTO) 
+                .collect(Collectors.toList());
+    }
+
     // HELPERS
-    // -------------------------
+
     private BigDecimal calculateAmountFor(ParkingSession session) {
         if (session.getVehicle() != null) {
             LocalDate day = session.getEntryTime().toLocalDate();

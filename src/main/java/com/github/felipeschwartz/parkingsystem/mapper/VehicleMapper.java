@@ -14,9 +14,11 @@ import java.util.List;
 )
 public interface VehicleMapper {
 
-    VehicleDTO toDTO(Vehicle entity);
+    @Mapping(target = "owner", qualifiedByName = {"ownerToSummaryDTO"})
+    VehicleDTO toDTO (Vehicle entity);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "owner", ignore = true)
     Vehicle toEntity(VehicleDTO dto);
 
     List<VehicleDTO> toDTOList(List<Vehicle> entities);

@@ -12,7 +12,7 @@ public class ParkingSessionDTO extends RepresentationModel<ParkingSessionDTO> im
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private VehicleDTO vehicle;
+    private VehicleSummaryDTO vehicle;
     private String licensePlate;
     private VehicleType vehicleType;
     private ParkingSpaceDTO parkingSpace;
@@ -27,7 +27,7 @@ public class ParkingSessionDTO extends RepresentationModel<ParkingSessionDTO> im
     public ParkingSessionDTO() {
     }
 
-    public ParkingSessionDTO(Long id, VehicleDTO vehicle, String licensePlate, VehicleType vehicleType, ParkingSpaceDTO parkingSpace, PaymentDTO payment, LocalDateTime entryTime, LocalDateTime exitTime, SessionStatus status, BigDecimal amountCharged, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ParkingSessionDTO(Long id, VehicleSummaryDTO vehicle, String licensePlate, VehicleType vehicleType, ParkingSpaceDTO parkingSpace, PaymentDTO payment, LocalDateTime entryTime, LocalDateTime exitTime, SessionStatus status, BigDecimal amountCharged, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.vehicle = vehicle;
         this.licensePlate = licensePlate;
@@ -50,11 +50,11 @@ public class ParkingSessionDTO extends RepresentationModel<ParkingSessionDTO> im
         this.id = id;
     }
 
-    public VehicleDTO getVehicle() {
+    public VehicleSummaryDTO getVehicle() {
         return vehicle;
     }
 
-    public void setVehicle(VehicleDTO vehicle) {
+    public void setVehicle(VehicleSummaryDTO vehicle) {
         this.vehicle = vehicle;
     }
 
