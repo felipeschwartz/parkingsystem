@@ -12,11 +12,12 @@ import org.mapstruct.MappingConstants;
 )
 public interface SubscriptionContractMapper {
 
-    OwnerSummaryMapper ownerSummaryMapper = org.mapstruct.factory.Mappers.getMapper(OwnerSummaryMapper.class);
     @Mapping(target = "owner", qualifiedByName = {"ownerToSummaryDTO"})
+    @Mapping(target = "vehicle", source = "vehicle", qualifiedByName = {"vehicleToSummary"})
     SubscriptionContractDTO toDTO(SubscriptionContract entity);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "owner", ignore = true)
+    @Mapping(target = "vehicle", ignore = true)
     SubscriptionContract toEntity(SubscriptionContractDTO dto);
 }

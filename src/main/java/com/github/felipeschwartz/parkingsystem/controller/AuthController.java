@@ -1,6 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
-
+import com.github.felipeschwartz.parkingsystem.config.JwtService;
+import com.github.felipeschwartz.parkingsystem.model.dto.LoginRequestDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,9 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.github.felipeschwartz.parkingsystem.model.dto.LoginRequestDTO;
-import com.github.felipeschwartz.parkingsystem.config.JwtService;
-
 
 import java.util.Map;
 

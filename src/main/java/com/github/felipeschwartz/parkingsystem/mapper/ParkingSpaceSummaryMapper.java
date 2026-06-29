@@ -3,6 +3,7 @@ package com.github.felipeschwartz.parkingsystem.mapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.ParkingSpaceSummaryDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.ParkingSpace;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.Named;
 

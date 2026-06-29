@@ -15,10 +15,14 @@ import java.util.List;
 public interface VehicleMapper {
 
     @Mapping(target = "owner", qualifiedByName = {"ownerToSummaryDTO"})
+    @Mapping(target = "subscriptionContracts", ignore = true)
+    @Mapping(target = "sessions", ignore = true)
     VehicleDTO toDTO (Vehicle entity);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "owner", ignore = true)
+    @Mapping(target = "subscriptionContracts", ignore = true)
+    @Mapping(target = "sessions", ignore = true)
     Vehicle toEntity(VehicleDTO dto);
 
     List<VehicleDTO> toDTOList(List<Vehicle> entities);

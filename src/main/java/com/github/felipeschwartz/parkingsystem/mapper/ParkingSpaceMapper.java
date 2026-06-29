@@ -11,6 +11,7 @@ import org.mapstruct.MappingConstants;
         uses = { ParkingLotSummaryMapper.class, ReservationMapper.class }
 )
 public interface ParkingSpaceMapper {
+
     ParkingSpaceDTO toDTO(ParkingSpace entity);
 
     @Mapping(target = "id", ignore = true)

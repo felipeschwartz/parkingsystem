@@ -21,7 +21,6 @@ public class ParkingSpaceDTO extends RepresentationModel<ParkingSpaceDTO> implem
     private SpaceStatus status;
     private Boolean active;
     private ParkingLotSummaryDTO parkingLot;
-    private Set<ReservationDTO> reservation = new HashSet<>();
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -92,14 +91,6 @@ public class ParkingSpaceDTO extends RepresentationModel<ParkingSpaceDTO> implem
 
     public void setParkingLot(ParkingLotSummaryDTO parkingLot) {
         this.parkingLot = parkingLot;
-    }
-
-    public Set<ReservationDTO> getReservation() {
-        return reservation;
-    }
-
-    public void setReservation(Set<ReservationDTO> reservation) {
-        this.reservation = reservation;
     }
 
     public LocalDateTime getCreatedAt() {
