@@ -219,12 +219,14 @@ public class ParkingSession implements Serializable {
 
     public BigDecimal calculateAmount(BigDecimal ratePerHour) {
 
-        boolean hasActiveContract = vehicle.getSubscriptionContracts().stream().anyMatch(SubscriptionContract::isActive);
+        if (this.vehicle != null) {
+            boolean hasActiveContract = vehicle.getSubscriptionContracts().stream().anyMatch(SubscriptionContract::isActive);
 
-        if(hasActiveContract) {
-            this.amountCharged = BigDecimal.ZERO;
-            this.updatedAt = LocalDateTime.now();
-            return BigDecimal.ZERO;
+            if (hasActiveContract) {
+                this.amountCharged = BigDecimal.ZERO;
+                this.updatedAt = LocalDateTime.now();
+                return BigDecimal.ZERO;
+            }
         }
 
         Objects.requireNonNull(ratePerHour, "ratePerHour can not be null");
