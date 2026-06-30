@@ -10,7 +10,6 @@ import com.github.felipeschwartz.parkingsystem.model.entity.ParkingSpace;
 import java.util.Optional;
 
 public interface ParkingSpaceRepository extends JpaRepository<ParkingSpace, Long> {
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select ps from ParkingSpace ps where ps.id = :id")
-    Optional<ParkingSpace> findByIdForUpdate(@Param("id") Long id);
+
+    Long id(Long id);
 }

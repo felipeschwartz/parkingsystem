@@ -56,7 +56,7 @@ public class ParkingSessionService {
 
         LocalDateTime when = (entryTime != null) ? entryTime : LocalDateTime.now();
 
-        ParkingSpace space = spaceRepository.findByIdForUpdate(parkingSpaceId)
+        ParkingSpace space = spaceRepository.findById(parkingSpaceId)
                 .orElseThrow(() -> new ObjectNotFoundException("ParkingSpace", parkingSpaceId));
 
         validateSpaceCanBeUsed(space, vehicleType);
@@ -85,7 +85,7 @@ public class ParkingSessionService {
         Vehicle vehicle = vehicleRepository.findById(vehicleId)
                 .orElseThrow(() -> new ObjectNotFoundException("Vehicle", vehicleId));
 
-        ParkingSpace space = spaceRepository.findByIdForUpdate(parkingSpaceId)
+        ParkingSpace space = spaceRepository.findById(parkingSpaceId)
                 .orElseThrow(() -> new ObjectNotFoundException("ParkingSpace", parkingSpaceId));
 
         validateSpaceCanBeUsed(space, vehicle.getType());
