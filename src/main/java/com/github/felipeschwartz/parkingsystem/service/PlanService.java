@@ -1,4 +1,11 @@
 package com.github.felipeschwartz.parkingsystem.service;
+import com.github.felipeschwartz.parkingsystem.mapper.CycleAvoidingMappingContext;
+import com.github.felipeschwartz.parkingsystem.mapper.PlanMapper;
+import com.github.felipeschwartz.parkingsystem.model.dto.PlanCreationDTO;
+import com.github.felipeschwartz.parkingsystem.model.dto.PlanDTO;
+import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.stereotype.Service;
@@ -10,44 +17,56 @@ import com.github.felipeschwartz.parkingsystem.repository.PlanRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class PlanService {
-    private final PlanRepository planRepository;
-    private final PlanRateRepository planRateRepository;
+    private Logger logger = LoggerFactory.getLogger(PaymentService.class.getName());
 
-    public PlanService(PlanRepository planRepository, PlanRateRepository planRateRepository) {
+    private final PlanRepository planRepository;
+    private final PlanMapper mapper;
+    private final CycleAvoidingMappingContext context;
+
+    public PlanService(PlanRepository planRepository, PlanMapper mapper, CycleAvoidingMappingContext context) {
         this.planRepository = planRepository;
-        this.planRateRepository = planRateRepository;
+        this.mapper = mapper;
+        this.context = context;
     }
 
     //PLAN
-    @Transactional
-    public Plan createPlan(String name) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Plan name can't be null or empty");
-        }
+    @Transactional(readOnly = true)
+    public List<PlanDTO> findAll() {
+        logger.info("Finding all plan records");
+        return planRepository.findAll().stream().map(plan -> mapper.planToPlanDTO(plan, context))
+                .collect(Collectors.toList());
+    }
 
-        Plan p = new Plan();
-        p.setName(name.trim());
-        p.setActive(true);
-
-        LocalDateTime now = LocalDateTime.now();
-        p.setCreatedAt(now);
-        p.setUpdatedAt(now);
-
-        return planRepository.save(p);
+    @Transactional(readOnly = true)
+    public PlanDTO findById(Long id) {
+        logger.info("Finding plan record with id {}", id);
+        Plan plan = planRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: ", id));
+        return mapper.toDTO(plan, context);
     }
 
     @Transactional
-    public Plan updatePlan(Long id, String name) {
-        Plan p = getPlanOrThrow(id);
-        if(name != null && !name.isBlank()) {
-            p.setName(name.trim());
-        }
-        p.setUpdatedAt(LocalDateTime.now());
-        return planRepository.save(p);
+    public PlanDTO create(PlanCreationDTO planCreationDTO) {
+        logger.info("Creating plan with name {}", planCreationDTO.getName());
+        Plan planToSave = mapper.toEntity(planCreationDTO);
+        Plan savedPlan = planRepository.save(planToSave);
+        return mapper.toDTO(savedPlan, context);
+    }
+
+    @Transactional
+    public PlanDTO update(Long id, PlanDTO updated) {
+        logger.info("Updating plan with id {}", id);
+        Plan existingPlan = planRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: ", id));
+        if (updated.getName() != null) existingPlan.setName(updated.getName());
+        if (updated.getActive() != null) existingPlan.setActive(updated.getActive());
+        existingPlan.setUpdatedAt(LocalDateTime.now());
+        Plan updatedPlan = planRepository.save(existingPlan);
+        return mapper.toDTO(updatedPlan, context);
     }
 
     @Transactional
@@ -66,81 +85,13 @@ public class PlanService {
         planRepository.save(p);
     }
 
-    //PLAN RATE
     @Transactional
-    public PlanRate addRate(Long id, VehicleType vehicleType, Integer durationMonths,
-                            BigDecimal monthlyPrice, BigDecimal discountPercent,
-                            boolean active) {
-        Plan plan = getPlanOrThrow(id);
-        Objects.requireNonNull(vehicleType, "Vehicle type can't be null");
-        if (durationMonths <= 0) {
-            throw new IllegalArgumentException("Duration months can't be negative");
+    public void deletePlan(Long id) {
+        logger.info("Deleting plan with id {}", id);
+        if (!planRepository.existsById(id)) {
+            throw new ObjectNotFoundException("Plan not found with id: ", id);
         }
-        Objects.requireNonNull(monthlyPrice, "Monthly price can't be null");
-        if (monthlyPrice.compareTo(BigDecimal.ZERO) < 0 ) {
-            throw new IllegalArgumentException("Monthly price can't be negative");
-        }
-        if (discountPercent == null) discountPercent = BigDecimal.ZERO;
-        if (discountPercent.compareTo(BigDecimal.ZERO) < 0 || discountPercent.compareTo(BigDecimal.valueOf(100)) > 0) {
-            throw new IllegalArgumentException("Discount percent must be between 0 and 100");
-        }
-
-        if (planRateRepository.existsByPlan_IdAndVehicleTypeAndDurationMonths(id, vehicleType, durationMonths)) {
-            throw new IllegalStateException("A PlanRate already exists for this plan with the same vehicleType and durationMonths..");
-        }
-
-        PlanRate rate = new PlanRate();
-        rate.setPlan(plan);
-        rate.setVehicleType(vehicleType);
-        rate.setDurationMonths(durationMonths);
-        rate.setMonthlyPrice(monthlyPrice);
-        rate.setDiscountPercent(discountPercent);
-        rate.setActive(active);
-
-        LocalDateTime now = LocalDateTime.now();
-        rate.setCreatedAt(now);
-        rate.setUpdatedAt(now);
-
-        return planRateRepository.save(rate);
-    }
-
-    @Transactional
-    public PlanRate updateRate(Long rateId,
-                               BigDecimal monthlyPrice,
-                               BigDecimal discountPercent,
-                               Boolean active) {
-
-        PlanRate rate = planRateRepository.findById(rateId)
-                .orElseThrow(() -> new IllegalArgumentException("PlanRate not found: " + rateId));
-
-        if (monthlyPrice != null) {
-            if (monthlyPrice.compareTo(BigDecimal.ZERO) < 0) throw new IllegalArgumentException("price cannot be negative.");
-            rate.setMonthlyPrice(monthlyPrice);
-        }
-
-        if (discountPercent != null) {
-            if (discountPercent.compareTo(BigDecimal.ZERO) < 0 || discountPercent.compareTo(BigDecimal.valueOf(100)) > 0) {
-                throw new IllegalArgumentException("discountPercent must be between 0 and 100.");
-            }
-            rate.setDiscountPercent(discountPercent);
-        }
-
-        if (active != null) {
-            rate.setActive(active);
-        }
-
-        rate.setUpdatedAt(LocalDateTime.now());
-        return planRateRepository.save(rate);
-    }
-
-    @Transactional
-    public void deactivateRate(Long rateId) {
-        PlanRate rate = planRateRepository.findById(rateId)
-                .orElseThrow(() -> new IllegalArgumentException("PlanRate not found: " + rateId));
-
-        rate.setActive(false);
-        rate.setUpdatedAt(LocalDateTime.now());
-        planRateRepository.save(rate);
+        planRepository.deleteById(id);
     }
 
     // --------------------
@@ -151,5 +102,6 @@ public class PlanService {
         return planRepository.findById(planId)
                 .orElseThrow(() -> new IllegalArgumentException("Plan not found: " + planId));
     }
+
 
 }

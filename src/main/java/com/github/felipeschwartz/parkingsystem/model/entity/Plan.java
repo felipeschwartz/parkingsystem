@@ -94,6 +94,14 @@ public class Plan implements Serializable {
         this.active = active;
     }
 
+    public Set<SubscriptionContract> getSubscriptionContracts() {
+        return subscriptionContracts;
+    }
+
+    public void setSubscriptionContracts(Set<SubscriptionContract> subscriptionContracts) {
+        this.subscriptionContracts = subscriptionContracts;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Plan plan)) return false;

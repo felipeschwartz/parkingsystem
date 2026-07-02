@@ -1,5 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
@@ -12,7 +14,11 @@ public class PlanDTO extends RepresentationModel<PlanDTO> implements Serializabl
     private static final long serialVersionUID = 1L;
 
     private Long id;
+
+    @NotBlank
+    @Size(min = 3, max = 100, message = "Plan name must be between 3 and 100 characters")
     private String name;
+
     private Set<SubscriptionContractDTO> subscriptionContracts =  new HashSet<>();
     private Set<PlanRateDTO> planRates = new HashSet<>();
     private Boolean active;
@@ -74,6 +80,15 @@ public class PlanDTO extends RepresentationModel<PlanDTO> implements Serializabl
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+
+    public Set<SubscriptionContractDTO> getSubscriptionContracts() {
+        return subscriptionContracts;
+    }
+
+    public void setSubscriptionContracts(Set<SubscriptionContractDTO> subscriptionContracts) {
+        this.subscriptionContracts = subscriptionContracts;
     }
 
     @Override
