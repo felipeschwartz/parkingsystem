@@ -1,100 +1,81 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
-import com.github.felipeschwartz.parkingsystem.model.entity.Plan;
-import org.springframework.stereotype.Service;
+import com.github.felipeschwartz.parkingsystem.mapper.PlanMapper;
+import com.github.felipeschwartz.parkingsystem.mapper.PlanRateMapper;
+import com.github.felipeschwartz.parkingsystem.model.dto.PlanRateDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.PlanRate;
-import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
 import com.github.felipeschwartz.parkingsystem.repository.PlanRateRepository;
+import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PlanRateService  {
 
+    private Logger logger = LoggerFactory.getLogger(PaymentService.class.getName());
     private final PlanRateRepository planRateRepository;
+    private final PlanRateMapper planRateMapper;
+    private final PlanMapper planMapper;
 
-    public PlanRateService(PlanRateRepository planRateRepository) {
+    public PlanRateService(PlanRateRepository planRateRepository, PlanRateMapper planRateMapper, PlanMapper planMapper) {
         this.planRateRepository = planRateRepository;
+        this.planRateMapper = planRateMapper;
+        this.planMapper = planMapper;
+    }
+
+    @Transactional(readOnly = true)
+    public List<PlanRateDTO> findAll() {
+        logger.info("Finding all plan rate records");
+        return planRateRepository.findAll().stream().map(planRate -> planRateMapper.toDTO(planRate))
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public PlanRate findByPlanIdAndVehicleType(Long planId, VehicleType vehicleType) {
-        return planRateRepository
-                .findByPlanIdAndVehicleType(planId, vehicleType)
-                .orElseThrow(() -> new RuntimeException(
-                        "PlanRate not found for planId=" + planId + " and vehicleType=" + vehicleType
-                ));
+    public PlanRateDTO findById(Long id) {
+        logger.info("Finding plan rate record with id {}", id);
+        PlanRate rate = planRateRepository.findById(id).orElseThrow(() ->new ObjectNotFoundException("Plan rate not found with id: ", id));
+        return planRateMapper.toDTO(rate);
     }
 
-    /*
+
     @Transactional
-    public PlanRate addRate(Long id, VehicleType vehicleType, Integer durationMonths,
-                            BigDecimal monthlyPrice, BigDecimal discountPercent,
-                            boolean active) {
-        Plan plan = getPlanOrThrow(id);
-        Objects.requireNonNull(vehicleType, "Vehicle type can't be null");
-        if (durationMonths <= 0) {
-            throw new IllegalArgumentException("Duration months can't be negative");
-        }
-        Objects.requireNonNull(monthlyPrice, "Monthly price can't be null");
-        if (monthlyPrice.compareTo(BigDecimal.ZERO) < 0 ) {
-            throw new IllegalArgumentException("Monthly price can't be negative");
-        }
-        if (discountPercent == null) discountPercent = BigDecimal.ZERO;
-        if (discountPercent.compareTo(BigDecimal.ZERO) < 0 || discountPercent.compareTo(BigDecimal.valueOf(100)) > 0) {
-            throw new IllegalArgumentException("Discount percent must be between 0 and 100");
-        }
-
-        if (planRateRepository.existsByPlan_IdAndVehicleTypeAndDurationMonths(id, vehicleType, durationMonths)) {
-            throw new IllegalStateException("A PlanRate already exists for this plan with the same vehicleType and durationMonths..");
-        }
-
-        PlanRate rate = new PlanRate();
-        rate.setPlan(plan);
-        rate.setVehicleType(vehicleType);
-        rate.setDurationMonths(durationMonths);
-        rate.setMonthlyPrice(monthlyPrice);
-        rate.setDiscountPercent(discountPercent);
-        rate.setActive(active);
-
-        LocalDateTime now = LocalDateTime.now();
-        rate.setCreatedAt(now);
-        rate.setUpdatedAt(now);
-
-        return planRateRepository.save(rate);
+    public PlanRateDTO create(PlanRateDTO planRateDTO) {
+        logger.info("Creating plan rate record {}", planRateDTO);
+        PlanRate planRate = planRateMapper.toEntity(planRateDTO);
+        PlanRate savedRate = planRateRepository.save(planRate);
+        return planRateMapper.toDTO(savedRate);
     }
-    */
+
 
     @Transactional
-    public PlanRate updateRate(Long rateId,
-                               BigDecimal monthlyPrice,
-                               BigDecimal discountPercent,
-                               Boolean active) {
-
-        PlanRate rate = planRateRepository.findById(rateId)
-                .orElseThrow(() -> new IllegalArgumentException("PlanRate not found: " + rateId));
-
-        if (monthlyPrice != null) {
-            if (monthlyPrice.compareTo(BigDecimal.ZERO) < 0) throw new IllegalArgumentException("price cannot be negative.");
-            rate.setMonthlyPrice(monthlyPrice);
+    public PlanRateDTO update(PlanRateDTO updated) {
+        logger.info("Updating plan rate record {}", updated);
+        PlanRate existingRate = planRateRepository.findById(updated.getId()).orElseThrow(() ->new ObjectNotFoundException("Plan rate not found with id: ", updated.getId()));
+        if (updated.getPlan() != null) {
+            existingRate.setPlan(planMapper.toEntity(updated.getPlan()));
         }
+        if (updated.getVehicleType() != null) existingRate.setVehicleType(updated.getVehicleType());
+        if (updated.getDurationMonths() != null) existingRate.setDurationMonths(updated.getDurationMonths());
+        if (updated.getMonthlyPrice() != null) existingRate.setMonthlyPrice(updated.getMonthlyPrice());
+        if (updated.getDiscountPercent() != null) existingRate.setDiscountPercent(updated.getDiscountPercent());
+        if (updated.getActive()) existingRate.setActive(true);
+        existingRate.setUpdatedAt(LocalDateTime.now());
+        PlanRate updatedRate = planRateRepository.save(existingRate);
+        return planRateMapper.toDTO(updatedRate);
+    }
 
-        if (discountPercent != null) {
-            if (discountPercent.compareTo(BigDecimal.ZERO) < 0 || discountPercent.compareTo(BigDecimal.valueOf(100)) > 0) {
-                throw new IllegalArgumentException("discountPercent must be between 0 and 100.");
-            }
-            rate.setDiscountPercent(discountPercent);
-        }
-
-        if (active != null) {
-            rate.setActive(active);
-        }
-
-        rate.setUpdatedAt(LocalDateTime.now());
-        return planRateRepository.save(rate);
+    @Transactional
+    public void delete(Long id) {
+        logger.info("Deleting plan rate record with id {}", id);
+        PlanRate rate = planRateRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("PlanRate not found: " + id));
+        planRateRepository.delete(rate);
     }
 
     @Transactional
@@ -106,7 +87,4 @@ public class PlanRateService  {
         rate.setUpdatedAt(LocalDateTime.now());
         planRateRepository.save(rate);
     }
-
-
-
 }

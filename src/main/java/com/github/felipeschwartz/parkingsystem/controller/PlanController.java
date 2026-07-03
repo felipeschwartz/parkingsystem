@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/parking_space")
+@RequestMapping("/plan")
 public class PlanController {
 
     private final PlanService service;

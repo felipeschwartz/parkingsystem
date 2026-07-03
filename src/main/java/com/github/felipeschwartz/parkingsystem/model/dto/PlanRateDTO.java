@@ -106,6 +106,8 @@ public class PlanRateDTO implements Serializable {
         this.updatedAt = updatedAt;
     }
 
+
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof PlanRateDTO planRate)) return false;

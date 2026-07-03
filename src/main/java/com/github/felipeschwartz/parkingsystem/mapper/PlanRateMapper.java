@@ -15,5 +15,7 @@ public interface PlanRateMapper {
     PlanRateDTO toDTO(PlanRate entity);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "plan", source = "plan")
     PlanRate toEntity(PlanRateDTO dto);
+
 }

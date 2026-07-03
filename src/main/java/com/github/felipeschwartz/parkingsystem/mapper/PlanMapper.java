@@ -2,6 +2,7 @@ package com.github.felipeschwartz.parkingsystem.mapper;
 
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanCreationDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanDTO;
+import com.github.felipeschwartz.parkingsystem.model.dto.PlanSummaryDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.SubscriptionContractDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.Plan;
 import com.github.felipeschwartz.parkingsystem.model.entity.SubscriptionContract;
@@ -48,4 +49,6 @@ public interface PlanMapper {
                 .map(contract -> context.getMappedInstance(contract, SubscriptionContractDTO.class, () -> context.getSubscriptionContractMapper().toDTO(contract, context)))
                 .collect(Collectors.toSet()); // Use toSet() para Set
     }
+
+    Plan toEntity(PlanSummaryDTO dto);
 }

@@ -1,24 +1,19 @@
 package com.github.felipeschwartz.parkingsystem.service;
+
 import com.github.felipeschwartz.parkingsystem.mapper.CycleAvoidingMappingContext;
 import com.github.felipeschwartz.parkingsystem.mapper.PlanMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanCreationDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanDTO;
+import com.github.felipeschwartz.parkingsystem.model.entity.Plan;
+import com.github.felipeschwartz.parkingsystem.repository.PlanRepository;
 import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.springframework.stereotype.Service;
-import com.github.felipeschwartz.parkingsystem.model.entity.Plan;
-import com.github.felipeschwartz.parkingsystem.model.entity.PlanRate;
-import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
-import com.github.felipeschwartz.parkingsystem.repository.PlanRateRepository;
-import com.github.felipeschwartz.parkingsystem.repository.PlanRepository;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,9 +54,9 @@ public class PlanService {
     }
 
     @Transactional
-    public PlanDTO update(Long id, PlanDTO updated) {
-        logger.info("Updating plan with id {}", id);
-        Plan existingPlan = planRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: ", id));
+    public PlanDTO update(PlanDTO updated) {
+        logger.info("Updating plan with id {}", updated.getId());
+        Plan existingPlan = planRepository.findById(updated.getId()).orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: ", updated.getId()));
         if (updated.getName() != null) existingPlan.setName(updated.getName());
         if (updated.getActive() != null) existingPlan.setActive(updated.getActive());
         existingPlan.setUpdatedAt(LocalDateTime.now());
