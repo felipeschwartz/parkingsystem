@@ -1,5 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
 import jakarta.persistence.*;
 
@@ -20,6 +22,7 @@ public class PlanRate implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "plan_id", nullable = false)
+    @JsonIgnore
     private Plan plan;
 
     @Enumerated(EnumType.STRING)

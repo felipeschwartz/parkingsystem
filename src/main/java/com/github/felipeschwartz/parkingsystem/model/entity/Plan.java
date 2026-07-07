@@ -1,7 +1,10 @@
 package com.github.felipeschwartz.parkingsystem.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -23,18 +26,21 @@ public class Plan implements Serializable {
     private String name;
     
     @OneToMany(mappedBy = "plan")
+    @JsonManagedReference
     private Set<SubscriptionContract> subscriptionContracts =  new HashSet<>();
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PlanRate> planRates = new HashSet<>();
+    private Set<PlanRate> rates = new HashSet<>();
 
     @Column
     private Boolean active;
 
     @Column
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @Column
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     public Plan() {
@@ -63,11 +69,11 @@ public class Plan implements Serializable {
     }
 
     public Set<PlanRate> getRates() {
-        return planRates;
+        return rates;
     }
 
     public void setRates(Set<PlanRate> planRates) {
-        this.planRates = planRates;
+        this.rates = planRates;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -118,13 +124,13 @@ public class Plan implements Serializable {
             throw new IllegalArgumentException("Plan.name não pode ser vazio.");
         }
 
-        if (planRates == null || planRates.isEmpty()) {
+        if (rates == null || rates.isEmpty()) {
             throw new IllegalArgumentException("Plan deve possuir pelo menos uma tarifa (PlanRate).");
         }
 
         Set<VehicleType> types = EnumSet.noneOf(VehicleType.class);
 
-        for (PlanRate rate : planRates) {
+        for (PlanRate rate : rates) {
             if (rate.getVehicleType() == null) {
                 throw new IllegalArgumentException("PlanRate.vehicleType não pode ser nulo.");
             }

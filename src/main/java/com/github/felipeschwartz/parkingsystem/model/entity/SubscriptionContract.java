@@ -1,5 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import com.github.felipeschwartz.parkingsystem.model.enums.SubscripionStatus;
@@ -28,6 +30,7 @@ public class SubscriptionContract implements Serializable {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(
             name = "plan_id",
             nullable = false,

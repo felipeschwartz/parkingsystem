@@ -20,7 +20,7 @@ public class PlanDTO extends RepresentationModel<PlanDTO> implements Serializabl
     private String name;
 
     private Set<SubscriptionContractDTO> subscriptionContracts =  new HashSet<>();
-    private Set<PlanRateDTO> planRates = new HashSet<>();
+    private Set<PlanRateDTO> rates = new HashSet<>();
     private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -51,11 +51,11 @@ public class PlanDTO extends RepresentationModel<PlanDTO> implements Serializabl
     }
 
     public Set<PlanRateDTO> getRates() {
-        return planRates;
+        return rates;
     }
 
     public void setRates(Set<PlanRateDTO> planRates) {
-        this.planRates = planRates;
+        this.rates = planRates;
     }
 
     public LocalDateTime getCreatedAt() {

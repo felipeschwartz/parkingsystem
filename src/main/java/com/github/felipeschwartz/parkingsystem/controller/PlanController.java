@@ -53,8 +53,8 @@ public class PlanController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public PlanDTO update(@PathVariable Long id, @RequestBody @Valid PlanDTO updatedPlan) {
-        return service.update(id, updatedPlan);
+    public PlanDTO update(@RequestBody @Valid PlanDTO updatedPlan) {
+        return service.update(updatedPlan);
     }
 
     @PutMapping(value = "/activate/{id}")

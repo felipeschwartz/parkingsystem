@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.RepresentationModel;
 import com.github.felipeschwartz.parkingsystem.model.entity.Owner;
 import com.github.felipeschwartz.parkingsystem.model.entity.Plan;
@@ -16,6 +17,7 @@ public class SubscriptionContractDTO extends RepresentationModel<SubscriptionCon
 
     private Long id;
     private VehicleSummaryDTO vehicle;
+    @JsonIgnore
     private PlanDTO plan;
     private LocalDate startDate;
     private LocalDate endDate;

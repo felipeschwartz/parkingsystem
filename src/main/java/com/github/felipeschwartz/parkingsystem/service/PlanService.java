@@ -2,10 +2,16 @@ package com.github.felipeschwartz.parkingsystem.service;
 
 import com.github.felipeschwartz.parkingsystem.mapper.CycleAvoidingMappingContext;
 import com.github.felipeschwartz.parkingsystem.mapper.PlanMapper;
+import com.github.felipeschwartz.parkingsystem.mapper.PlanRateMapper;
+import com.github.felipeschwartz.parkingsystem.mapper.SubscriptionContractMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanCreationDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.Plan;
+import com.github.felipeschwartz.parkingsystem.model.entity.PlanRate;
+import com.github.felipeschwartz.parkingsystem.model.entity.SubscriptionContract;
+import com.github.felipeschwartz.parkingsystem.repository.PlanRateRepository;
 import com.github.felipeschwartz.parkingsystem.repository.PlanRepository;
+import com.github.felipeschwartz.parkingsystem.repository.SubscriptionContractRepository;
 import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,11 +31,19 @@ public class PlanService {
     private final PlanRepository planRepository;
     private final PlanMapper mapper;
     private final CycleAvoidingMappingContext context;
+    private final PlanRateRepository planRateRepository;
+    private final SubscriptionContractRepository subscriptionContractRepository;
+    private final PlanRateMapper planRateMapper;
+    private final SubscriptionContractMapper subscriptionContractMapper;
 
-    public PlanService(PlanRepository planRepository, PlanMapper mapper, CycleAvoidingMappingContext context) {
+    public PlanService(PlanRepository planRepository, PlanMapper mapper, CycleAvoidingMappingContext context, PlanRateRepository planRateRepository, SubscriptionContractRepository subscriptionContractRepository, PlanRateMapper planRateMapper, SubscriptionContractMapper subscriptionContractMapper) {
         this.planRepository = planRepository;
         this.mapper = mapper;
         this.context = context;
+        this.planRateRepository = planRateRepository;
+        this.subscriptionContractRepository = subscriptionContractRepository;
+        this.planRateMapper = planRateMapper;
+        this.subscriptionContractMapper = subscriptionContractMapper;
     }
 
     //PLAN
@@ -50,8 +66,24 @@ public class PlanService {
         logger.info("Creating plan with name {}", planCreationDTO.getName());
         Plan planToSave = mapper.toEntity(planCreationDTO);
         Plan savedPlan = planRepository.save(planToSave);
-        return mapper.toDTO(savedPlan, context);
+        if (planCreationDTO.getRateIds() != null && !planCreationDTO.getRateIds().isEmpty()) {
+            Set<PlanRate> fetchedRates = new HashSet<>(planRateRepository.findAllById(planCreationDTO.getRateIds()));
+            for (PlanRate planRate : fetchedRates) {
+                planRate.setPlan(savedPlan);
+                savedPlan.getRates().add(planRate);
+            }
+        }
+        if (planCreationDTO.getSubscriptionContractIds() != null && !planCreationDTO.getSubscriptionContractIds().isEmpty()) {
+            Set<SubscriptionContract> fetchedContracts = new HashSet<>(subscriptionContractRepository.findAllById(planCreationDTO.getSubscriptionContractIds()));
+            for (SubscriptionContract subscriptionContract : fetchedContracts) {
+                subscriptionContract.setPlan(savedPlan);
+                savedPlan.getSubscriptionContracts().add(subscriptionContract);
+            }
+        }
+        savedPlan.validate();
+        return mapper.toDTO(savedPlan, new CycleAvoidingMappingContext(mapper, subscriptionContractMapper, planRateMapper));
     }
+
 
     @Transactional
     public PlanDTO update(PlanDTO updated) {

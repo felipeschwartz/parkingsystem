@@ -8,7 +8,7 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
-        uses = { PlanMapper.class }
+        uses = { PlanSummaryMapper.class }
 )
 public interface PlanRateMapper {
 

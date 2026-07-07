@@ -1,28 +1,21 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 import java.util.List;
 
-public class PlanCreationDTO {
-    @NotBlank(message = "Plan name cannot be null or empty")
-    @Size(min = 3, max = 100, message = "Plan name must be between 3 and 100 characters")
+public class PlanRequestDTO {
     private String name;
-
-    @NotNull(message = "Active status cannot be null")
     private Boolean active;
-
-    private List<Long> rateIds;
+    private List<Long> rateIds; // Para receber apenas os IDs das Rates
     private List<Long> subscriptionContractIds;
 
-    public PlanCreationDTO() {
+    public PlanRequestDTO() {
     }
 
-    public PlanCreationDTO(String name, Boolean active) {
+    public PlanRequestDTO(String name, Boolean active, List<Long> rateIds, List<Long> subscriptionContractIds) {
         this.name = name;
         this.active = active;
+        this.rateIds = rateIds;
+        this.subscriptionContractIds = subscriptionContractIds;
     }
 
     public String getName() {

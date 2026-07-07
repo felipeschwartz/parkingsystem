@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ public class PlanRateDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
+    @JsonIgnore
     private PlanSummaryDTO plan;
     private VehicleType vehicleType;
     private Integer durationMonths;

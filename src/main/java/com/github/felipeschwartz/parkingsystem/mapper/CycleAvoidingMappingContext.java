@@ -16,21 +16,24 @@ public class CycleAvoidingMappingContext {
 
     private PlanMapper planMapper;
     private SubscriptionContractMapper subscriptionContractMapper;
+    private PlanRateMapper planRateMapper;
+
+    public CycleAvoidingMappingContext(PlanMapper planMapper, SubscriptionContractMapper subscriptionContractMapper, PlanRateMapper planRateMapper) {
+        this.planMapper = planMapper;
+        this.subscriptionContractMapper = subscriptionContractMapper;
+        this.planRateMapper = planRateMapper;
+    }
 
     public PlanMapper getPlanMapper() {
         return planMapper;
-    }
-
-    public void setPlanMapper(PlanMapper planMapper) {
-        this.planMapper = planMapper;
     }
 
     public SubscriptionContractMapper getSubscriptionContractMapper() {
         return subscriptionContractMapper;
     }
 
-    public void setSubscriptionContractMapper(SubscriptionContractMapper subscriptionContractMapper) {
-        this.subscriptionContractMapper = subscriptionContractMapper;
+    public PlanRateMapper getPlanRateMapper() {
+        return planRateMapper;
     }
 
     @BeforeMapping
@@ -55,4 +58,6 @@ public class CycleAvoidingMappingContext {
         knownInstances.put(source, target);
         return target;
     }
+
+
 }
