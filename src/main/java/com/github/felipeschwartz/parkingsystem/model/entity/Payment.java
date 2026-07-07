@@ -3,6 +3,8 @@ package com.github.felipeschwartz.parkingsystem.model.entity;
 import com.github.felipeschwartz.parkingsystem.model.enums.PaymentMethod;
 import com.github.felipeschwartz.parkingsystem.model.enums.PaymentStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -34,9 +36,11 @@ public class Payment {
     private String reference;
 
     @Column(name = "created_date")
+    @CreationTimestamp
     private LocalDateTime createdDate;
 
     @Column(name = "updated_date")
+    @UpdateTimestamp
     private LocalDateTime updatedDate;
 
     public Payment() {

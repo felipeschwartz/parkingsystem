@@ -3,6 +3,8 @@ package com.github.felipeschwartz.parkingsystem.model.entity;
 import jakarta.persistence.*;
 import com.github.felipeschwartz.parkingsystem.model.enums.SpaceStatus;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -40,9 +42,11 @@ public class ParkingSpace implements Serializable {
     private Set<Reservation> reservation = new HashSet<>();
 
     @Column
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @Column
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     public ParkingSpace() {

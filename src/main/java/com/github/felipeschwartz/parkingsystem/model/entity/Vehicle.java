@@ -2,6 +2,9 @@ package com.github.felipeschwartz.parkingsystem.model.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -40,9 +43,11 @@ public class Vehicle implements Serializable {
     private Set<ParkingSession> sessions = new HashSet<>();
 
     @Column
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @Column
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     public Vehicle() {

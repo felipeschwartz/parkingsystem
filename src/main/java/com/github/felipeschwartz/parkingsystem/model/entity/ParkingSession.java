@@ -3,6 +3,8 @@ package com.github.felipeschwartz.parkingsystem.model.entity;
 import jakarta.persistence.*;
 import com.github.felipeschwartz.parkingsystem.model.enums.SessionStatus;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -57,9 +59,11 @@ public class ParkingSession implements Serializable {
     private BigDecimal amountCharged;
 
     @Column
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @Column
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     public ParkingSession() {
