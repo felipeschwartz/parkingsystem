@@ -1,6 +1,5 @@
 package com.github.felipeschwartz.parkingsystem.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
 import jakarta.persistence.*;

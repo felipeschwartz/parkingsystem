@@ -15,10 +15,11 @@ public class PlanRateDTO implements Serializable {
     private Long id;
     @JsonIgnore
     private PlanSummaryDTO plan;
+    private Long pId;
+    private BigDecimal discountPercent;
     private VehicleType vehicleType;
     private Integer durationMonths;
     private BigDecimal monthlyPrice;
-    private BigDecimal discountPercent;
     private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -26,14 +27,17 @@ public class PlanRateDTO implements Serializable {
     public PlanRateDTO() {
     }
 
-    public PlanRateDTO(Long id, PlanSummaryDTO plan, VehicleType vehicleType, Integer durationMonths, BigDecimal monthlyPrice, BigDecimal discountPercent, Boolean active) {
+    public PlanRateDTO(Long id, PlanSummaryDTO plan, Long pId, BigDecimal discountPercent, VehicleType vehicleType, Integer durationMonths, BigDecimal monthlyPrice, Boolean active, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.plan = plan;
+        this.pId = pId;
+        this.discountPercent = discountPercent;
         this.vehicleType = vehicleType;
         this.durationMonths = durationMonths;
         this.monthlyPrice = monthlyPrice;
-        this.discountPercent = discountPercent;
         this.active = active;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Long getId() {
@@ -50,6 +54,22 @@ public class PlanRateDTO implements Serializable {
 
     public void setPlan(PlanSummaryDTO plan) {
         this.plan = plan;
+    }
+
+    public Long getpId() {
+        return pId;
+    }
+
+    public void setpId(Long pId) {
+        this.pId = pId;
+    }
+
+    public BigDecimal getDiscountPercent() {
+        return discountPercent;
+    }
+
+    public void setDiscountPercent(BigDecimal discountPercent) {
+        this.discountPercent = discountPercent;
     }
 
     public VehicleType getVehicleType() {
@@ -76,14 +96,6 @@ public class PlanRateDTO implements Serializable {
         this.monthlyPrice = monthlyPrice;
     }
 
-    public BigDecimal getDiscountPercent() {
-        return discountPercent;
-    }
-
-    public void setDiscountPercent(BigDecimal disccount) {
-        this.discountPercent = disccount;
-    }
-
     public Boolean getActive() {
         return active;
     }
@@ -107,8 +119,6 @@ public class PlanRateDTO implements Serializable {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-
 
     @Override
     public boolean equals(Object o) {
@@ -135,6 +145,21 @@ public class PlanRateDTO implements Serializable {
         return monthlyPrice
                 .subtract(monthlyPrice.multiply(discountFactor))
                 .setScale(2, RoundingMode.HALF_UP);
+    }
+
+    @Override
+    public String toString() {
+        return "PlanRateDTO{" +
+                "id=" + id +
+                ", pId=" + pId +
+                ", vehicleType=" + vehicleType +
+                ", durationMonths=" + durationMonths +
+                ", monthlyPrice=" + monthlyPrice +
+                ", discountPercent=" + discountPercent +
+                ", active=" + active +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 
 }

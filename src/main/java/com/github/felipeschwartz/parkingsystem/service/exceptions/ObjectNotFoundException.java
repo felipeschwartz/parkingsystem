@@ -9,4 +9,8 @@ public class ObjectNotFoundException extends RuntimeException {
     public ObjectNotFoundException(String entityName, String licensePlate) {
         super(entityName + " not found: " + licensePlate);
     }
+
+    public ObjectNotFoundException(String s) {
+
+    }
 }
