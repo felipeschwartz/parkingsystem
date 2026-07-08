@@ -43,10 +43,10 @@ public class PlanRateService  {
     @Transactional
     public PlanRateDTO findById(Long id) {
         logger.info("Finding plan rate record with id {}", id);
-        PlanRate rate = planRateRepository.findById(id).orElseThrow(() ->new ObjectNotFoundException("Plan rate not found with id: ", id));
+        PlanRate rate = planRateRepository.findById(id)
+                .orElseThrow(() ->new ObjectNotFoundException("Plan rate not found with id: ", id));
         return planRateMapper.toDTO(rate);
     }
-
 
     @Transactional
     public PlanRateDTO create(PlanRateDTO planRateDTO) {
@@ -54,46 +54,54 @@ public class PlanRateService  {
         Plan plan = planRepository.findById(planRateDTO.getpId())
                 .orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: " + planRateDTO.getpId()));
         PlanRate planRate = planRateMapper.toEntity(planRateDTO);
-        planRate.setVehicleType(planRateDTO.getVehicleType());
-        planRate.setDurationMonths(planRateDTO.getDurationMonths());
-        planRate.setMonthlyPrice(planRateDTO.getMonthlyPrice());
-        planRate.setDiscountPercent(planRateDTO.getDiscountPercent());
-        planRate.setActive(planRateDTO.getActive());
         planRate.setPlan(plan);
         planRate = planRateRepository.save(planRate);
-        PlanRateDTO createdPlanRateDTO = planRateMapper.toDTO(planRate);
-        createdPlanRateDTO.setId(planRate.getId());
-        createdPlanRateDTO.setVehicleType(planRate.getVehicleType());
-        createdPlanRateDTO.setDurationMonths(planRate.getDurationMonths());
-        createdPlanRateDTO.setMonthlyPrice(planRate.getMonthlyPrice());
-        createdPlanRateDTO.setDiscountPercent(planRate.getDiscountPercent());
-        createdPlanRateDTO.setActive(planRate.getActive());
-        createdPlanRateDTO.setCreatedAt(planRate.getCreatedAt());
-        createdPlanRateDTO.setUpdatedAt(planRate.getUpdatedAt());
-        createdPlanRateDTO.setpId(plan.getId());
-
-        return createdPlanRateDTO;
+        return planRateMapper.toDTO(planRate);
     }
 
 
+//    @Transactional
+//    public PlanRateDTO create(PlanRateDTO planRateDTO) {
+//        logger.info("Creating plan rate record {}", planRateDTO);
+//        Plan plan = planRepository.findById(planRateDTO.getpId())
+//                .orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: " + planRateDTO.getpId()));
+//        PlanRate planRate = planRateMapper.toEntity(planRateDTO);
+//        planRate.setVehicleType(planRateDTO.getVehicleType());
+//        planRate.setDurationMonths(planRateDTO.getDurationMonths());
+//        planRate.setMonthlyPrice(planRateDTO.getMonthlyPrice());
+//        planRate.setDiscountPercent(planRateDTO.getDiscountPercent());
+//        planRate.setActive(planRateDTO.getActive());
+//        planRate.setPlan(plan);
+//        planRate = planRateRepository.save(planRate);
+//        PlanRateDTO createdPlanRateDTO = planRateMapper.toDTO(planRate);
+//        createdPlanRateDTO.setId(planRate.getId());
+//        createdPlanRateDTO.setVehicleType(planRate.getVehicleType());
+//        createdPlanRateDTO.setDurationMonths(planRate.getDurationMonths());
+//        createdPlanRateDTO.setMonthlyPrice(planRate.getMonthlyPrice());
+//        createdPlanRateDTO.setDiscountPercent(planRate.getDiscountPercent());
+//        createdPlanRateDTO.setActive(planRate.getActive());
+//        createdPlanRateDTO.setCreatedAt(planRate.getCreatedAt());
+//        createdPlanRateDTO.setUpdatedAt(planRate.getUpdatedAt());
+//        createdPlanRateDTO.setpId(plan.getId());
+//
+//        return createdPlanRateDTO;
+//    }
+
+
     @Transactional
-    public PlanRateDTO update(PlanRateDTO updated) {
-        logger.info("Updating plan rate record {}", updated);
-        PlanRate existingRate = planRateRepository.findById(updated.getId())
-                .orElseThrow(() ->new ObjectNotFoundException("Plan rate not found with id: ", updated.getId()));
-        if (updated.getpId() != null) {
-            Plan newPlan = planRepository.findPlanById(updated.getpId())
-                    .orElseThrow(() ->new ObjectNotFoundException("Plan not found with id: " + updated.getpId()));
+    public PlanRateDTO update(PlanRateDTO updatedDto) {
+        logger.info("Updating plan rate record {}", updatedDto);
+        PlanRate existingRate = planRateRepository.findById(updatedDto.getId())
+                .orElseThrow(() -> new ObjectNotFoundException("Plan rate not found with id: " + updatedDto.getId()));
+        if (updatedDto.getpId() != null) {
+            Plan newPlan = planRepository.findById(updatedDto.getpId())
+                    .orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: " + updatedDto.getpId()));
             existingRate.setPlan(newPlan);
         }
-        if (updated.getVehicleType() != null) existingRate.setVehicleType(updated.getVehicleType());
-        if (updated.getDurationMonths() != null) existingRate.setDurationMonths(updated.getDurationMonths());
-        if (updated.getMonthlyPrice() != null) existingRate.setMonthlyPrice(updated.getMonthlyPrice());
-        if (updated.getDiscountPercent() != null) existingRate.setDiscountPercent(updated.getDiscountPercent());
-        if (updated.getActive() != null) existingRate.setActive(updated.getActive());
+        planRateMapper.updatePlanRateFromDto(updatedDto, existingRate);
         existingRate.setUpdatedAt(LocalDateTime.now());
-        PlanRate updatedRate = planRateRepository.save(existingRate);
-        return planRateMapper.toDTO(updatedRate);
+        PlanRate savedRate = planRateRepository.save(existingRate);
+        return planRateMapper.toDTO(savedRate);
     }
 
     @Transactional

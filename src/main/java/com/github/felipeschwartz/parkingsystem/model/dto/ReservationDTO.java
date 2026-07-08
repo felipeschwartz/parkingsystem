@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.felipeschwartz.parkingsystem.model.enums.ReservationStatus;
 
 import java.io.Serializable;
@@ -10,7 +11,10 @@ public class ReservationDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
+    @JsonIgnore
     private VehicleSummaryDTO vehicle;
+
+    private Long vId;
     private ParkingSpaceDTO parkingSpace;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -22,9 +26,10 @@ public class ReservationDTO implements Serializable {
     public ReservationDTO() {
     }
 
-    public ReservationDTO(Long id, VehicleSummaryDTO vehicle, ParkingSpaceDTO parkingSpace, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status) {
+    public ReservationDTO(Long id, VehicleSummaryDTO vehicle, Long vId, ParkingSpaceDTO parkingSpace, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status) {
         this.id = id;
         this.vehicle = vehicle;
+        this.vId = vId;
         this.parkingSpace = parkingSpace;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -45,6 +50,14 @@ public class ReservationDTO implements Serializable {
 
     public void setVehicle(VehicleSummaryDTO vehicle) {
         this.vehicle = vehicle;
+    }
+
+    public Long getvId() {
+        return vId;
+    }
+
+    public void setvId(Long vId) {
+        this.vId = vId;
     }
 
     public ParkingSpaceDTO getParkingSpace() {
@@ -105,5 +118,21 @@ public class ReservationDTO implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ReservationDTO{");
+        sb.append("id=").append(id);
+        sb.append(", vehicle=").append(vehicle);
+        sb.append(", vId=").append(vId);
+        sb.append(", parkingSpace=").append(parkingSpace);
+        sb.append(", startTime=").append(startTime);
+        sb.append(", endTime=").append(endTime);
+        sb.append(", status=").append(status);
+        sb.append(", createdAt=").append(createdAt);
+        sb.append(", updatedAt=").append(updatedAt);
+        sb.append('}');
+        return sb.toString();
     }
 }
