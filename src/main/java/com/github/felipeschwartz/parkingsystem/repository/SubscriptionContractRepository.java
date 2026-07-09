@@ -15,6 +15,9 @@ import java.util.Optional;
 @Repository
 public interface SubscriptionContractRepository extends JpaRepository<SubscriptionContract, Long> {
 
+    @Query("SELECT sc FROM SubscriptionContract sc JOIN FETCH sc.owner")
+    List<SubscriptionContract> findAllWithOwners();
+
     // Query method simples: busca por veículo e status (sem lógica de vigência)
     List<SubscriptionContract> findByVehicleIdAndStatusOrderByStartDateDesc(Long vehicleId, SubscripionStatus status);
     Optional<SubscriptionContract> findByVehicleAndStatus(Vehicle vehicle, SubscripionStatus status);

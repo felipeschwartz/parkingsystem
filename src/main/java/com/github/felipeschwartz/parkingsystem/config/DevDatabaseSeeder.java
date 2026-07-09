@@ -137,12 +137,11 @@ public class DevDatabaseSeeder implements CommandLineRunner {
                 new BigDecimal("399.90"),
                 new BigDecimal("499.90"));
 
-        // Se você quiser garantir consistência pela sua regra:
         plan1.validate();
         plan2.validate();
         plan3.validate();
 
-        em.persist(plan1); // cascade salva as PlanRates
+        em.persist(plan1);
         em.persist(plan2);
         em.persist(plan3);
         em.flush();

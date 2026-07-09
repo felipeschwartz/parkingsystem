@@ -204,4 +204,8 @@ public class SubscriptionContract implements Serializable {
         }
         return true;
     }
+
+    public void cancel(Long id) {
+        this.status = SubscripionStatus.CANCELLED;
+    }
 }

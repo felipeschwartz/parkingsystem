@@ -18,7 +18,8 @@ public class SubscriptionContractDTO extends RepresentationModel<SubscriptionCon
     private Long id;
     private VehicleSummaryDTO vehicle;
     @JsonIgnore
-    private PlanDTO plan;
+    private PlanSummaryDTO plan;
+    private Long pId;
     private LocalDate startDate;
     private LocalDate endDate;
     private SubscripionStatus status = SubscripionStatus.ACTIVE;
@@ -28,14 +29,17 @@ public class SubscriptionContractDTO extends RepresentationModel<SubscriptionCon
 
     public SubscriptionContractDTO() {}
 
-    public SubscriptionContractDTO(Long id, VehicleSummaryDTO vehicle, PlanDTO plan, LocalDate startDate, LocalDate endDate, SubscripionStatus status, OwnerSummaryDTO owner) {
+    public SubscriptionContractDTO(Long id, VehicleSummaryDTO vehicle, PlanSummaryDTO plan, Long pId, LocalDate startDate, LocalDate endDate, SubscripionStatus status, OwnerSummaryDTO owner, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.vehicle = vehicle;
         this.plan = plan;
+        this.pId = pId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
         this.owner = owner;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Long getId() {
@@ -46,12 +50,20 @@ public class SubscriptionContractDTO extends RepresentationModel<SubscriptionCon
         this.id = id;
     }
 
-    public PlanDTO getPlan() {
+    public PlanSummaryDTO getPlan() {
         return plan;
     }
 
-    public void setPlan(PlanDTO plan) {
+    public void setPlan(PlanSummaryDTO plan) {
         this.plan = plan;
+    }
+
+    public Long getpId() {
+        return pId;
+    }
+
+    public void setpId(Long pId) {
+        this.pId = pId;
     }
 
     public SubscripionStatus getStatus() {
