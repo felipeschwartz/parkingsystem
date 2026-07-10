@@ -243,13 +243,14 @@ public class DevDatabaseSeeder implements CommandLineRunner {
 
     private UserIndividual newIndividual(
             String phone, String email, Address address,
-            UserType user, String cpf, String firstName, String lastName,
+            UserType type, String cpf, String firstName, String lastName,
             LocalDate birthDate, String encodedPassword, LocalDateTime now
     ) {
         UserIndividual oi = new UserIndividual();
         oi.setPhone(phone);
         oi.setEmail(email);
         oi.setAddress(address);
+        oi.setUserType(type);
         oi.setCpf(cpf);
         oi.setFirstName(firstName);
         oi.setLastName(lastName);
@@ -262,13 +263,14 @@ public class DevDatabaseSeeder implements CommandLineRunner {
 
     private UserEntity newEntity(
             String phone, String email, Address address,
-            UserType parking, String cnpj, String billingContact, String corporateName,
+            UserType type, String cnpj, String billingContact, String corporateName,
             String fantasyName, String encodedPassword, LocalDateTime now
     ) {
         UserEntity oe = new UserEntity();
         oe.setPhone(phone);
         oe.setEmail(email);
         oe.setAddress(address);
+        oe.setUserType(type);
         oe.setCnpj(cnpj);
         oe.setBillingContact(billingContact);
         oe.setCorporateName(corporateName);
