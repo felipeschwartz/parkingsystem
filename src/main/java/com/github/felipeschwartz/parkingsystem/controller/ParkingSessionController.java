@@ -67,24 +67,24 @@ public class ParkingSessionController {
     // UPDATE - CLOSE SESSION
 
     @PutMapping(
-            value = "/close/{sessionId}",
+            value = "/close/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<ParkingSessionDTO> closeSession(
-            @PathVariable Long sessionId,
+            @PathVariable Long id,
             @RequestBody(required = false) CloseSessionRequestDTO request
     ) {
         LocalDateTime exitTime = (request != null) ? request.exitTime() : null;
-        ParkingSessionDTO closedSession = sessionService.closeSession(sessionId, exitTime);
+        ParkingSessionDTO closedSession = sessionService.closeSession(id, exitTime);
         return ResponseEntity.ok(closedSession);
     }
 
     // READ SESSIONS
 
-    @GetMapping(value = "/{sessionId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ParkingSessionDTO> findById(@PathVariable Long sessionId) {
-        ParkingSessionDTO session = sessionService.findById(sessionId);
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ParkingSessionDTO> findById(@PathVariable Long id) {
+        ParkingSessionDTO session = sessionService.findById(id);
         return ResponseEntity.ok(session);
     }
 

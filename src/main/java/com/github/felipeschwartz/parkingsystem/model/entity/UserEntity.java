@@ -1,10 +1,12 @@
 package com.github.felipeschwartz.parkingsystem.model.entity;
 
+import com.github.felipeschwartz.parkingsystem.model.enums.UserType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user_entities")
@@ -28,9 +30,8 @@ public class UserEntity extends User implements Serializable {
     public UserEntity() {
     }
 
-    public UserEntity(Long id, String phone, String email, String cnpj, String billingContact, String corporateName,
-                      String fantasyName, Address address, String password) {
-        super(id, phone, email, address, password);
+    public UserEntity(Long id, String phone, String email, Address address, UserType userType, LocalDateTime createdAt, LocalDateTime updatedAt, String password, String cnpj, String billingContact, String corporateName, String fantasyName) {
+        super(id, phone, email, address, userType, createdAt, updatedAt, password);
         this.cnpj = cnpj;
         this.billingContact = billingContact;
         this.corporateName = corporateName;

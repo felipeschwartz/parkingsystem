@@ -62,14 +62,15 @@ public class DevDatabaseSeeder implements CommandLineRunner {
 
         // ---------- Users (3 Individuals + 3 Entities) ----------
         List<UserIndividual> individuals = new ArrayList<>();
-        individuals.add(newIndividual("11911110001", "pf1@teste.com", addr1, "11111111111", "Ana", "Silva", LocalDate.of(1994, 1, 10), encodedDefaultPassword, now));
-        individuals.add(newIndividual("11911110002", "pf2@teste.com", addr2, "22222222222", "Bruno", "Souza", LocalDate.of(1990, 5, 20), encodedDefaultPassword, now));
-        individuals.add(newIndividual("11911110003", "pf3@teste.com", addr3, "33333333333", "Carla", "Oliveira", LocalDate.of(1988, 9, 5), encodedDefaultPassword, now));
+        individuals.add(newIndividual("11911110001", "pf1@teste.com", addr1, UserType.USER, "11111111111", "Ana", "Silva", LocalDate.of(1994, 1, 10), encodedDefaultPassword, now));
+        individuals.add(newIndividual("11911110002", "pf2@teste.com", addr2, UserType.USER, "22222222222", "Bruno", "Souza", LocalDate.of(1990, 5, 20), encodedDefaultPassword, now));
+        individuals.add(newIndividual("11911110003", "pf3@teste.com", addr3, UserType.USER, "33333333333", "Carla", "Oliveira", LocalDate.of(1988, 9, 5), encodedDefaultPassword, now));
+
 
         List<UserEntity> entities = new ArrayList<>();
-        entities.add(newEntity("11333330001", "pj1@teste.com", addr4, "11111111000111", "Financeiro", "Empresa Alpha LTDA", "Alpha", encodedDefaultPassword, now));
-        entities.add(newEntity("11333330002", "pj2@teste.com", addr5, "22222222000122", "Contas", "Empresa Beta SA", "Beta", encodedDefaultPassword, now));
-        entities.add(newEntity("11333330003", "pj3@teste.com", addr6, "33333333000133", "Billing", "Empresa Gama ME", "Gama", encodedDefaultPassword, now));
+        entities.add(newEntity("11333330001", "pj1@teste.com", addr4, UserType.PARKING,"11111111000111", "Financeiro", "Empresa Alpha LTDA", "Alpha", encodedDefaultPassword, now));
+        entities.add(newEntity("11333330002", "pj2@teste.com", addr5, UserType.PARKING_MANAGER, "22222222000122", "Contas", "Empresa Beta SA", "Beta", encodedDefaultPassword, now));
+        entities.add(newEntity("11333330003", "pj3@teste.com", addr6, UserType.PARKING, "33333333000133", "Billing", "Empresa Gama ME", "Gama", encodedDefaultPassword, now));
 
         individuals.forEach(em::persist);
         entities.forEach(em::persist);
@@ -242,7 +243,7 @@ public class DevDatabaseSeeder implements CommandLineRunner {
 
     private UserIndividual newIndividual(
             String phone, String email, Address address,
-            String cpf, String firstName, String lastName,
+            UserType user, String cpf, String firstName, String lastName,
             LocalDate birthDate, String encodedPassword, LocalDateTime now
     ) {
         UserIndividual oi = new UserIndividual();
@@ -261,7 +262,7 @@ public class DevDatabaseSeeder implements CommandLineRunner {
 
     private UserEntity newEntity(
             String phone, String email, Address address,
-            String cnpj, String billingContact, String corporateName,
+            UserType parking, String cnpj, String billingContact, String corporateName,
             String fantasyName, String encodedPassword, LocalDateTime now
     ) {
         UserEntity oe = new UserEntity();

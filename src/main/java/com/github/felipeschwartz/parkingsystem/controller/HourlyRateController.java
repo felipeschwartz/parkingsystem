@@ -47,7 +47,7 @@ public class HourlyRateController {
     }
 
     @PutMapping(
-            value = "/{id}", // Adicionado path variable para o ID
+            value = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )

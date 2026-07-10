@@ -142,6 +142,7 @@ public class UserService {
                     if (updated.getLastName() != null) individual.setLastName(updated.getLastName());
                     if (updated.getBirthDate() != null) individual.setBirthDate(updated.getBirthDate());
                     if (updated.getAddress() != null) individual.setAddress(addressMapper.toEntity(updated.getAddress()));
+                    if (updated.getUserType() != null) individual.setUserType(updated.getUserType());
                     UserIndividual updatedUser = userIndividualRepository.save(individual);
                     return individualMapper.toDTO(updatedUser);
                 });
@@ -158,6 +159,7 @@ public class UserService {
                     if (updated.getCorporateName() != null) entity.setCorporateName(updated.getCorporateName());
                     if (updated.getFantasyName() != null) entity.setFantasyName(updated.getFantasyName());
                     if (updated.getAddress() != null) entity.setAddress(addressMapper.toEntity(updated.getAddress()));
+                    if (updated.getUserType() != null) entity.setUserType(updated.getUserType());
                     UserEntity updatedUser = userEntityRepository.save(entity);
                     return entityMapper.toDTO(updatedUser);
                 });
