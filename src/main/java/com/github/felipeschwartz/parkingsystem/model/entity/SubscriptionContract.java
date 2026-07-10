@@ -1,17 +1,15 @@
 package com.github.felipeschwartz.parkingsystem.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
 import com.github.felipeschwartz.parkingsystem.model.enums.SubscripionStatus;
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import java.util.Objects;
 
 @Entity
@@ -54,11 +52,11 @@ public class SubscriptionContract implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
-            name = "owner_id",
+            name = "user_id",
             nullable = false,
-            foreignKey = @ForeignKey(name = "fk_subscription_contract_owner")
+            foreignKey = @ForeignKey(name = "fk_subscription_contract_user")
     )
-    private Owner owner;
+    private User user;
 
     @Column
     @CreationTimestamp
@@ -70,14 +68,14 @@ public class SubscriptionContract implements Serializable {
 
     public SubscriptionContract() {}
 
-    public SubscriptionContract(Long id, Vehicle vehicle, Plan plan, LocalDate startDate, LocalDate endDate, SubscripionStatus status, Owner owner) {
+    public SubscriptionContract(Long id, Vehicle vehicle, Plan plan, LocalDate startDate, LocalDate endDate, SubscripionStatus status, User user) {
         this.id = id;
         this.vehicle = vehicle;
         this.plan = plan;
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
-        this.owner = owner;
+        this.user = user;
     }
 
     public Long getId() {
@@ -120,12 +118,12 @@ public class SubscriptionContract implements Serializable {
         this.endDate = endDate;
     }
 
-    public Owner getOwner() {
-        return owner;
+    public User getUser() {
+        return user;
     }
 
-    public void setOwner(Owner owner) {
-        this.owner = owner;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Vehicle getVehicle() {

@@ -1,8 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
 import org.springframework.hateoas.RepresentationModel;
-import com.github.felipeschwartz.parkingsystem.model.entity.Address;
-import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -10,7 +8,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public abstract class OwnerDTO<T extends OwnerDTO<T>> extends RepresentationModel<T> implements Serializable {
+public abstract class UserDTO<T extends UserDTO<T>> extends RepresentationModel<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
@@ -21,10 +19,10 @@ public abstract class OwnerDTO<T extends OwnerDTO<T>> extends RepresentationMode
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    protected OwnerDTO() {
+    protected UserDTO() {
     }
 
-    public OwnerDTO(Long id, String phone, String email, AddressDTO address) {
+    public UserDTO(Long id, String phone, String email, AddressDTO address) {
         this.id = id;
         this.phone = phone;
         this.email = email;
@@ -54,8 +52,8 @@ public abstract class OwnerDTO<T extends OwnerDTO<T>> extends RepresentationMode
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof OwnerDTO owner)) return false;
-        return Objects.equals(getId(), owner.getId());
+        if (!(o instanceof UserDTO user)) return false;
+        return Objects.equals(getId(), user.getId());
     }
 
     @Override

@@ -16,7 +16,7 @@ public class ControllerExceptionHandler {
                 System.currentTimeMillis(),
                 status.value(),
                 "Not Found", // Mensagem de erro genérica para o tipo de erro
-                e.getMessage(), // Mensagem específica da exceção (e.g., "Owner not found: 123")
+                e.getMessage(), // Mensagem específica da exceção (e.g., "User not found: 123")
                 request.getRequestURI()
         );
         return ResponseEntity.status(status).body(err);

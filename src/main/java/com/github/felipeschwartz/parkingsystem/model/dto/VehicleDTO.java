@@ -16,7 +16,7 @@ public class VehicleDTO extends RepresentationModel<VehicleDTO> implements Seria
     private Long id;
     private String licensePlate;
     private VehicleType type;
-    private OwnerSummaryDTO owner;
+    private UserSummaryDTO user;
     private Set<SubscriptionContractDTO> subscriptionContracts = new HashSet<>();
     private Set<ParkingSessionDTO> sessions = new HashSet<>();
     private LocalDateTime createdAt;
@@ -25,11 +25,11 @@ public class VehicleDTO extends RepresentationModel<VehicleDTO> implements Seria
     public VehicleDTO() {
     }
 
-    public VehicleDTO(Long id, String licensePlate, VehicleType type, OwnerSummaryDTO owner) {
+    public VehicleDTO(Long id, String licensePlate, VehicleType type, UserSummaryDTO user) {
         this.id = id;
         this.licensePlate = licensePlate;
         this.type = type;
-        this.owner = owner;
+        this.user = user;
     }
 
     public Long getId() {
@@ -56,12 +56,12 @@ public class VehicleDTO extends RepresentationModel<VehicleDTO> implements Seria
         this.type = type;
     }
 
-    public OwnerSummaryDTO getOwner() {
-        return owner;
+    public UserSummaryDTO getUser() {
+        return user;
     }
 
-    public void setOwner(OwnerSummaryDTO owner) {
-        this.owner = owner;
+    public void setUser(UserSummaryDTO user) {
+        this.user = user;
     }
 
     public Set<SubscriptionContractDTO> getSubscriptionContracts() {

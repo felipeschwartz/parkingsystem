@@ -1,45 +1,43 @@
 package com.github.felipeschwartz.parkingsystem.mapper;
 
-import com.github.felipeschwartz.parkingsystem.model.dto.OwnerSummaryDTO;
-import com.github.felipeschwartz.parkingsystem.model.entity.Owner;
-import com.github.felipeschwartz.parkingsystem.model.entity.OwnerEntity;
-import com.github.felipeschwartz.parkingsystem.model.entity.OwnerIndividual;
+import com.github.felipeschwartz.parkingsystem.model.dto.UserSummaryDTO;
+import com.github.felipeschwartz.parkingsystem.model.entity.*;
 import org.mapstruct.*;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface OwnerSummaryMapper {
+public interface UserSummaryMapper {
 
-    @Named("ownerToSummaryDTO")
+    @Named("userToSummaryDTO")
     @Mapping(target = "cpf", ignore = true) // Ignorar para que seja preenchido no @AfterMapping
     @Mapping(target = "cnpj", ignore = true) // Ignorar para que seja preenchido no @AfterMapping
-    OwnerSummaryDTO ownerToSummaryDTO(Owner owner);
+    UserSummaryDTO userToSummaryDTO(User user);
 
     @AfterMapping
-    default void fillPolymorphicFields(@MappingTarget OwnerSummaryDTO dto, Owner owner) {
-        if (owner instanceof OwnerIndividual individual) {
+    default void fillPolymorphicFields(@MappingTarget UserSummaryDTO dto, User user) {
+        if (user instanceof UserIndividual individual) {
             dto.setCpf(individual.getCpf());
-        } else if (owner instanceof OwnerEntity entity) {
+        } else if (user instanceof UserEntity entity) {
             dto.setCnpj(entity.getCnpj());
         }
     }
 
-    @Named("summaryDTOToOwner")
+    @Named("summaryDTOToUser")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "address", ignore = true)
     @Mapping(target = "vehicles", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    Owner summaryDTOToOwner(OwnerSummaryDTO dto);
+    User summaryDTOToUser(UserSummaryDTO dto);
 
     @ObjectFactory
-    default Owner createOwner(OwnerSummaryDTO dto) {
+    default User createUser(UserSummaryDTO dto) {
         if (dto.getCpf() != null && !dto.getCpf().isBlank()) {
-            return new OwnerIndividual();
+            return new UserIndividual();
         } else if (dto.getCnpj() != null && !dto.getCnpj().isBlank()) {
-            return new OwnerEntity();
+            return new UserEntity();
         }
-        throw new IllegalArgumentException("OwnerSummaryDTO must contain either CPF or CNPJ to create an Owner entity.");
+        throw new IllegalArgumentException("UserSummaryDTO must contain either CPF or CNPJ to create an User entity.");
     }
 
     @Named("summaryDTOToIndividual")
@@ -49,7 +47,7 @@ public interface OwnerSummaryMapper {
     @Mapping(target = "vehicles", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    OwnerIndividual summaryDTOToIndividual(OwnerSummaryDTO dto);
+    UserIndividual summaryDTOToIndividual(UserSummaryDTO dto);
 
     @Named("summaryDTOToEntity")
     @Mapping(target = "id", ignore = true)
@@ -58,5 +56,5 @@ public interface OwnerSummaryMapper {
     @Mapping(target = "vehicles", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    OwnerEntity summaryDTOToEntity(OwnerSummaryDTO dto);
+    UserEntity summaryDTOToEntity(UserSummaryDTO dto);
 }

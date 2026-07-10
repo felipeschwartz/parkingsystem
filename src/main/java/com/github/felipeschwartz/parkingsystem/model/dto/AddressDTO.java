@@ -1,8 +1,5 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-
 public class AddressDTO {
 
     private String street;

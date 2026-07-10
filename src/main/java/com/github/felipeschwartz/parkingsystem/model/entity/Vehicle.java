@@ -1,13 +1,16 @@
 package com.github.felipeschwartz.parkingsystem.model.entity;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table
@@ -28,11 +31,11 @@ public class Vehicle implements Serializable {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(
-            name = "owner_id",
+            name = "user_id",
             nullable = true,
-            foreignKey = @ForeignKey(name = "fk_vehicle_owner")
+            foreignKey = @ForeignKey(name = "fk_vehicle_user")
     )
-    private Owner owner;
+    private User user;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -53,11 +56,11 @@ public class Vehicle implements Serializable {
     public Vehicle() {
     }
 
-    public Vehicle(Long id, String licensePlate, VehicleType type, Owner owner) {
+    public Vehicle(Long id, String licensePlate, VehicleType type, User user) {
         this.id = id;
         this.licensePlate = licensePlate;
         this.type = type;
-        this.owner = owner;
+        this.user = user;
     }
 
     public Long getId() {
@@ -84,12 +87,12 @@ public class Vehicle implements Serializable {
         this.type = type;
     }
 
-    public Owner getOwner() {
-        return owner;
+    public User getUser() {
+        return user;
     }
 
-    public void setOwner(Owner owner) {
-        this.owner = owner;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Set<SubscriptionContract> getSubscriptionContracts() {

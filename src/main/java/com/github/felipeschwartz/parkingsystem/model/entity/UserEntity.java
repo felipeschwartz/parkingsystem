@@ -1,11 +1,14 @@
 package com.github.felipeschwartz.parkingsystem.model.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
 import java.io.Serializable;
 
 @Entity
-@Table(name = "owner_entities")
-public class OwnerEntity extends Owner implements Serializable {
+@Table(name = "user_entities")
+public class UserEntity extends User implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(nullable = false, unique = true, length = 14)
@@ -22,11 +25,11 @@ public class OwnerEntity extends Owner implements Serializable {
 
 
 
-    public OwnerEntity() {
+    public UserEntity() {
     }
 
-    public OwnerEntity(Long id, String phone, String email, String cnpj, String billingContact, String corporateName,
-                       String fantasyName, Address address, String password) {
+    public UserEntity(Long id, String phone, String email, String cnpj, String billingContact, String corporateName,
+                      String fantasyName, Address address, String password) {
         super(id, phone, email, address, password);
         this.cnpj = cnpj;
         this.billingContact = billingContact;

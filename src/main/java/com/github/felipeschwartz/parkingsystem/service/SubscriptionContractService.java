@@ -3,11 +3,8 @@ package com.github.felipeschwartz.parkingsystem.service;
 import com.github.felipeschwartz.parkingsystem.mapper.CycleAvoidingMappingContext;
 import com.github.felipeschwartz.parkingsystem.mapper.SubscriptionContractMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.SubscriptionContractDTO;
-import com.github.felipeschwartz.parkingsystem.model.entity.Owner;
-import com.github.felipeschwartz.parkingsystem.model.entity.Plan;
-import com.github.felipeschwartz.parkingsystem.model.entity.SubscriptionContract;
-import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
-import com.github.felipeschwartz.parkingsystem.repository.OwnerRepository;
+import com.github.felipeschwartz.parkingsystem.model.entity.*;
+import com.github.felipeschwartz.parkingsystem.repository.UserRepository;
 import com.github.felipeschwartz.parkingsystem.repository.PlanRepository;
 import com.github.felipeschwartz.parkingsystem.repository.SubscriptionContractRepository;
 import com.github.felipeschwartz.parkingsystem.repository.VehicleRepository;
@@ -19,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,21 +30,21 @@ public class SubscriptionContractService {
     private final CycleAvoidingMappingContext context;
     private final PlanRepository planRepository;
     private final VehicleRepository vehicleRepository;
-    private final OwnerRepository ownerRepository;
+    private final UserRepository userRepository;
 
-    public SubscriptionContractService(SubscriptionContractRepository subscriptionContractRepository, SubscriptionContractMapper subscriptionContractMapper, CycleAvoidingMappingContext context, PlanRepository planRepository, VehicleRepository vehicleRepository, OwnerRepository ownerRepository) {
+    public SubscriptionContractService(SubscriptionContractRepository subscriptionContractRepository, SubscriptionContractMapper subscriptionContractMapper, CycleAvoidingMappingContext context, PlanRepository planRepository, VehicleRepository vehicleRepository, UserRepository userRepository) {
         this.subscriptionContractRepository = subscriptionContractRepository;
         this.subscriptionContractMapper = subscriptionContractMapper;
         this.context = context;
         this.planRepository = planRepository;
         this.vehicleRepository = vehicleRepository;
-        this.ownerRepository = ownerRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional(readOnly = true)
     public List<SubscriptionContractDTO> findAll() {
         logger.info("Finding all Subscription contracts records");
-        List<SubscriptionContract> contracts = subscriptionContractRepository.findAllWithOwners();
+        List<SubscriptionContract> contracts = subscriptionContractRepository.findAllWithUsers();
         return contracts.stream()
                 .map(subscriptionContract -> subscriptionContractMapper.toDTO(subscriptionContract, context))
                 .collect(Collectors.toList());
@@ -70,12 +66,12 @@ public class SubscriptionContractService {
                 .orElseThrow(() -> new ObjectNotFoundException("Plan with id " + dto.getpId() + " not found!"));
         Vehicle vehicle = vehicleRepository.findById(dto.getVehicle().getId())
                 .orElseThrow(() -> new ObjectNotFoundException("Vehicle with id " + dto.getVehicle().getId() + " not found!"));
-        Owner owner = ownerRepository.findById(dto.getOwner().getId())
-                .orElseThrow(() -> new ObjectNotFoundException("Owner with id " + dto.getOwner().getId() + " not found!"));
+        User user = userRepository.findById(dto.getUser().getId())
+                .orElseThrow(() -> new ObjectNotFoundException("User with id " + dto.getUser().getId() + " not found!"));
         SubscriptionContract subscriptionToSave = subscriptionContractMapper.toEntity(dto);
         subscriptionToSave.setPlan(plan);
         subscriptionToSave.setVehicle(vehicle);
-        subscriptionToSave.setOwner(owner);
+        subscriptionToSave.setUser(user);
         SubscriptionContract savedSubscription =  subscriptionContractRepository.save(subscriptionToSave);
         Set<SubscriptionContract> currentContracts = plan.getSubscriptionContracts();
         if (currentContracts == null) {

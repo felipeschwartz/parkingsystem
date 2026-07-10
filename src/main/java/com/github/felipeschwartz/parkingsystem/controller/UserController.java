@@ -1,16 +1,16 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import com.github.felipeschwartz.parkingsystem.model.dto.UserIndividualDTO;
+import com.github.felipeschwartz.parkingsystem.model.entity.UserIndividual;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.github.felipeschwartz.parkingsystem.model.dto.OwnerDTO;
-import com.github.felipeschwartz.parkingsystem.model.dto.OwnerEntityDTO;
-import com.github.felipeschwartz.parkingsystem.model.dto.OwnerIndividualDTO;
-import com.github.felipeschwartz.parkingsystem.model.entity.OwnerEntity;
-import com.github.felipeschwartz.parkingsystem.model.entity.OwnerIndividual;
-import com.github.felipeschwartz.parkingsystem.service.OwnerService;
+import com.github.felipeschwartz.parkingsystem.model.dto.UserDTO;
+import com.github.felipeschwartz.parkingsystem.model.dto.UserEntityDTO;
+import com.github.felipeschwartz.parkingsystem.model.entity.UserEntity;
+import com.github.felipeschwartz.parkingsystem.service.UserService;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -18,39 +18,39 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/owner")
-public class OwnerController {
+@RequestMapping("/user")
+public class UserController {
 
-    private final OwnerService service;
+    private final UserService service;
 
-    public OwnerController(OwnerService service) {
+    public UserController(UserService service) {
         this.service = service;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<OwnerDTO>> findAll() {
-        List<OwnerDTO> owners = service.findAll();
-        return ResponseEntity.ok(owners);
+    public ResponseEntity<List<UserDTO>> findAll() {
+        List<UserDTO> users = service.findAll();
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OwnerDTO> findById(@PathVariable Long id) {
-        return service.findOwnerById(id)
-                .map(ownerDTO -> new ResponseEntity<>(ownerDTO, HttpStatus.OK))
+    public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
+        return service.findUserById(id)
+                .map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping(value = "/cpf/{cpf}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OwnerIndividualDTO> findByCpf(@PathVariable String cpf) {
-        return service.findOwnerByCpf(cpf)
-                .map(ownerIndividualDTO -> new ResponseEntity<>(ownerIndividualDTO, HttpStatus.OK))
+    public ResponseEntity<UserIndividualDTO> findByCpf(@PathVariable String cpf) {
+        return service.findUserByCpf(cpf)
+                .map(userIndividualDTO -> new ResponseEntity<>(userIndividualDTO, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping(value = "/cnpj/{cnpj}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OwnerEntityDTO> findByCnpj(@PathVariable String cnpj) {
-        return service.findOwnerByCnpj(cnpj)
-                .map(ownerEntityDTO -> new ResponseEntity<>(ownerEntityDTO, HttpStatus.OK))
+    public ResponseEntity<UserEntityDTO> findByCnpj(@PathVariable String cnpj) {
+        return service.findUserByCnpj(cnpj)
+                .map(userEntityDTO -> new ResponseEntity<>(userEntityDTO, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
@@ -59,8 +59,8 @@ public class OwnerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OwnerEntityDTO> createEntity(@RequestBody @Valid OwnerEntity entity) {
-        OwnerEntityDTO createdEntity = service.createEntity(entity);
+    public ResponseEntity<UserEntityDTO> createEntity(@RequestBody @Valid UserEntity entity) {
+        UserEntityDTO createdEntity = service.createEntity(entity);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(createdEntity.getId())
@@ -73,8 +73,8 @@ public class OwnerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OwnerIndividualDTO> createIndividual(@RequestBody @Valid OwnerIndividual individual) {
-        OwnerIndividualDTO createdIndividual = service.createIndividual(individual);
+    public ResponseEntity<UserIndividualDTO> createIndividual(@RequestBody @Valid UserIndividual individual) {
+        UserIndividualDTO createdIndividual = service.createIndividual(individual);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}") // CORRIGIDO: Adicionado o fechamento da chave
                 .buildAndExpand(createdIndividual.getId())
@@ -87,9 +87,9 @@ public class OwnerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OwnerIndividualDTO> updateIndividuals(@PathVariable Long id, @RequestBody @Valid OwnerIndividualDTO updatedIndividual) {
-        Optional<OwnerIndividualDTO> updatedOwner = service.updateIndividual(id, updatedIndividual);
-        return updatedOwner.map(ownerIndividualDTO -> new ResponseEntity<>(ownerIndividualDTO, HttpStatus.OK))
+    public ResponseEntity<UserIndividualDTO> updateIndividuals(@PathVariable Long id, @RequestBody @Valid UserIndividualDTO updatedIndividual) {
+        Optional<UserIndividualDTO> updatedUser = service.updateIndividual(id, updatedIndividual);
+        return updatedUser.map(userIndividualDTO -> new ResponseEntity<>(userIndividualDTO, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
@@ -98,9 +98,9 @@ public class OwnerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OwnerEntityDTO> updateEntities(@PathVariable Long id, @RequestBody @Valid OwnerEntityDTO updatedEntity) {
-        Optional<OwnerEntityDTO> updatedOwner = service.updateEntity(id, updatedEntity);
-        return updatedOwner.map(ownerEntityDTO -> new ResponseEntity<>(ownerEntityDTO, HttpStatus.OK))
+    public ResponseEntity<UserEntityDTO> updateEntities(@PathVariable Long id, @RequestBody @Valid UserEntityDTO updatedEntity) {
+        Optional<UserEntityDTO> updatedUser = service.updateEntity(id, updatedEntity);
+        return updatedUser.map(userEntityDTO -> new ResponseEntity<>(userEntityDTO, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 

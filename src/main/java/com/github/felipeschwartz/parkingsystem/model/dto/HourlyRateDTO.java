@@ -20,7 +20,8 @@ public class HourlyRateDTO implements Serializable {
     public HourlyRateDTO() {
     }
 
-    public HourlyRateDTO(VehicleType vehicleType, BigDecimal ratePerHour, Boolean active) {
+    public HourlyRateDTO(Long id, VehicleType vehicleType, BigDecimal ratePerHour, Boolean active) {
+        this.id = id;
         this.vehicleType = vehicleType;
         this.ratePerHour = ratePerHour;
         this.active = active;

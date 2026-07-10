@@ -83,7 +83,7 @@ public class VehicleService {
 
         if (updated.getLicensePlate() != null) vehicle.setLicensePlate(updated.getLicensePlate());
         if (updated.getType() != null) vehicle.setType(updated.getType());
-        if (updated.getOwner() != null) vehicle.setOwner(updated.getOwner());
+        if (updated.getUser() != null) vehicle.setUser(updated.getUser());
 
         vehicle.setUpdatedAt(LocalDateTime.now());
         return vehicleMapper.toDTO(vehicleRepository.save(vehicle));

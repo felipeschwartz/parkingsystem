@@ -1,9 +1,8 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
-import org.springframework.hateoas.RepresentationModel;
-import com.github.felipeschwartz.parkingsystem.model.entity.ParkingSession;
 import com.github.felipeschwartz.parkingsystem.model.enums.PaymentMethod;
 import com.github.felipeschwartz.parkingsystem.model.enums.PaymentStatus;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

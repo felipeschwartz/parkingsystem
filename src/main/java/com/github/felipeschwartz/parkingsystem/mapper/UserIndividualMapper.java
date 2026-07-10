@@ -1,7 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.mapper;
 
-import com.github.felipeschwartz.parkingsystem.model.dto.OwnerEntityDTO;
-import com.github.felipeschwartz.parkingsystem.model.entity.OwnerEntity;
+import com.github.felipeschwartz.parkingsystem.model.dto.UserIndividualDTO;
+import com.github.felipeschwartz.parkingsystem.model.entity.UserIndividual;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -10,9 +10,9 @@ import org.mapstruct.MappingConstants;
         componentModel = MappingConstants.ComponentModel.SPRING,
         uses = { AddressMapper.class, VehicleMapper.class }
 )
-public interface OwnerEntityMapper {
-    OwnerEntityDTO toDTO(OwnerEntity entity);
+public interface UserIndividualMapper {
+    UserIndividualDTO toDTO(UserIndividual entity);
 
     @Mapping(target = "id", ignore = true)
-    OwnerEntity toEntity(OwnerEntityDTO dto);
+    UserIndividual toEntity(UserIndividualDTO dto);
 }

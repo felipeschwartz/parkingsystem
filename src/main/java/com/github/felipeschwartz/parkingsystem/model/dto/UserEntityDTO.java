@@ -1,12 +1,12 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
-public class OwnerEntityDTO extends OwnerDTO<OwnerEntityDTO> {
+public class UserEntityDTO extends UserDTO<UserEntityDTO> {
     private String cnpj;
     private String billingContact;
     private String corporateName;
     private String fantasyName;
 
-    public OwnerEntityDTO() {
+    public UserEntityDTO() {
     }
 
     public String getCnpj() {

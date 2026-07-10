@@ -21,7 +21,7 @@ import java.util.List;
 @Profile("dev")
 public class DevDatabaseSeeder implements CommandLineRunner {
 
-    private static final String DEFAULT_OWNER_PASSWORD = "owner123";
+    private static final String DEFAULT_USER_PASSWORD = "user123";
 
     @PersistenceContext
     private EntityManager em;
@@ -35,13 +35,13 @@ public class DevDatabaseSeeder implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        // Seed idempotente: se já existe Owner, assume que já populou.
-        if (count("Owner") > 0) return;
+        // Seed idempotente: se já existe User, assume que já populou.
+        if (count("User") > 0) return;
 
         LocalDateTime now = LocalDateTime.now();
         LocalDate today = LocalDate.now();
 
-        String encodedDefaultPassword = passwordEncoder.encode(DEFAULT_OWNER_PASSWORD);
+        String encodedDefaultPassword = passwordEncoder.encode(DEFAULT_USER_PASSWORD);
 
         // ---------- Helpers de enums (evita depender de nomes específicos) ----------
         VehicleType[] vehicleTypes = VehicleType.values();
@@ -60,13 +60,13 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         Address addr5 = new Address("Av. Brasil", "777", "Sala 12", "Belo Horizonte", "MG", "30000-000", "BR");
         Address addr6 = new Address("Rua Central", "999", "Bloco B", "Florianópolis", "SC", "88000-000", "BR");
 
-        // ---------- Owners (3 Individuals + 3 Entities) ----------
-        List<OwnerIndividual> individuals = new ArrayList<>();
+        // ---------- Users (3 Individuals + 3 Entities) ----------
+        List<UserIndividual> individuals = new ArrayList<>();
         individuals.add(newIndividual("11911110001", "pf1@teste.com", addr1, "11111111111", "Ana", "Silva", LocalDate.of(1994, 1, 10), encodedDefaultPassword, now));
         individuals.add(newIndividual("11911110002", "pf2@teste.com", addr2, "22222222222", "Bruno", "Souza", LocalDate.of(1990, 5, 20), encodedDefaultPassword, now));
         individuals.add(newIndividual("11911110003", "pf3@teste.com", addr3, "33333333333", "Carla", "Oliveira", LocalDate.of(1988, 9, 5), encodedDefaultPassword, now));
 
-        List<OwnerEntity> entities = new ArrayList<>();
+        List<UserEntity> entities = new ArrayList<>();
         entities.add(newEntity("11333330001", "pj1@teste.com", addr4, "11111111000111", "Financeiro", "Empresa Alpha LTDA", "Alpha", encodedDefaultPassword, now));
         entities.add(newEntity("11333330002", "pj2@teste.com", addr5, "22222222000122", "Contas", "Empresa Beta SA", "Beta", encodedDefaultPassword, now));
         entities.add(newEntity("11333330003", "pj3@teste.com", addr6, "33333333000133", "Billing", "Empresa Gama ME", "Gama", encodedDefaultPassword, now));
@@ -75,10 +75,10 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         entities.forEach(em::persist);
         em.flush();
 
-        // Junta em lista "Owner" para facilitar
-        List<Owner> owners = new ArrayList<>();
-        owners.addAll(individuals);
-        owners.addAll(entities);
+        // Junta em lista "User" para facilitar
+        List<User> users = new ArrayList<>();
+        users.addAll(individuals);
+        users.addAll(entities);
 
         // ---------- ParkingLots (3) ----------
         ParkingLot lot1 = new ParkingLot(null, "Lot Paulista", addr1, "113000-0001", 100, true, 60, 30, 10);
@@ -162,27 +162,27 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         em.flush();
 
         // ---------- Vehicles (6) ----------
-        // Um veículo por owner (6) => atende min 3 / max 10
+        // Um veículo por user (6) => atende min 3 / max 10
         List<Vehicle> vehicles = new ArrayList<>();
-        vehicles.add(newVehicle("ABC-1001", vehicleTypes[0], owners.get(0), now));
-        vehicles.add(newVehicle("ABC-1002", vehicleTypes[Math.min(1, vehicleTypes.length - 1)], owners.get(1), now));
-        vehicles.add(newVehicle("ABC-1003", vehicleTypes[Math.min(2, vehicleTypes.length - 1)], owners.get(2), now));
-        vehicles.add(newVehicle("XYZ-2001", vehicleTypes[0], owners.get(3), now));
-        vehicles.add(newVehicle("XYZ-2002", vehicleTypes[Math.min(1, vehicleTypes.length - 1)], owners.get(4), now));
-        vehicles.add(newVehicle("XYZ-2003", vehicleTypes[Math.min(2, vehicleTypes.length - 1)], owners.get(5), now));
+        vehicles.add(newVehicle("ABC-1001", vehicleTypes[0], users.get(0), now));
+        vehicles.add(newVehicle("ABC-1002", vehicleTypes[Math.min(1, vehicleTypes.length - 1)], users.get(1), now));
+        vehicles.add(newVehicle("ABC-1003", vehicleTypes[Math.min(2, vehicleTypes.length - 1)], users.get(2), now));
+        vehicles.add(newVehicle("XYZ-2001", vehicleTypes[0], users.get(3), now));
+        vehicles.add(newVehicle("XYZ-2002", vehicleTypes[Math.min(1, vehicleTypes.length - 1)], users.get(4), now));
+        vehicles.add(newVehicle("XYZ-2003", vehicleTypes[Math.min(2, vehicleTypes.length - 1)], users.get(5), now));
 
         vehicles.forEach(em::persist);
         em.flush();
 
         // ---------- SubscriptionContracts (3) ----------
-        // 3 contratos vinculando (vehicle + owner + plan)
-        SubscriptionContract sc1 = new SubscriptionContract(null, vehicles.get(0), plan1, today.minusMonths(2), today.plusMonths(10), SubscripionStatus.ACTIVE, vehicles.get(0).getOwner());
+        // 3 contratos vinculando (vehicle + user + plan)
+        SubscriptionContract sc1 = new SubscriptionContract(null, vehicles.get(0), plan1, today.minusMonths(2), today.plusMonths(10), SubscripionStatus.ACTIVE, vehicles.get(0).getUser());
         sc1.setCreatedAt(now); sc1.setUpdatedAt(now);
 
-        SubscriptionContract sc2 = new SubscriptionContract(null, vehicles.get(3), plan2, today.minusMonths(1), today.plusMonths(11), SubscripionStatus.ACTIVE, vehicles.get(3).getOwner());
+        SubscriptionContract sc2 = new SubscriptionContract(null, vehicles.get(3), plan2, today.minusMonths(1), today.plusMonths(11), SubscripionStatus.ACTIVE, vehicles.get(3).getUser());
         sc2.setCreatedAt(now); sc2.setUpdatedAt(now);
 
-        SubscriptionContract sc3 = new SubscriptionContract(null, vehicles.get(4), plan3, today.minusMonths(3), today.plusMonths(9), SubscripionStatus.ACTIVE, vehicles.get(4).getOwner());
+        SubscriptionContract sc3 = new SubscriptionContract(null, vehicles.get(4), plan3, today.minusMonths(3), today.plusMonths(9), SubscripionStatus.ACTIVE, vehicles.get(4).getUser());
         sc3.setCreatedAt(now); sc3.setUpdatedAt(now);
 
         em.persist(sc1);
@@ -240,12 +240,12 @@ public class DevDatabaseSeeder implements CommandLineRunner {
                 .getSingleResult();
     }
 
-    private OwnerIndividual newIndividual(
+    private UserIndividual newIndividual(
             String phone, String email, Address address,
             String cpf, String firstName, String lastName,
             LocalDate birthDate, String encodedPassword, LocalDateTime now
     ) {
-        OwnerIndividual oi = new OwnerIndividual();
+        UserIndividual oi = new UserIndividual();
         oi.setPhone(phone);
         oi.setEmail(email);
         oi.setAddress(address);
@@ -259,12 +259,12 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         return oi;
     }
 
-    private OwnerEntity newEntity(
+    private UserEntity newEntity(
             String phone, String email, Address address,
             String cnpj, String billingContact, String corporateName,
             String fantasyName, String encodedPassword, LocalDateTime now
     ) {
-        OwnerEntity oe = new OwnerEntity();
+        UserEntity oe = new UserEntity();
         oe.setPhone(phone);
         oe.setEmail(email);
         oe.setAddress(address);
@@ -294,11 +294,11 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         return ps;
     }
 
-    private Vehicle newVehicle(String plate, VehicleType type, Owner owner, LocalDateTime now) {
+    private Vehicle newVehicle(String plate, VehicleType type, User user, LocalDateTime now) {
         Vehicle v = new Vehicle();
         v.setLicensePlate(plate);
         v.setType(type);
-        v.setOwner(owner);
+        v.setUser(user);
         v.setCreatedAt(now);
         v.setUpdatedAt(now);
         return v;

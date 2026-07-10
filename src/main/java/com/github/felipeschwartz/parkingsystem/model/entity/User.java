@@ -12,9 +12,9 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "owner")
+@Table(name = "tb_users")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Owner implements Serializable {
+public abstract class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -28,7 +28,7 @@ public abstract class Owner implements Serializable {
     private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Vehicle> vehicles = new HashSet<>();
 
     @Embedded
@@ -45,10 +45,10 @@ public abstract class Owner implements Serializable {
     @Column(nullable = false)
     private String password;
 
-    protected Owner() {
+    protected User() {
     }
 
-    public Owner(Long id, String phone, String email, Address address, String password) {
+    public User(Long id, String phone, String email, Address address, String password) {
         this.id = id;
         this.phone = phone;
         this.email = email;
@@ -122,8 +122,8 @@ public abstract class Owner implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Owner owner)) return false;
-        return Objects.equals(getId(), owner.getId());
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(getId(), user.getId());
     }
 
     @Override
@@ -146,12 +146,12 @@ public abstract class Owner implements Serializable {
     public void addVehicle(Vehicle v) {
         if (v == null) return;
         vehicles.add(v);
-        v.setOwner(this);
+        v.setUser(this);
     }
 
     public void removeVehicle(Vehicle v) {
         if (v == null) return;
         vehicles.remove(v);
-        v.setOwner(null);
+        v.setUser(null);
     }
 }

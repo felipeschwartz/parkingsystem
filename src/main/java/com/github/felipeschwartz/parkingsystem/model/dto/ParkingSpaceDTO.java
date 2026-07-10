@@ -1,15 +1,12 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
-import org.springframework.hateoas.RepresentationModel;
-import com.github.felipeschwartz.parkingsystem.model.entity.ParkingLot;
-import com.github.felipeschwartz.parkingsystem.model.entity.Reservation;
 import com.github.felipeschwartz.parkingsystem.model.enums.SpaceStatus;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
+import org.springframework.hateoas.RepresentationModel;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 public class ParkingSpaceDTO extends RepresentationModel<ParkingSpaceDTO> implements Serializable {
     private static final long serialVersionUID = 1L;

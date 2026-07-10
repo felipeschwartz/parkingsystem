@@ -1,9 +1,8 @@
 package com.github.felipeschwartz.parkingsystem.model.entity;
 
-import jakarta.persistence.*;
 import com.github.felipeschwartz.parkingsystem.model.converter.VehicleTypeConverter;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
-
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

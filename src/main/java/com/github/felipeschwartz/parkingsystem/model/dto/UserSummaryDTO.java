@@ -1,6 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
-public class OwnerSummaryDTO {
+public class UserSummaryDTO {
 
     private Long id;
     private String phone;

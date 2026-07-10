@@ -10,17 +10,17 @@ import java.util.List;
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
-        uses = { OwnerSummaryMapper.class, SubscriptionContractMapper.class, ParkingSessionMapper.class }
+        uses = { UserSummaryMapper.class, SubscriptionContractMapper.class, ParkingSessionMapper.class }
 )
 public interface VehicleMapper {
 
-    @Mapping(target = "owner", qualifiedByName = {"ownerToSummaryDTO"})
+    @Mapping(target = "user", qualifiedByName = {"userToSummaryDTO"})
     @Mapping(target = "subscriptionContracts", ignore = true)
     @Mapping(target = "sessions", ignore = true)
     VehicleDTO toDTO (Vehicle entity);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "owner", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "subscriptionContracts", ignore = true)
     @Mapping(target = "sessions", ignore = true)
     Vehicle toEntity(VehicleDTO dto);

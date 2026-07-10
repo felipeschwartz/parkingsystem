@@ -1,8 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
 import org.springframework.hateoas.RepresentationModel;
-import com.github.felipeschwartz.parkingsystem.model.entity.Address;
-import com.github.felipeschwartz.parkingsystem.model.entity.ParkingSpace;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

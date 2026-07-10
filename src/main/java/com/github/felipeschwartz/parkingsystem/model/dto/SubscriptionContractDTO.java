@@ -1,15 +1,12 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.hateoas.RepresentationModel;
-import com.github.felipeschwartz.parkingsystem.model.entity.Owner;
-import com.github.felipeschwartz.parkingsystem.model.entity.Plan;
-import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
 import com.github.felipeschwartz.parkingsystem.model.enums.SubscripionStatus;
+import org.springframework.hateoas.RepresentationModel;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import java.util.Objects;
 
 public class SubscriptionContractDTO extends RepresentationModel<SubscriptionContractDTO> implements Serializable {
@@ -23,13 +20,13 @@ public class SubscriptionContractDTO extends RepresentationModel<SubscriptionCon
     private LocalDate startDate;
     private LocalDate endDate;
     private SubscripionStatus status = SubscripionStatus.ACTIVE;
-    private OwnerSummaryDTO owner;
+    private UserSummaryDTO user;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public SubscriptionContractDTO() {}
 
-    public SubscriptionContractDTO(Long id, VehicleSummaryDTO vehicle, PlanSummaryDTO plan, Long pId, LocalDate startDate, LocalDate endDate, SubscripionStatus status, OwnerSummaryDTO owner, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public SubscriptionContractDTO(Long id, VehicleSummaryDTO vehicle, PlanSummaryDTO plan, Long pId, LocalDate startDate, LocalDate endDate, SubscripionStatus status, UserSummaryDTO user, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.vehicle = vehicle;
         this.plan = plan;
@@ -37,7 +34,7 @@ public class SubscriptionContractDTO extends RepresentationModel<SubscriptionCon
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
-        this.owner = owner;
+        this.user = user;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -90,12 +87,12 @@ public class SubscriptionContractDTO extends RepresentationModel<SubscriptionCon
         this.endDate = endDate;
     }
 
-    public OwnerSummaryDTO getOwner() {
-        return owner;
+    public UserSummaryDTO getUser() {
+        return user;
     }
 
-    public void setOwner(OwnerSummaryDTO owner) {
-        this.owner = owner;
+    public void setUser(UserSummaryDTO user) {
+        this.user = user;
     }
 
     public VehicleSummaryDTO getVehicle() {

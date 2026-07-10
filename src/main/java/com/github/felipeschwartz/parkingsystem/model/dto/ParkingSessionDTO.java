@@ -1,8 +1,9 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
-import org.springframework.hateoas.RepresentationModel;
 import com.github.felipeschwartz.parkingsystem.model.enums.SessionStatus;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
+import org.springframework.hateoas.RepresentationModel;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
