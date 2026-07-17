@@ -2,12 +2,13 @@ package com.github.felipeschwartz.parkingsystem.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.felipeschwartz.parkingsystem.model.enums.ReservationStatus;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class ReservationDTO implements Serializable {
+public class ReservationDTO extends RepresentationModel<ReservationDTO> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;

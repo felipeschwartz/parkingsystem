@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import com.github.felipeschwartz.parkingsystem.controller.VehicleController;
 import com.github.felipeschwartz.parkingsystem.model.entity.SubscriptionContract;
 import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
 import org.slf4j.Logger;
@@ -17,6 +18,10 @@ import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFound
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class VehicleService {
@@ -38,7 +43,11 @@ public class VehicleService {
     @Transactional(readOnly = true)
     public List<VehicleDTO> findAll() {
         logger.info("Finding all Vehicles!");
-        return vehicleRepository.findAll().stream().map(vehicleMapper::toDTO).toList();
+        List<VehicleDTO> vehicles = vehicleRepository.findAll().stream()
+                .map(vehicleMapper::toDTO)
+                .collect(Collectors.toList());
+        vehicles.forEach(this::addHateoasLinks);
+        return vehicles;
     }
 
     @Transactional(readOnly = true)
@@ -46,7 +55,9 @@ public class VehicleService {
         logger.info("Finding one Vehicle!");
         Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Vehicle not found: ", id));
-        return vehicleMapper.toDTO(vehicle);
+        VehicleDTO dto = vehicleMapper.toDTO(vehicle);
+        addHateoasLinks(dto);
+        return dto;
 
     }
 
@@ -54,39 +65,41 @@ public class VehicleService {
 
 
     @Transactional
-    public VehicleDTO create(Vehicle vehicle) {
+    public VehicleDTO create(VehicleDTO vehicleDTO) {
         logger.info("Creating one Vehicle!");
-        Objects.requireNonNull(vehicle, "vehicle must not be null.");
+        Objects.requireNonNull(vehicleDTO, "vehicle must not be null.");
 
-        String licencePlate = vehicle.getLicensePlate();
+        String licencePlate = vehicleDTO.getLicensePlate();
         if (licencePlate == null || licencePlate.isBlank()) {
             throw new IllegalArgumentException("Licence Plate must not be blank.");
         }
         if (vehicleRepository.existsByLicensePlate(licencePlate)) {
             throw new IllegalStateException("An Vehicle with this Licence Plate already exists.");
         }
-
+        Vehicle vehicle = vehicleMapper.toEntity(vehicleDTO);
         LocalDateTime now = LocalDateTime.now();
         vehicle.setCreatedAt(now);
         vehicle.setUpdatedAt(now);
-
-        return vehicleMapper.toDTO(vehicleRepository.save(vehicle));
+        VehicleDTO createdDto = vehicleMapper.toDTO(vehicleRepository.save(vehicle));
+        addHateoasLinks(createdDto);
+        return createdDto;
     }
 
     // -------- UPDATE --------
 
     @Transactional
-    public VehicleDTO update(Long id, Vehicle updated) {
+    public VehicleDTO update(VehicleDTO updated) {
         logger.info("Updating one Vehicle!");
-        Vehicle vehicle = vehicleRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Vehicle not found: ", id));
+        Vehicle vehicle = vehicleRepository.findById(updated.getId())
+                .orElseThrow(() -> new ObjectNotFoundException("Vehicle not found: ", updated.getId()));
 
         if (updated.getLicensePlate() != null) vehicle.setLicensePlate(updated.getLicensePlate());
         if (updated.getType() != null) vehicle.setType(updated.getType());
-        if (updated.getUser() != null) vehicle.setUser(updated.getUser());
 
         vehicle.setUpdatedAt(LocalDateTime.now());
-        return vehicleMapper.toDTO(vehicleRepository.save(vehicle));
+        VehicleDTO updatedDto = vehicleMapper.toDTO(vehicleRepository.save(vehicle));
+        addHateoasLinks(updatedDto);
+        return updatedDto;
     }
 
     // -------- DELETE --------
@@ -108,8 +121,9 @@ public class VehicleService {
         logger.info("Finding one Vehicle by Licence Plate!");
         Vehicle vehicle = vehicleRepository.findVehicleByLicensePlate(licensePlate)
                 .orElseThrow(() -> new ObjectNotFoundException("Vehicle ", licensePlate));
-
-        return vehicleMapper.toDTO(vehicle);
+        VehicleDTO dto = vehicleMapper.toDTO(vehicle);
+        addHateoasLinks(dto);
+        return dto;
     }
 
 
@@ -146,6 +160,14 @@ public class VehicleService {
                 .orElseThrow(() -> new NoActiveContractException(licensePlate));
     }
 
+
+    private void addHateoasLinks(VehicleDTO dto) {
+        dto.add(linkTo(methodOn(VehicleController.class).findById(dto.getId())).withSelfRel().withType("GET"));
+        dto.add(linkTo(methodOn(VehicleController.class).findAll()).withRel("findAll").withType("GET"));
+        dto.add(linkTo(methodOn(VehicleController.class).create(dto)).withRel("create").withType("POST"));
+        dto.add(linkTo(methodOn(VehicleController.class).update(dto)).withRel("update").withType("PUT"));
+        dto.add(linkTo(methodOn(VehicleController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
+    }
 
 
 }

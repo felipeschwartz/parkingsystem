@@ -51,8 +51,8 @@ public class HourlyRateController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<HourlyRateDTO> update(@PathVariable Long id, @RequestBody @Valid HourlyRateDTO hourlyRateDTO) {
-        HourlyRateDTO updatedHourlyRate = service.update(id, hourlyRateDTO);
+    public ResponseEntity<HourlyRateDTO> update(@RequestBody @Valid HourlyRateDTO hourlyRateDTO) {
+        HourlyRateDTO updatedHourlyRate = service.update(hourlyRateDTO);
         return ResponseEntity.ok(updatedHourlyRate);
     }
 

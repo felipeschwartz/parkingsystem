@@ -3,6 +3,7 @@ package com.github.felipeschwartz.parkingsystem.model.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.felipeschwartz.parkingsystem.model.enums.UserType;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Collate;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -49,6 +50,11 @@ public abstract class User implements Serializable {
     @Column(nullable = false)
     private String password;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private Set<String> roles = new HashSet<>();
+
     protected User() {
     }
 
@@ -61,6 +67,19 @@ public abstract class User implements Serializable {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.password = password;
+    }
+
+    public User(Long id, String phone, String email, Set<Vehicle> vehicles, Address address, UserType userType, LocalDateTime createdAt, LocalDateTime updatedAt, String password, Set<String> roles) {
+        this.id = id;
+        this.phone = phone;
+        this.email = email;
+        this.vehicles = vehicles;
+        this.address = address;
+        this.userType = userType;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.password = password;
+        this.roles = roles;
     }
 
     public Long getId() {
@@ -133,6 +152,14 @@ public abstract class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 
     @Override

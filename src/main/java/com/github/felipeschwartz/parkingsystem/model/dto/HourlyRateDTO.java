@@ -1,13 +1,14 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class HourlyRateDTO implements Serializable {
+public class HourlyRateDTO extends RepresentationModel<HourlyRateDTO> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;

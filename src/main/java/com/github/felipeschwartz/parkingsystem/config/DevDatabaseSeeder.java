@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @Profile("dev")
@@ -62,15 +63,18 @@ public class DevDatabaseSeeder implements CommandLineRunner {
 
         // ---------- Users (3 Individuals + 3 Entities) ----------
         List<UserIndividual> individuals = new ArrayList<>();
-        individuals.add(newIndividual("11911110001", "pf1@teste.com", addr1, UserType.USER, "11111111111", "Ana", "Silva", LocalDate.of(1994, 1, 10), encodedDefaultPassword, now));
-        individuals.add(newIndividual("11911110002", "pf2@teste.com", addr2, UserType.USER, "22222222222", "Bruno", "Souza", LocalDate.of(1990, 5, 20), encodedDefaultPassword, now));
-        individuals.add(newIndividual("11911110003", "pf3@teste.com", addr3, UserType.USER, "33333333333", "Carla", "Oliveira", LocalDate.of(1988, 9, 5), encodedDefaultPassword, now));
+        individuals.add(newIndividual("11911110001", "pf1@teste.com", addr1, UserType.USER, "11111111111", "Ana", "Silva", LocalDate.of(1994, 1, 10), encodedDefaultPassword, now, Set.of("ROLE_USER")));
+        individuals.add(newIndividual("11911110002", "pf2@teste.com", addr2, UserType.USER, "22222222222", "Bruno", "Souza", LocalDate.of(1990, 5, 20), encodedDefaultPassword, now, Set.of("ROLE_PARKING")));
+        individuals.add(newIndividual("11911110003", "pf3@teste.com", addr3, UserType.USER, "33333333333", "Carla", "Oliveira", LocalDate.of(1988, 9, 5), encodedDefaultPassword, now, Set.of("ROLE_PARKING_MANAGER", "ROLE_PARKING")));
 
 
         List<UserEntity> entities = new ArrayList<>();
-        entities.add(newEntity("11333330001", "pj1@teste.com", addr4, UserType.PARKING,"11111111000111", "Financeiro", "Empresa Alpha LTDA", "Alpha", encodedDefaultPassword, now));
-        entities.add(newEntity("11333330002", "pj2@teste.com", addr5, UserType.PARKING_MANAGER, "22222222000122", "Contas", "Empresa Beta SA", "Beta", encodedDefaultPassword, now));
-        entities.add(newEntity("11333330003", "pj3@teste.com", addr6, UserType.PARKING, "33333333000133", "Billing", "Empresa Gama ME", "Gama", encodedDefaultPassword, now));
+        entities.add(newEntity("11333330001", "pj1@teste.com", addr4, UserType.PARKING,"11111111000111", "Financeiro", "Empresa Alpha LTDA", "Alpha", encodedDefaultPassword, now, Set.of("ROLE_USER")));
+        entities.add(newEntity("11333330002", "pj2@teste.com", addr5, UserType.PARKING_MANAGER, "22222222000122", "Contas", "Empresa Beta SA", "Beta", encodedDefaultPassword, now, Set.of("ROLE_USER")));
+        entities.add(newEntity("11333330003", "pj3@teste.com", addr6, UserType.PARKING, "33333333000133", "Billing", "Empresa Gama ME", "Gama", encodedDefaultPassword, now, Set.of("ROLE_USER")));
+
+        UserIndividual adminUser = newIndividual("11911110004", "admin@teste.com", addr1, UserType.ADMIN, "44444444444", "Admin", "User", LocalDate.of(1980, 1, 1), encodedDefaultPassword, now, Set.of("ROLE_ADMIN", "ROLE_USER"));
+        individuals.add(adminUser);
 
         individuals.forEach(em::persist);
         entities.forEach(em::persist);
@@ -244,7 +248,7 @@ public class DevDatabaseSeeder implements CommandLineRunner {
     private UserIndividual newIndividual(
             String phone, String email, Address address,
             UserType type, String cpf, String firstName, String lastName,
-            LocalDate birthDate, String encodedPassword, LocalDateTime now
+            LocalDate birthDate, String encodedPassword, LocalDateTime now, Set<String> roles
     ) {
         UserIndividual oi = new UserIndividual();
         oi.setPhone(phone);
@@ -258,13 +262,14 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         oi.setPassword(encodedPassword);
         oi.setCreatedAt(now);
         oi.setUpdatedAt(now);
+        oi.setRoles(roles);
         return oi;
     }
 
     private UserEntity newEntity(
             String phone, String email, Address address,
             UserType type, String cnpj, String billingContact, String corporateName,
-            String fantasyName, String encodedPassword, LocalDateTime now
+            String fantasyName, String encodedPassword, LocalDateTime now, Set<String> roles
     ) {
         UserEntity oe = new UserEntity();
         oe.setPhone(phone);
@@ -278,6 +283,7 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         oe.setPassword(encodedPassword);
         oe.setCreatedAt(now);
         oe.setUpdatedAt(now);
+        oe.setRoles(roles);
         return oe;
     }
 

@@ -38,7 +38,7 @@ public class VehicleController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<VehicleDTO> create(@RequestBody @Valid Vehicle vehicle) {
+    public ResponseEntity<VehicleDTO> create(@RequestBody @Valid VehicleDTO vehicle) {
         VehicleDTO createdVehicle = service.create(vehicle);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/id/{id}")
@@ -52,8 +52,8 @@ public class VehicleController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public VehicleDTO update(@PathVariable Long id, @RequestBody @Valid Vehicle updatedVehicle) {
-        return service.update(id, updatedVehicle);
+    public VehicleDTO update(@RequestBody @Valid VehicleDTO updatedVehicle) {
+        return service.update(updatedVehicle);
     }
 
 

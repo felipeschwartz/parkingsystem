@@ -7,6 +7,7 @@ import com.github.felipeschwartz.parkingsystem.model.dto.*;
 import com.github.felipeschwartz.parkingsystem.model.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.github.felipeschwartz.parkingsystem.repository.UserEntityRepository;
@@ -39,6 +40,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PARKING_MANAGER')")
     public List<UserDTO> findAll() {
         logger.info("Finding all Users!");
         return userRepository.findAll()
@@ -55,6 +57,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PARKING_MANAGER') or #userId == authentication.principal.id")
     public Optional<UserDTO> findUserById(Long userId) {
         logger.info("Finding one User!");
         return userRepository.findById(userId)
@@ -69,6 +72,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PARKING_MANAGER') or #cpf == authentication.principal.cpf")
     public Optional<UserIndividualDTO> findUserByCpf(String cpf) {
         logger.info("Finding one User by CPF!");
         return userIndividualRepository.findByCpf(cpf)
@@ -76,6 +80,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PARKING_MANAGER') or #cnpj == authentication.principal.cnpj")
     public Optional<UserEntityDTO> findUserByCnpj(String cnpj) {
         logger.info("Finding one User by CNPJ!");
         return userEntityRepository.findByCnpj(cnpj)
@@ -85,6 +90,7 @@ public class UserService {
     // -------- CREATE --------
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public UserIndividualDTO createIndividual(UserIndividual individual) {
         logger.info("Creating one Individual User!");
         Objects.requireNonNull(individual, "individual must not be null.");
@@ -107,6 +113,7 @@ public class UserService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public UserEntityDTO createEntity(UserEntity entity) {
         logger.info("Creating one Entity User!");
         Objects.requireNonNull(entity, "entity must not be null.");
@@ -132,6 +139,7 @@ public class UserService {
     // -------- UPDATE --------
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public Optional<UserIndividualDTO> updateIndividual(Long id, UserIndividualDTO updated) {
         logger.info("Updating one Individual User!");
         return userIndividualRepository.findById(id)
@@ -149,6 +157,7 @@ public class UserService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public Optional<UserEntityDTO> updateEntity(Long id, UserEntityDTO updated) {
         logger.info("Updating one Entity User!");
         return userEntityRepository.findById(id)
@@ -169,6 +178,7 @@ public class UserService {
     // -------- DELETE --------
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(Long userId) {
         logger.info("Deleting one User!");
         if (!userRepository.existsById(userId)) {
