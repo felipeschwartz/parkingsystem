@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import com.github.felipeschwartz.parkingsystem.controller.ParkingSpaceController;
 import com.github.felipeschwartz.parkingsystem.mapper.ParkingSpaceMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.ParkingSpaceDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.ParkingSpace;
@@ -12,10 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class ParkingSpaceService {
-    private Logger logger = LoggerFactory.getLogger(ParkingLotService.class.getName());
+    private Logger logger = LoggerFactory.getLogger(ParkingSpaceService.class.getName());
 
     private final ParkingSpaceRepository repository;
     private final ParkingSpaceMapper mapper;
@@ -26,41 +31,50 @@ public class ParkingSpaceService {
     }
 
     @Transactional(readOnly = true)
-    public List<ParkingSpaceDTO> findAllParkingSpaces() {
+    public List<ParkingSpaceDTO> findAll() {
         logger.info("Finding all Parking Spaces!");
-        return repository.findAll().stream().map(mapper::toDTO).toList();
+        List<ParkingSpaceDTO> parkingSpaces = repository.findAll().stream()
+                .map(mapper::toDTO)
+                .collect(Collectors.toList());
+        parkingSpaces.forEach(this::addHateoasLinks);
+        return parkingSpaces;
     }
 
     @Transactional(readOnly = true)
-    public ParkingSpaceDTO findParkingSpace(Long id) {
-        logger.info("Finding Parking Lot!");
-        ParkingSpace parkingSpace = repository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Parking Space not found: ", id));
-        return mapper.toDTO(parkingSpace);
+    public ParkingSpaceDTO findById(Long id) {
+        logger.info("Finding Parking Space!");
+        ParkingSpace parkingSpace = repository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Parking Space not found: ", id));
+        ParkingSpaceDTO parkingSpaceDTO = mapper.toDTO(parkingSpace);
+        addHateoasLinks(parkingSpaceDTO);
+        return parkingSpaceDTO;
     }
 
     // -------- CREATE --------
 
     @Transactional
-    public ParkingSpaceDTO createParkingSpace(ParkingSpaceDTO dto) {
+    public ParkingSpaceDTO createParkingSpace(ParkingSpaceDTO parkingSpaceDTO) {
         logger.info("Creating Parking Space!");
-        ParkingSpace entity = mapper.toEntity(dto);
-        entity.setCreatedAt(LocalDateTime.now());
-        entity.setUpdatedAt(LocalDateTime.now());
-        entity = repository.save(entity);
-        return mapper.toDTO(entity);
+        ParkingSpace parkingSpace = mapper.toEntity(parkingSpaceDTO);
+        parkingSpace.setCreatedAt(LocalDateTime.now());
+        parkingSpace.setUpdatedAt(LocalDateTime.now());
+        ParkingSpaceDTO savedParkingSpaceDTO = mapper.toDTO(repository.save(parkingSpace));
+        addHateoasLinks(savedParkingSpaceDTO);
+        return savedParkingSpaceDTO;
     }
 
     // -------- UPDATE --------
 
     @Transactional
-    public ParkingSpaceDTO updateParkingSpace(Long id, ParkingSpaceDTO dto) {
+    public ParkingSpaceDTO updateParkingSpace(ParkingSpaceDTO parkingSpaceDTO) {
         logger.info("Updating Parking Space!");
-        ParkingSpace entity = repository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Parking Space not found: ", id));
-        mapper.updateEntityFromDto(dto, entity);
-        entity.setUpdatedAt(LocalDateTime.now());
-        entity = repository.save(entity);
-        return mapper.toDTO(entity);
+        ParkingSpace parkingSpace = repository.findById(parkingSpaceDTO.getId())
+                .orElseThrow(() -> new ObjectNotFoundException("Parking Space not found: ", parkingSpaceDTO.getId()));
+        mapper.updateEntityFromDto(parkingSpaceDTO, parkingSpace);
+        parkingSpace.setUpdatedAt(LocalDateTime.now());
+        ParkingSpaceDTO updatedParkingSpaceDTO = mapper.toDTO(repository.save(parkingSpace));
+        addHateoasLinks(updatedParkingSpaceDTO);
+        return updatedParkingSpaceDTO;
     }
 
     // -------- DELETE --------
@@ -72,5 +86,13 @@ public class ParkingSpaceService {
             throw new ObjectNotFoundException("Parking Space not found: ", id);
         }
         repository.deleteById(id);
+    }
+
+    private void addHateoasLinks(ParkingSpaceDTO dto) {
+        dto.add(linkTo(methodOn(ParkingSpaceController.class).findById(dto.getId())).withSelfRel().withType("GET"));
+        dto.add(linkTo(methodOn(ParkingSpaceController.class).findAll()).withRel("findAll").withType("GET"));
+        dto.add(linkTo(methodOn(ParkingSpaceController.class).create(dto)).withRel("create").withType("POST"));
+        dto.add(linkTo(methodOn(ParkingSpaceController.class).update(dto)).withRel("update").withType("PUT"));
+        dto.add(linkTo(methodOn(ParkingSpaceController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
     }
 }

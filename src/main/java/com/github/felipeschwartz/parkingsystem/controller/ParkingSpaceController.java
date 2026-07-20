@@ -24,12 +24,12 @@ public class ParkingSpaceController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ParkingSpaceDTO> findAll() {
-        return service.findAllParkingSpaces();
+        return service.findAll();
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParkingSpaceDTO findById(@PathVariable Long id) {
-        return service.findParkingSpace(id);
+        return service.findById(id);
     }
 
 
@@ -51,8 +51,8 @@ public class ParkingSpaceController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ParkingSpaceDTO update(@PathVariable Long id, @RequestBody @Valid ParkingSpaceDTO updatedParkingSpace) {
-        return service.updateParkingSpace(id, updatedParkingSpace);
+    public ParkingSpaceDTO update(@RequestBody @Valid ParkingSpaceDTO updatedParkingSpace) {
+        return service.updateParkingSpace(updatedParkingSpace);
     }
 
 
