@@ -37,8 +37,8 @@ public class PaymentController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<PaymentDTO> create(@RequestBody @Valid Payment payment) {
-        PaymentDTO createdPayment = service.createPayment(payment);
+    public ResponseEntity<PaymentDTO> create(@RequestBody @Valid PaymentDTO payment) {
+        PaymentDTO createdPayment = service.create(payment);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(createdPayment.getId())
@@ -51,7 +51,7 @@ public class PaymentController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public PaymentDTO update(@PathVariable Long id, @RequestBody @Valid Payment updatedPayment) {
-        return service.update(id, updatedPayment);
+    public PaymentDTO update(@RequestBody @Valid PaymentDTO updatedPayment) {
+        return service.update(updatedPayment);
     }
 }

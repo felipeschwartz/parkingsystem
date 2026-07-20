@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import com.github.felipeschwartz.parkingsystem.controller.PaymentController;
 import com.github.felipeschwartz.parkingsystem.mapper.PaymentMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.PaymentDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.ParkingSession;
@@ -15,8 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.github.felipeschwartz.parkingsystem.model.enums.PaymentStatus.PAID;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class PaymentService {
@@ -35,37 +39,44 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public List<PaymentDTO> findAll() {
         logger.info("Finding all Payments!");
-        return paymentRepository.findAll().stream().map(mapper::toDTO).toList();
+        List<PaymentDTO> paymentDTOS = paymentRepository.findAll().stream()
+                .map(mapper::toDTO)
+                .collect(Collectors.toList());
+        paymentDTOS.forEach(this::addHateoasLinks);
+        return paymentDTOS;
     }
 
     @Transactional(readOnly = true)
     public PaymentDTO findById(Long id) {
         logger.info("Finding Parking Lot!");
-        Payment payment = paymentRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Payment not found: ", id));
-        return mapper.toDTO(payment);
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Payment not found: ", id));
+        PaymentDTO paymentDTO = mapper.toDTO(payment);
+        addHateoasLinks(paymentDTO);
+        return paymentDTO;
     }
 
     // -------- CREATE --------
 
     @Transactional
-    public PaymentDTO createPayment(Payment payment) {
+    public PaymentDTO create(PaymentDTO paymentDTO) {
         logger.info("Creating Payment!");
-        return mapper.toDTO(paymentRepository.save(payment));
+        Payment payment = mapper.toEntity(paymentDTO);
+        payment.setCreatedDate(LocalDateTime.now());
+        payment.setUpdatedDate(LocalDateTime.now());
+        PaymentDTO paymentDTOCreated = mapper.toDTO(paymentRepository.save(payment));
+        addHateoasLinks(paymentDTOCreated);
+        return paymentDTOCreated;
     }
 
     // -------- UPDATE --------
 
     @Transactional
-    public PaymentDTO update(Long id, Payment updated) {
-        logger.info("Updating Payment with id: {}", id);
-        Payment entity = paymentRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Payment not found: ", id));
-        if (updated.getParkingSession() != null) entity.setParkingSession(updated.getParkingSession());
-        if (updated.getAmount() != null) entity.setAmount(updated.getAmount());
-        if (updated.getPaymentDate() != null) entity.setPaymentDate(updated.getPaymentDate());
-        if (updated.getPaymentMethod() != null) entity.setPaymentMethod(updated.getPaymentMethod());
-        if (updated.getPaymentStatus() != null) entity.setPaymentStatus(updated.getPaymentStatus());
-        if (updated.getReference() != null) entity.setReference(updated.getReference());
+    public PaymentDTO update(PaymentDTO updated) {
+        logger.info("Updating Payment with id: {}", updated.getId());
+        Payment entity = paymentRepository.findById(updated.getId())
+                .orElseThrow(() -> new ObjectNotFoundException("Payment not found: ", updated.getId()));
+        mapper.updateEntityFromDTO(updated, entity);
         entity.setUpdatedDate(LocalDateTime.now());
 
         if (entity.getParkingSession() != null && entity.getPaymentStatus() == PAID) {
@@ -75,7 +86,16 @@ public class PaymentService {
             parkingSessionRepository.save(parkingSession);
             logger.info("ParkingSession {} status updated to CLOSED due to payment.", parkingSession.getId());
         }
+        PaymentDTO paymentDTOUpdated = mapper.toDTO(paymentRepository.save(entity));
+        addHateoasLinks(paymentDTOUpdated);
+        return paymentDTOUpdated;
+    }
 
-        return mapper.toDTO(paymentRepository.save(entity));
+
+    private void addHateoasLinks(PaymentDTO dto) {
+        dto.add(linkTo(methodOn(PaymentController.class).findById(dto.getId())).withSelfRel().withType("GET"));
+        dto.add(linkTo(methodOn(PaymentController.class).findAll()).withRel("findAll").withType("GET"));
+        dto.add(linkTo(methodOn(PaymentController.class).create(dto)).withRel("create").withType("POST"));
+        dto.add(linkTo(methodOn(PaymentController.class).update(dto)).withRel("update").withType("PUT"));
     }
 }
