@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import com.github.felipeschwartz.parkingsystem.controller.ParkingLotController;
 import com.github.felipeschwartz.parkingsystem.mapper.ParkingLotMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.ParkingLotDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.ParkingLot;
@@ -12,6 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class ParkingLotService {
@@ -29,7 +34,11 @@ public class ParkingLotService {
     @Transactional(readOnly = true)
     public List<ParkingLotDTO> findAll() {
         logger.info("Finding all Parking Lot!");
-        return repository.findAll().stream().map(mapper::toDTO).toList();
+        List<ParkingLotDTO> parkingLots = repository.findAll().stream()
+                .map(mapper::toDTO)
+                .collect(Collectors.toList());
+        parkingLots.forEach(this::addHateoasLinks);
+        return parkingLots;
     }
 
     @Transactional(readOnly = true)
@@ -37,45 +46,51 @@ public class ParkingLotService {
         logger.info("Finding one Parking Lot!");
         ParkingLot parkingLot = repository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("ParkingLot not found: ", id));
-        return mapper.toDTO(parkingLot);
-
+        ParkingLotDTO parkingLotDTO = mapper.toDTO(parkingLot);
+        addHateoasLinks(parkingLotDTO);
+        return parkingLotDTO;
     }
-
-    // -------- CREATE --------
 
 
     @Transactional
-    public ParkingLotDTO create(ParkingLotDTO dto) {
+    public ParkingLotDTO create(ParkingLotDTO parkingLotDTO) {
         logger.info("Creating one ParkingLot!");
-        ParkingLot entity = mapper.toEntity(dto);
-        entity.setCreatedAt(LocalDateTime.now());
-        entity.setUpdatedAt(LocalDateTime.now());
-        entity = repository.save(entity);
-        return mapper.toDTO(entity);
+        ParkingLot parkingLot = mapper.toEntity(parkingLotDTO);
+        parkingLot.setCreatedAt(LocalDateTime.now());
+        parkingLot.setUpdatedAt(LocalDateTime.now());
+        ParkingLotDTO createdParkingLotDTO = mapper.toDTO(repository.save(parkingLot));
+        addHateoasLinks(createdParkingLotDTO);
+        return createdParkingLotDTO;
     }
 
-    // -------- UPDATE --------
 
     @Transactional
-    public ParkingLotDTO update(Long id, ParkingLotDTO updated) {
+    public ParkingLotDTO update(ParkingLotDTO parkingLotDTO) {
         logger.info("Updating one ParkingLot!");
-        ParkingLot entity = repository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("ParkingLot not found: ", id));
-        mapper.updateEntityFromDto(updated, entity);
-        entity.setUpdatedAt(LocalDateTime.now());
-        entity = repository.save(entity);
-        return mapper.toDTO(entity);
-
+        ParkingLot parkingLot = repository.findById(parkingLotDTO.getId())
+                .orElseThrow(() -> new ObjectNotFoundException("ParkingLot not found: ", parkingLotDTO.getId()));
+        mapper.updateEntityFromDto(parkingLotDTO, parkingLot);
+        parkingLot.setUpdatedAt(LocalDateTime.now());
+        ParkingLotDTO updatedParkingLotDTO = mapper.toDTO(repository.save(parkingLot));
+        addHateoasLinks(updatedParkingLotDTO);
+        return updatedParkingLotDTO;
     }
-
-    // -------- DELETE --------
 
     @Transactional
     public void delete(Long id) {
-        logger.info("Deleting one ParkingLot!");
+        logger.info("Deleting Hourly Rate {}", id);
         if (!repository.existsById(id)) {
             throw new ObjectNotFoundException("ParkingLot not found: ", id);
         }
         repository.deleteById(id);
+    }
+
+
+    private void addHateoasLinks(ParkingLotDTO dto) {
+        dto.add(linkTo(methodOn(ParkingLotController.class).findById(dto.getId())).withSelfRel().withType("GET"));
+        dto.add(linkTo(methodOn(ParkingLotController.class).findAll()).withRel("findAll").withType("GET"));
+        dto.add(linkTo(methodOn(ParkingLotController.class).create(dto)).withRel("create").withType("POST"));
+        dto.add(linkTo(methodOn(ParkingLotController.class).update(dto)).withRel("update").withType("PUT"));
+        dto.add(linkTo(methodOn(ParkingLotController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
     }
 }

@@ -51,8 +51,8 @@ public class ParkingLotController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ParkingLotDTO update(@PathVariable Long id, @RequestBody @Valid ParkingLotDTO updatedParkingLot) {
-        return service.update(id, updatedParkingLot);
+    public ParkingLotDTO update(@RequestBody @Valid ParkingLotDTO updatedParkingLot) {
+        return service.update(updatedParkingLot);
     }
 
 

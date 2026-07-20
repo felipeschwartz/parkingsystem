@@ -8,12 +8,13 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
-        uses = { ParkingSessionMapper.class }
+        uses = { ParkingSessionSummaryMapper.class }
 )
 public interface PaymentMapper {
 
     PaymentDTO toDTO(Payment entity);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "parkingSession", ignore = true)
     Payment toEntity(PaymentDTO dto);
 }

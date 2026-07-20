@@ -1,28 +1,40 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import com.github.felipeschwartz.parkingsystem.controller.ParkingLotController;
+import com.github.felipeschwartz.parkingsystem.controller.ParkingSessionController;
 import com.github.felipeschwartz.parkingsystem.mapper.ParkingSessionMapper;
+import com.github.felipeschwartz.parkingsystem.model.dto.OpenSessionRequestDTO;
+import com.github.felipeschwartz.parkingsystem.model.dto.ParkingLotDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.ParkingSessionDTO;
-import com.github.felipeschwartz.parkingsystem.model.enums.SubscripionStatus;
-import com.github.felipeschwartz.parkingsystem.repository.*;
-import org.springframework.stereotype.Service;
 import com.github.felipeschwartz.parkingsystem.model.entity.HourlyRate;
 import com.github.felipeschwartz.parkingsystem.model.entity.ParkingSession;
 import com.github.felipeschwartz.parkingsystem.model.entity.ParkingSpace;
 import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
 import com.github.felipeschwartz.parkingsystem.model.enums.SessionStatus;
 import com.github.felipeschwartz.parkingsystem.model.enums.SpaceStatus;
+import com.github.felipeschwartz.parkingsystem.model.enums.SubscripionStatus;
 import com.github.felipeschwartz.parkingsystem.model.enums.VehicleType;
+import com.github.felipeschwartz.parkingsystem.repository.*;
 import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors; // Importar Collectors
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class ParkingSessionService {
+    private Logger logger = LoggerFactory.getLogger(ParkingLotService.class.getName());
+
     private final ParkingSessionRepository sessionRepository;
     private final ParkingSpaceRepository spaceRepository;
     private final VehicleRepository vehicleRepository;
@@ -46,74 +58,49 @@ public class ParkingSessionService {
         this.sessionMapper = sessionMapper; 
     }
 
-    // OPEN - HOURLY
-    
+    //OPEN
     @Transactional
-    public ParkingSessionDTO openHourlySession(Long parkingSpaceId, 
-                                               String licensePlate,
-                                               VehicleType vehicleType,
-                                               LocalDateTime entryTime) {
+    public ParkingSessionDTO openParkingSession(OpenSessionRequestDTO request) {
+        logger.info("Opening Parking Session");
 
-        LocalDateTime when = (entryTime != null) ? entryTime : LocalDateTime.now();
-
-        ParkingSpace space = spaceRepository.findById(parkingSpaceId)
-                .orElseThrow(() -> new ObjectNotFoundException("ParkingSpace", parkingSpaceId));
-
-        validateSpaceCanBeUsed(space, vehicleType);
-
+        LocalDateTime entryTime = (request.entryTime() != null) ? request.entryTime() : LocalDateTime.now();
+        ParkingSpace space = spaceRepository.findById(request.parkingSpaceId())
+                .orElseThrow(() -> new ObjectNotFoundException("ParkingSpace not found with ID: " + request.parkingSpaceId()));
         if (sessionRepository.existsByParkingSpace_IdAndStatus(space.getId(), SessionStatus.OPEN)) {
-            throw new IllegalStateException("There is already an OPEN session for this parking space.");
+            throw new ObjectNotFoundException("There is already an OPEN session for parking space ID: " + space.getId());
         }
+        Optional<Vehicle> existingVehicle = vehicleRepository.findVehicleByLicensePlate(request.licensePlate());
 
-        ParkingSession session = ParkingSession.forHourly(licensePlate, vehicleType, space, when);
+        ParkingSession session;
+        Vehicle vehicle = null;
+
+        if  (existingVehicle.isPresent()) {
+            vehicle = existingVehicle.get();
+            boolean hasActiveContract = subscriptionContractRepository.existsByVehicleIdAndStatusAndEndDateGreaterThanEqual(
+                    vehicle.getId(), SubscripionStatus.ACTIVE, entryTime.toLocalDate());
+            if (hasActiveContract) {
+                session = ParkingSession.forSubscription(vehicle, space, entryTime);
+            } else {
+                session = ParkingSession.forHourly(request.licensePlate(), request.vehicleType(), space, entryTime);
+            }
+        } else {
+            session = ParkingSession.forHourly(request.licensePlate(), request.vehicleType(), space, entryTime);
+        }
 
         space.setStatus(SpaceStatus.OCCUPIED);
         spaceRepository.save(space);
-
-        return sessionMapper.toDTO(sessionRepository.save(session)); 
+        ParkingSession savedSession = sessionRepository.save(session);
+        ParkingSessionDTO createdSessionDTO = sessionMapper.toDTO(savedSession);
+        addHateoasLinks(createdSessionDTO);
+        return createdSessionDTO;
     }
 
-    // OPEN - SUBSCRIPTION
-    
-    @Transactional
-    public ParkingSessionDTO openSubscriptionSession(Long parkingSpaceId, 
-                                                     Long vehicleId,
-                                                     LocalDateTime entryTime) {
-
-        LocalDateTime when = (entryTime != null) ? entryTime : LocalDateTime.now();
-
-        Vehicle vehicle = vehicleRepository.findById(vehicleId)
-                .orElseThrow(() -> new ObjectNotFoundException("Vehicle", vehicleId));
-
-        ParkingSpace space = spaceRepository.findById(parkingSpaceId)
-                .orElseThrow(() -> new ObjectNotFoundException("ParkingSpace", parkingSpaceId));
-
-        validateSpaceCanBeUsed(space, vehicle.getType());
-
-        if (sessionRepository.existsByParkingSpace_IdAndStatus(space.getId(), SessionStatus.OPEN)) {
-            throw new IllegalStateException("There is already an OPEN session for this parking space.");
-        }
-
-        boolean hasActiveContract = subscriptionContractRepository.hasActiveContractForDate(
-                vehicle.getId(), SubscripionStatus.ACTIVE, when.toLocalDate()
-        );
-        if (!hasActiveContract) {
-            throw new IllegalStateException("Vehicle does not have an active monthly contract for today.");
-        }
-
-        ParkingSession session = ParkingSession.forSubscription(vehicle, space, when);
-
-        space.setStatus(SpaceStatus.OCCUPIED);
-        spaceRepository.save(space);
-
-        return sessionMapper.toDTO(sessionRepository.save(session)); 
-    }
 
     // CLOSE
 
     @Transactional
     public ParkingSessionDTO closeSession(Long sessionId, LocalDateTime exitTime) { 
-        LocalDateTime when = (exitTime != null) ? exitTime : LocalDateTime.now();
+        LocalDateTime actualExitTime = (exitTime != null) ? exitTime : LocalDateTime.now();
 
         ParkingSession session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ObjectNotFoundException("ParkingSession", sessionId));
@@ -122,7 +109,7 @@ public class ParkingSessionService {
             throw new IllegalStateException("Only OPEN sessions can be closed.");
         }
 
-        session.close(when);
+        session.close(actualExitTime);
 
         BigDecimal amount = calculateAmountFor(session);
         session.setAmountCharged(amount);
@@ -132,35 +119,43 @@ public class ParkingSessionService {
             space.setStatus(SpaceStatus.AVAILABLE);
             spaceRepository.save(space);
         }
-
-        return sessionMapper.toDTO(sessionRepository.save(session)); 
+        ParkingSession savedSession = sessionRepository.save(session);
+        ParkingSessionDTO updatedSessionDTO = sessionMapper.toDTO(savedSession);
+        addHateoasLinks(updatedSessionDTO);
+        return updatedSessionDTO;
     }
 
     // READ (Novos métodos)
 
     @Transactional(readOnly = true)
-    public ParkingSessionDTO findById(Long sessionId) { 
-        return sessionRepository.findById(sessionId)
-                .map(sessionMapper::toDTO) 
-                .orElseThrow(() -> new ObjectNotFoundException("ParkingSession", sessionId));
+    public ParkingSessionDTO findById(Long id) {
+        logger.info("Finding Parking Session with ID {}", id);
+        ParkingSession parkingSession = sessionRepository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Parking Session not found: ", id));
+        ParkingSessionDTO parkingSessionDTO = sessionMapper.toDTO(parkingSession);
+        addHateoasLinks(parkingSessionDTO);
+        return parkingSessionDTO;
     }
 
     @Transactional(readOnly = true)
-    public List<ParkingSessionDTO> findAll() { // Retorna lista de DTOs
-        return sessionRepository.findAll().stream()
-                .map(sessionMapper::toDTO) 
+    public List<ParkingSessionDTO> findAll() {
+        logger.info("Finding all Parking Sessions");
+        List<ParkingSessionDTO> parkingSessionDTOS = sessionRepository.findAll().stream()
+                .map(sessionMapper::toDTO)
                 .collect(Collectors.toList());
+        parkingSessionDTOS.forEach(this::addHateoasLinks);
+        return parkingSessionDTOS;
     }
 
     @Transactional(readOnly = true)
-    public List<ParkingSessionDTO> findOpenSessionsByParkingSpace(Long parkingSpaceId) { // Retorna lista de DTOs
+    public List<ParkingSessionDTO> findOpenSessionsByParkingSpace(Long parkingSpaceId) {
         return sessionRepository.findByParkingSpaceIdAndStatus(parkingSpaceId, SessionStatus.OPEN).stream()
                 .map(sessionMapper::toDTO) 
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<ParkingSessionDTO> findSessionsByVehicle(Long vehicleId) { // Retorna lista de DTOs
+    public List<ParkingSessionDTO> findSessionsByVehicle(Long vehicleId) {
         return sessionRepository.findByVehicleId(vehicleId).stream()
                 .map(sessionMapper::toDTO) 
                 .collect(Collectors.toList());
@@ -197,5 +192,12 @@ public class ParkingSessionService {
         if (space.getVehicleType() != vehicleType) {
             throw new IllegalStateException("Vehicle type not allowed in this parking space.");
         }
+    }
+
+    private void addHateoasLinks(ParkingSessionDTO dto) {
+        dto.add(linkTo(methodOn(ParkingSessionController.class).findById(dto.getId())).withSelfRel().withType("GET"));
+        dto.add(linkTo(methodOn(ParkingSessionController.class).findAll()).withRel("findAll").withType("GET"));
+        dto.add(linkTo(methodOn(ParkingSessionController.class).openSession(null)).withRel("create").withType("POST"));
+        dto.add(linkTo(methodOn(ParkingSessionController.class).closeSession(dto.getId(), null)).withRel("close").withType("PUT"));
     }
 }

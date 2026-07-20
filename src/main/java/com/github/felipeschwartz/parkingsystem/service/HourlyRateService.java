@@ -30,7 +30,7 @@ public class HourlyRateService {
         this.hourlyRateMapper = hourlyRateMapper;
     }
 
-    @Transactional(readOnly = true) // Adicionado
+    @Transactional(readOnly = true)
     public List<HourlyRateDTO> findAll() {
         logger.info("Finding all Hourly Rates");
         List<HourlyRateDTO> hourlyRates = hourlyRateRepository.findAll().stream()
@@ -67,10 +67,7 @@ public class HourlyRateService {
         logger.info("Updating Hourly Rate {}", hourlyRateDTO);
         HourlyRate rate = hourlyRateRepository.findById(hourlyRateDTO.getId())
                 .orElseThrow(() -> new ObjectNotFoundException("HourlyRate", hourlyRateDTO.getId()));
-
-        if (hourlyRateDTO.getVehicleType() != null) rate.setVehicleType(hourlyRateDTO.getVehicleType());
-        if (hourlyRateDTO.getRatePerHour() != null) rate.setRatePerHour(hourlyRateDTO.getRatePerHour());
-        if (hourlyRateDTO.getActive() != null) rate.setActive(hourlyRateDTO.getActive());
+        hourlyRateMapper.updateEntityFromDto(hourlyRateDTO, rate);
         rate.setUpdatedAt(LocalDateTime.now());
         HourlyRateDTO updatedHourlyRateDTO = hourlyRateMapper.toDTO(hourlyRateRepository.save(rate));
         addHateoasLinks(updatedHourlyRateDTO);

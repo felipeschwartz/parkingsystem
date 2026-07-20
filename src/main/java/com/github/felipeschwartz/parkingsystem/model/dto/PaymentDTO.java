@@ -13,7 +13,7 @@ public class PaymentDTO extends RepresentationModel<PaymentDTO> implements Seria
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private ParkingSessionDTO parkingSession;
+    private ParkingSessionSummaryDTO parkingSession;
     private BigDecimal amount;
     private LocalDateTime paymentDate;
     private PaymentMethod paymentMethod;
@@ -25,7 +25,7 @@ public class PaymentDTO extends RepresentationModel<PaymentDTO> implements Seria
     public PaymentDTO() {
     }
 
-    public PaymentDTO(Long id, ParkingSessionDTO parkingSession, BigDecimal amount, LocalDateTime paymentDate, PaymentMethod paymentMethod, PaymentStatus paymentStatus, String reference, LocalDateTime createdDate, LocalDateTime updatedDate) {
+    public PaymentDTO(Long id, ParkingSessionSummaryDTO parkingSession, BigDecimal amount, LocalDateTime paymentDate, PaymentMethod paymentMethod, PaymentStatus paymentStatus, String reference, LocalDateTime createdDate, LocalDateTime updatedDate) {
         this.id = id;
         this.parkingSession = parkingSession;
         this.amount = amount;
@@ -45,11 +45,11 @@ public class PaymentDTO extends RepresentationModel<PaymentDTO> implements Seria
         this.id = id;
     }
 
-    public ParkingSessionDTO getParkingSession() {
+    public ParkingSessionSummaryDTO getParkingSession() {
         return parkingSession;
     }
 
-    public void setParkingSession(ParkingSessionDTO parkingSession) {
+    public void setParkingSession(ParkingSessionSummaryDTO parkingSession) {
         this.parkingSession = parkingSession;
     }
 

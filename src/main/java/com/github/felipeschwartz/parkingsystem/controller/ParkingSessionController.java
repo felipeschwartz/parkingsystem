@@ -1,9 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
-import com.github.felipeschwartz.parkingsystem.model.dto.CloseSessionRequestDTO;
-import com.github.felipeschwartz.parkingsystem.model.dto.OpenHourlySessionRequestDTO;
-import com.github.felipeschwartz.parkingsystem.model.dto.OpenSubscriptionSessionRequestDTO;
-import com.github.felipeschwartz.parkingsystem.model.dto.ParkingSessionDTO;
+import com.github.felipeschwartz.parkingsystem.model.dto.*;
 import com.github.felipeschwartz.parkingsystem.service.ParkingSessionService;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
@@ -25,20 +22,15 @@ public class ParkingSessionController {
         this.sessionService = sessionService;
     }
 
-    // CREATE - OPEN SESSIONS
+    // CREATE - OPEN SESSION
 
     @PostMapping(
-            value = "/open/hourly",
+            value = "/open",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<ParkingSessionDTO> openHourlySession(@RequestBody @Valid OpenHourlySessionRequestDTO request) {
-        ParkingSessionDTO newSession = sessionService.openHourlySession(
-                request.parkingSpaceId(),
-                request.licensePlate(),
-                request.vehicleType(),
-                request.entryTime()
-        );
+    public ResponseEntity<ParkingSessionDTO> openSession(@RequestBody @Valid OpenSessionRequestDTO request) {
+        ParkingSessionDTO newSession = sessionService.openParkingSession(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(newSession.getId())
@@ -46,23 +38,6 @@ public class ParkingSessionController {
         return ResponseEntity.created(location).body(newSession);
     }
 
-    @PostMapping(
-            value = "/open/subscription",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<ParkingSessionDTO> openSubscriptionSession(@RequestBody @Valid OpenSubscriptionSessionRequestDTO request) {
-        ParkingSessionDTO newSession = sessionService.openSubscriptionSession(
-                request.parkingSpaceId(),
-                request.vehicleId(),
-                request.entryTime()
-        );
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(newSession.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(newSession);
-    }
 
     // UPDATE - CLOSE SESSION
 

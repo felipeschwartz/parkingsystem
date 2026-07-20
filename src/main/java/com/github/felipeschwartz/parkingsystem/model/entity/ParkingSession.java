@@ -69,17 +69,19 @@ public class ParkingSession implements Serializable {
     public ParkingSession() {
     }
 
-    public ParkingSession(Long id, Vehicle vehicle, ParkingSpace parkingSpace,
-                          LocalDateTime entryTime, LocalDateTime exitTime,
-                          SessionStatus status, BigDecimal amountCharged) {
+    public ParkingSession(Long id, Vehicle vehicle, String licensePlate, VehicleType vehicleType, ParkingSpace parkingSpace, Payment payment, LocalDateTime entryTime, LocalDateTime exitTime, SessionStatus status, BigDecimal amountCharged, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.vehicle = vehicle;
+        this.licensePlate = licensePlate;
+        this.vehicleType = vehicleType;
         this.parkingSpace = parkingSpace;
+        this.payment = payment;
         this.entryTime = entryTime;
         this.exitTime = exitTime;
         this.status = status;
         this.amountCharged = amountCharged;
-
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Long getId() {
@@ -114,6 +116,14 @@ public class ParkingSession implements Serializable {
 
     public void setParkingSpace(ParkingSpace parkingSpace) {
         this.parkingSpace = parkingSpace;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
     }
 
     public LocalDateTime getEntryTime() {
@@ -176,23 +186,6 @@ public class ParkingSession implements Serializable {
         return Objects.hashCode(getId());
     }
 
-    public void open(LocalDateTime entryTime) {
-        Objects.requireNonNull(entryTime, "entryTime must not be null");
-
-        if (this.status == SessionStatus.OPEN) {
-            throw new IllegalStateException("the session is already open");
-        }
-        if (this.status == SessionStatus.CLOSED) {
-            throw new IllegalStateException("the session is already closed");
-        }
-        this.entryTime = entryTime;
-        this.exitTime = null;
-        this.amountCharged = null;
-
-        this.status = SessionStatus.OPEN;
-        this.updatedAt = LocalDateTime.now();
-        if (this.createdAt == null) this.createdAt = this.updatedAt;
-    }
 
     public void close(LocalDateTime exitTime) {
         Objects.requireNonNull(exitTime, "exitTime must not be null");
@@ -292,5 +285,23 @@ public class ParkingSession implements Serializable {
         s.parkingSpace = parkingSpace;
         s.open(entryTime);
         return s;
+    }
+
+    public void open(LocalDateTime entryTime) {
+        Objects.requireNonNull(entryTime, "entryTime must not be null");
+
+        if (this.status == SessionStatus.OPEN) {
+            throw new IllegalStateException("the session is already open");
+        }
+        if (this.status == SessionStatus.CLOSED) {
+            throw new IllegalStateException("the session is already closed");
+        }
+        this.entryTime = entryTime;
+        this.exitTime = null;
+        this.amountCharged = null;
+
+        this.status = SessionStatus.OPEN;
+        this.updatedAt = LocalDateTime.now();
+        if (this.createdAt == null) this.createdAt = this.updatedAt;
     }
 }
