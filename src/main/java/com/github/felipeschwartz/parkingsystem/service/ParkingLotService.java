@@ -43,7 +43,7 @@ public class ParkingLotService {
 
     @Transactional(readOnly = true)
     public ParkingLotDTO findById(Long id) {
-        logger.info("Finding one Parking Lot!");
+        logger.info("Finding Parking Lot with id {}", id);
         ParkingLot parkingLot = repository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("ParkingLot not found: ", id));
         ParkingLotDTO parkingLotDTO = mapper.toDTO(parkingLot);

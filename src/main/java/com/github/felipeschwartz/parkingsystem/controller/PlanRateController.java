@@ -37,7 +37,7 @@ public class PlanRateController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<PlanRateDTO> create(String name, @RequestBody @Valid PlanRateDTO planRateDTO) {
+    public ResponseEntity<PlanRateDTO> create(@RequestBody @Valid PlanRateDTO planRateDTO) {
         PlanRateDTO createdPlanRate = service.create(planRateDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -51,8 +51,8 @@ public class PlanRateController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<PlanRateDTO> update(@PathVariable Long id, @RequestBody PlanRateDTO updatedDTO) {
-        updatedDTO.setId(id);
+    public ResponseEntity<PlanRateDTO> update(@RequestBody PlanRateDTO updatedDTO) {
+        updatedDTO.setId(updatedDTO.getId());
         PlanRateDTO result = service.update(updatedDTO);
         return ResponseEntity.ok(result);
     }

@@ -22,7 +22,7 @@ public class PlanRate implements Serializable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "plan_id", nullable = false)
+    @JoinColumn(name = "plan_id", nullable = true)
     @JsonIgnore
     private Plan plan;
 

@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import com.github.felipeschwartz.parkingsystem.controller.PlanRateController;
 import com.github.felipeschwartz.parkingsystem.mapper.PlanMapper;
 import com.github.felipeschwartz.parkingsystem.mapper.PlanRateMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanRateDTO;
@@ -16,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class PlanRateService  {
@@ -36,56 +40,31 @@ public class PlanRateService  {
     @Transactional(readOnly = true)
     public List<PlanRateDTO> findAll() {
         logger.info("Finding all plan rate records");
-        return planRateRepository.findAll().stream().map(planRate -> planRateMapper.toDTO(planRate))
-                .collect(Collectors.toList());
+        List<PlanRateDTO> planRates = planRateRepository.findAll().stream()
+                .map(planRateMapper::toDTO).collect(Collectors.toList());
+        planRates.forEach(this::addHateoasLinks);
+        return planRates;
     }
 
     @Transactional
     public PlanRateDTO findById(Long id) {
         logger.info("Finding plan rate record with id {}", id);
-        PlanRate rate = planRateRepository.findById(id)
+        PlanRate planRate = planRateRepository.findById(id)
                 .orElseThrow(() ->new ObjectNotFoundException("Plan rate not found with id: ", id));
-        return planRateMapper.toDTO(rate);
+        PlanRateDTO planRateDTO = planRateMapper.toDTO(planRate);
+        addHateoasLinks(planRateDTO);
+        return planRateDTO;
     }
 
     @Transactional
     public PlanRateDTO create(PlanRateDTO planRateDTO) {
         logger.info("Creating plan rate record {}", planRateDTO);
-        Plan plan = planRepository.findById(planRateDTO.getpId())
-                .orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: " + planRateDTO.getpId()));
         PlanRate planRate = planRateMapper.toEntity(planRateDTO);
-        planRate.setPlan(plan);
-        planRate = planRateRepository.save(planRate);
-        return planRateMapper.toDTO(planRate);
+        planRate.setCreatedAt(LocalDateTime.now());
+        planRate.setUpdatedAt(LocalDateTime.now());
+        PlanRateDTO planRateDTOCreated = planRateMapper.toDTO(planRateRepository.save(planRate));
+        return planRateDTOCreated;
     }
-
-
-//    @Transactional
-//    public PlanRateDTO create(PlanRateDTO planRateDTO) {
-//        logger.info("Creating plan rate record {}", planRateDTO);
-//        Plan plan = planRepository.findById(planRateDTO.getpId())
-//                .orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: " + planRateDTO.getpId()));
-//        PlanRate planRate = planRateMapper.toEntity(planRateDTO);
-//        planRate.setVehicleType(planRateDTO.getVehicleType());
-//        planRate.setDurationMonths(planRateDTO.getDurationMonths());
-//        planRate.setMonthlyPrice(planRateDTO.getMonthlyPrice());
-//        planRate.setDiscountPercent(planRateDTO.getDiscountPercent());
-//        planRate.setActive(planRateDTO.getActive());
-//        planRate.setPlan(plan);
-//        planRate = planRateRepository.save(planRate);
-//        PlanRateDTO createdPlanRateDTO = planRateMapper.toDTO(planRate);
-//        createdPlanRateDTO.setId(planRate.getId());
-//        createdPlanRateDTO.setVehicleType(planRate.getVehicleType());
-//        createdPlanRateDTO.setDurationMonths(planRate.getDurationMonths());
-//        createdPlanRateDTO.setMonthlyPrice(planRate.getMonthlyPrice());
-//        createdPlanRateDTO.setDiscountPercent(planRate.getDiscountPercent());
-//        createdPlanRateDTO.setActive(planRate.getActive());
-//        createdPlanRateDTO.setCreatedAt(planRate.getCreatedAt());
-//        createdPlanRateDTO.setUpdatedAt(planRate.getUpdatedAt());
-//        createdPlanRateDTO.setpId(plan.getId());
-//
-//        return createdPlanRateDTO;
-//    }
 
 
     @Transactional
@@ -93,23 +72,25 @@ public class PlanRateService  {
         logger.info("Updating plan rate record {}", updatedDto);
         PlanRate existingRate = planRateRepository.findById(updatedDto.getId())
                 .orElseThrow(() -> new ObjectNotFoundException("Plan rate not found with id: " + updatedDto.getId()));
-        if (updatedDto.getpId() != null) {
-            Plan newPlan = planRepository.findById(updatedDto.getpId())
-                    .orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: " + updatedDto.getpId()));
-            existingRate.setPlan(newPlan);
-        }
+//        if (updatedDto.getpId() != null) {
+//            Plan newPlan = planRepository.findById(updatedDto.getpId())
+//                    .orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: " + updatedDto.getpId()));
+//            existingRate.setPlan(newPlan);
+//        }
         planRateMapper.updatePlanRateFromDto(updatedDto, existingRate);
         existingRate.setUpdatedAt(LocalDateTime.now());
-        PlanRate savedRate = planRateRepository.save(existingRate);
-        return planRateMapper.toDTO(savedRate);
+        PlanRateDTO planRateDTO = planRateMapper.toDTO(planRateRepository.save(existingRate));
+        addHateoasLinks(planRateDTO);
+        return planRateDTO;
     }
 
     @Transactional
     public void delete(Long id) {
         logger.info("Deleting plan rate record with id {}", id);
-        PlanRate rate = planRateRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("PlanRate not found: " + id));
-        planRateRepository.delete(rate);
+        if (!planRateRepository.existsById(id)) {
+            throw new ObjectNotFoundException("Plan rate not found with id: " + id);
+        }
+        planRateRepository.deleteById(id);
     }
 
     @Transactional
@@ -120,5 +101,13 @@ public class PlanRateService  {
         rate.setActive(false);
         rate.setUpdatedAt(LocalDateTime.now());
         planRateRepository.save(rate);
+    }
+
+    private void addHateoasLinks(PlanRateDTO dto) {
+        dto.add(linkTo(methodOn(PlanRateController.class).findById(dto.getId())).withSelfRel().withType("GET"));
+        dto.add(linkTo(methodOn(PlanRateController.class).findAll()).withRel("findAll").withType("GET"));
+        dto.add(linkTo(methodOn(PlanRateController.class).create(dto)).withRel("create").withType("POST"));
+        dto.add(linkTo(methodOn(PlanRateController.class).update(dto)).withRel("update").withType("PUT"));
+        dto.add(linkTo(methodOn(PlanRateController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
     }
 }
