@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import com.github.felipeschwartz.parkingsystem.controller.ReservationController;
 import com.github.felipeschwartz.parkingsystem.mapper.ReservationMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.ReservationDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.ParkingSpace;
@@ -17,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class ReservationService {
@@ -37,21 +41,27 @@ public class ReservationService {
     @Transactional(readOnly = true)
     public List<ReservationDTO> findAll() {
         logger.info("Finding all reservations records");
-        return reservationRepository.findAll().stream().map(reservation -> reservationMapper.toDTO(reservation))
+        List<ReservationDTO> reservationDTOS = reservationRepository.findAll().stream()
+                .map(reservationMapper::toDTO)
                 .collect(Collectors.toList());
+        reservationDTOS.forEach(this::addHateoasLinks);
+        return reservationDTOS;
     }
 
     @Transactional
     public ReservationDTO findById(Long id) {
         logger.info("Finding reservation record with id {}", id);
-        Reservation rate = reservationRepository.findById(id).orElseThrow(() ->new ObjectNotFoundException("Reservation not found with id: ", id));
-        return reservationMapper.toDTO(rate);
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() ->new ObjectNotFoundException("Reservation not found with id: ", id));
+        ReservationDTO reservationDTO = reservationMapper.toDTO(reservation);
+        addHateoasLinks(reservationDTO);
+        return reservationDTO;
     }
 
 
     @Transactional
     public ReservationDTO create(ReservationDTO reservationDTO) {
-        logger.info("Creating reservation record {}", reservationDTO);
+        logger.info("Creating reservation record");
         Vehicle vehicle = vehicleRepository.findById(reservationDTO.getvId())
                 .orElseThrow(() -> new ObjectNotFoundException("Vehicle not found with id: " + reservationDTO.getvId()));
         ParkingSpace parkingSpace = parkingSpaceRepository.findById(reservationDTO.getParkingSpace().getId())
@@ -59,14 +69,17 @@ public class ReservationService {
         Reservation entity = reservationMapper.toEntity(reservationDTO);
         entity.setVehicle(vehicle);
         entity.setParkingSpace(parkingSpace);
-        entity = reservationRepository.save(entity);
-        return reservationMapper.toDTO(entity);
+        entity.setCreatedAt(LocalDateTime.now());
+        entity.setUpdatedAt(LocalDateTime.now());
+        ReservationDTO createdReservationDTO = reservationMapper.toDTO(reservationRepository.save(entity));
+        addHateoasLinks(createdReservationDTO);
+        return createdReservationDTO;
     }
 
 
     @Transactional
     public ReservationDTO update(ReservationDTO updated) {
-        logger.info("Updating reservation record {}", updated);
+        logger.info("Updating reservation record with Id {}", updated.getId());
         Reservation existingReservation = reservationRepository.findById(updated.getId())
                 .orElseThrow(() ->new ObjectNotFoundException("Reservation not found with id: ", updated.getId()));
         if (updated.getvId() != null) {
@@ -76,15 +89,25 @@ public class ReservationService {
         }
         reservationMapper.updateReservationFromDto(updated, existingReservation);
         existingReservation.setUpdatedAt(LocalDateTime.now());
-        Reservation updatedReservation = reservationRepository.save(existingReservation);
-        return reservationMapper.toDTO(updatedReservation);
+        ReservationDTO updatedReservationDTO = reservationMapper.toDTO(reservationRepository.save(existingReservation));
+        addHateoasLinks(updatedReservationDTO);
+        return updatedReservationDTO;
     }
 
     @Transactional
     public void delete(Long id) {
         logger.info("Deleting reservation record with id {}", id);
-        Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Reservation not found: " + id));
-        reservationRepository.delete(reservation);
+        if (!reservationRepository.existsById(id)) {
+            throw new ObjectNotFoundException("Reservation not found with id: " + id);
+        }
+        reservationRepository.deleteById(id);
+    }
+
+    private void addHateoasLinks(ReservationDTO dto) {
+        dto.add(linkTo(methodOn(ReservationController.class).findById(dto.getId())).withSelfRel().withType("GET"));
+        dto.add(linkTo(methodOn(ReservationController.class).findAll()).withRel("findAll").withType("GET"));
+        dto.add(linkTo(methodOn(ReservationController.class).create(dto)).withRel("create").withType("POST"));
+        dto.add(linkTo(methodOn(ReservationController.class).update(dto)).withRel("update").withType("PUT"));
+        dto.add(linkTo(methodOn(ReservationController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
     }
 }

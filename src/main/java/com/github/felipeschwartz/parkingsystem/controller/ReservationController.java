@@ -37,7 +37,7 @@ public class ReservationController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<ReservationDTO> create(String name, @RequestBody @Valid ReservationDTO reservationDTO) {
+    public ResponseEntity<ReservationDTO> create(@RequestBody @Valid ReservationDTO reservationDTO) {
         ReservationDTO createdReservation = service.create(reservationDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -51,8 +51,8 @@ public class ReservationController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<ReservationDTO> update(@PathVariable Long id, @RequestBody ReservationDTO updatedDTO) {
-        updatedDTO.setId(id);
+    public ResponseEntity<ReservationDTO> update(@RequestBody ReservationDTO updatedDTO) {
+        updatedDTO.setId(updatedDTO.getId());
         ReservationDTO result = service.update(updatedDTO);
         return ResponseEntity.ok(result);
     }
