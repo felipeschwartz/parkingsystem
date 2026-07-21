@@ -3,6 +3,7 @@ package com.github.felipeschwartz.parkingsystem.controller;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanRateDTO;
 import com.github.felipeschwartz.parkingsystem.service.PlanRateService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +56,12 @@ public class PlanRateController {
         updatedDTO.setId(updatedDTO.getId());
         PlanRateDTO result = service.update(updatedDTO);
         return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/deactivate/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deactivate(@PathVariable Long id) {
+        service.deactivateRate(id);
     }
 
     @DeleteMapping(value = "/{id}")

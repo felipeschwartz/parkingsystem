@@ -1,13 +1,10 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
 import com.github.felipeschwartz.parkingsystem.controller.PlanRateController;
-import com.github.felipeschwartz.parkingsystem.mapper.PlanMapper;
 import com.github.felipeschwartz.parkingsystem.mapper.PlanRateMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanRateDTO;
-import com.github.felipeschwartz.parkingsystem.model.entity.Plan;
 import com.github.felipeschwartz.parkingsystem.model.entity.PlanRate;
 import com.github.felipeschwartz.parkingsystem.repository.PlanRateRepository;
-import com.github.felipeschwartz.parkingsystem.repository.PlanRepository;
 import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,14 +24,10 @@ public class PlanRateService  {
     private Logger logger = LoggerFactory.getLogger(PaymentService.class.getName());
     private final PlanRateRepository planRateRepository;
     private final PlanRateMapper planRateMapper;
-    private final PlanMapper planMapper;
-    private final PlanRepository planRepository;
 
-    public PlanRateService(PlanRateRepository planRateRepository, PlanRateMapper planRateMapper, PlanMapper planMapper, PlanRepository planRepository) {
+    public PlanRateService(PlanRateRepository planRateRepository, PlanRateMapper planRateMapper) {
         this.planRateRepository = planRateRepository;
         this.planRateMapper = planRateMapper;
-        this.planMapper = planMapper;
-        this.planRepository = planRepository;
     }
 
     @Transactional(readOnly = true)
@@ -94,9 +87,9 @@ public class PlanRateService  {
     }
 
     @Transactional
-    public void deactivateRate(Long rateId) {
-        PlanRate rate = planRateRepository.findById(rateId)
-                .orElseThrow(() -> new IllegalArgumentException("PlanRate not found: " + rateId));
+    public void deactivateRate(Long id) {
+        PlanRate rate = planRateRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("PlanRate not found: " + id));
 
         rate.setActive(false);
         rate.setUpdatedAt(LocalDateTime.now());

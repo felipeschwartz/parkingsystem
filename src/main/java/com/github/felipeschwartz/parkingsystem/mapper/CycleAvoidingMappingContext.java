@@ -24,6 +24,10 @@ public class CycleAvoidingMappingContext {
         this.planRateMapper = planRateMapper;
     }
 
+    public CycleAvoidingMappingContext() {
+
+    }
+
     public PlanMapper getPlanMapper() {
         return planMapper;
     }

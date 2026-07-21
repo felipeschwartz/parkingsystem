@@ -3,6 +3,7 @@ package com.github.felipeschwartz.parkingsystem.model.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.hateoas.Link;
 
 import java.util.List;
 
@@ -56,4 +57,5 @@ public class PlanCreationDTO {
     public void setSubscriptionContractIds(List<Long> subscriptionContractIds) {
         this.subscriptionContractIds = subscriptionContractIds;
     }
+
 }

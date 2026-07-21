@@ -71,4 +71,8 @@ public interface PlanMapper {
                 .map(rate -> context.getMappedInstance(rate, PlanRateDTO.class, () -> context.getPlanRateMapper().toDTO(rate)))
                 .collect(Collectors.toSet());
     }
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    void updateEntityFromDTO(PlanDTO updated, @MappingTarget Plan existingPlan);
 }

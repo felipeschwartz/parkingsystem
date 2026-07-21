@@ -39,7 +39,7 @@ public class PlanController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<PlanDTO> create(String name, @RequestBody @Valid PlanCreationDTO planCreationDTO) {
+    public ResponseEntity<PlanDTO> create(@RequestBody @Valid PlanCreationDTO planCreationDTO) {
         PlanDTO createdPlan = service.create(planCreationDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
