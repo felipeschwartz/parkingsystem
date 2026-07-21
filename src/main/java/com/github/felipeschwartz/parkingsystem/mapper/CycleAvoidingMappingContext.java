@@ -3,6 +3,7 @@ package com.github.felipeschwartz.parkingsystem.mapper;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.TargetType;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.IdentityHashMap;
@@ -18,7 +19,7 @@ public class CycleAvoidingMappingContext {
     private SubscriptionContractMapper subscriptionContractMapper;
     private PlanRateMapper planRateMapper;
 
-    public CycleAvoidingMappingContext(PlanMapper planMapper, SubscriptionContractMapper subscriptionContractMapper, PlanRateMapper planRateMapper) {
+    public CycleAvoidingMappingContext(@Lazy PlanMapper planMapper, @Lazy SubscriptionContractMapper subscriptionContractMapper, @Lazy PlanRateMapper planRateMapper) {
         this.planMapper = planMapper;
         this.subscriptionContractMapper = subscriptionContractMapper;
         this.planRateMapper = planRateMapper;

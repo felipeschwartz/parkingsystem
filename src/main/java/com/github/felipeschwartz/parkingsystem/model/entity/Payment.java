@@ -37,16 +37,16 @@ public class Payment {
 
     @Column(name = "created_date")
     @CreationTimestamp
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_date")
     @UpdateTimestamp
-    private LocalDateTime updatedDate;
+    private LocalDateTime updatedAt;
 
     public Payment() {
     }
 
-    public Payment(Long id, ParkingSession parkingSession, BigDecimal amount, LocalDateTime paymentDate, PaymentMethod paymentMethod, PaymentStatus paymentStatus, String reference, LocalDateTime createdDate, LocalDateTime updatedDate) {
+    public Payment(Long id, ParkingSession parkingSession, BigDecimal amount, LocalDateTime paymentDate, PaymentMethod paymentMethod, PaymentStatus paymentStatus, String reference, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.parkingSession = parkingSession;
         this.amount = amount;
@@ -54,8 +54,8 @@ public class Payment {
         this.paymentMethod = paymentMethod;
         this.paymentStatus = paymentStatus;
         this.reference = reference;
-        this.createdDate = createdDate;
-        this.updatedDate = updatedDate;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Long getId() {
@@ -114,20 +114,20 @@ public class Payment {
         this.reference = reference;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
+    public void setCreatedAt(LocalDateTime createdDate) {
+        this.createdAt = createdDate;
     }
 
-    public LocalDateTime getUpdatedDate() {
-        return updatedDate;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdatedDate(LocalDateTime updatedDate) {
-        this.updatedDate = updatedDate;
+    public void setUpdatedAt(LocalDateTime updatedDate) {
+        this.updatedAt = updatedDate;
     }
 
     @Override

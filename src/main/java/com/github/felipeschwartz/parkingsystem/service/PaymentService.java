@@ -62,8 +62,8 @@ public class PaymentService {
     public PaymentDTO create(PaymentDTO paymentDTO) {
         logger.info("Creating Payment!");
         Payment payment = mapper.toEntity(paymentDTO);
-        payment.setCreatedDate(LocalDateTime.now());
-        payment.setUpdatedDate(LocalDateTime.now());
+        payment.setCreatedAt(LocalDateTime.now());
+        payment.setUpdatedAt(LocalDateTime.now());
         PaymentDTO paymentDTOCreated = mapper.toDTO(paymentRepository.save(payment));
         addHateoasLinks(paymentDTOCreated);
         return paymentDTOCreated;
@@ -77,7 +77,7 @@ public class PaymentService {
         Payment entity = paymentRepository.findById(updated.getId())
                 .orElseThrow(() -> new ObjectNotFoundException("Payment not found: ", updated.getId()));
         mapper.updateEntityFromDTO(updated, entity);
-        entity.setUpdatedDate(LocalDateTime.now());
+        entity.setUpdatedAt(LocalDateTime.now());
 
         if (entity.getParkingSession() != null && entity.getPaymentStatus() == PAID) {
             ParkingSession parkingSession = entity.getParkingSession();

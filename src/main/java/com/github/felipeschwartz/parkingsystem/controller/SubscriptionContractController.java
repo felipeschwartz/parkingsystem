@@ -49,8 +49,8 @@ public class SubscriptionContractController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<SubscriptionContractDTO> update(@PathVariable Long id, @RequestBody @Valid SubscriptionContractDTO subscriptionContractDTO) {
-        subscriptionContractDTO.setId(id);
+    public ResponseEntity<SubscriptionContractDTO> update(@RequestBody @Valid SubscriptionContractDTO subscriptionContractDTO) {
+        subscriptionContractDTO.setId(subscriptionContractDTO.getId());
         SubscriptionContractDTO updatedSubscription = service.update(subscriptionContractDTO);
         return ResponseEntity.ok(updatedSubscription);
     }

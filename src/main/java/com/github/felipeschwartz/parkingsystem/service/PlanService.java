@@ -3,8 +3,6 @@ package com.github.felipeschwartz.parkingsystem.service;
 import com.github.felipeschwartz.parkingsystem.controller.PlanController;
 import com.github.felipeschwartz.parkingsystem.mapper.CycleAvoidingMappingContext;
 import com.github.felipeschwartz.parkingsystem.mapper.PlanMapper;
-import com.github.felipeschwartz.parkingsystem.mapper.PlanRateMapper;
-import com.github.felipeschwartz.parkingsystem.mapper.SubscriptionContractMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanCreationDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.Plan;
@@ -30,28 +28,22 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class PlanService {
-    private final PlanMapper planMapper;
     private Logger logger = LoggerFactory.getLogger(PaymentService.class.getName());
 
+    private final PlanMapper planMapper;
     private final PlanRepository planRepository;
-    private final PlanMapper mapper;
     private final CycleAvoidingMappingContext context;
     private final PlanRateRepository planRateRepository;
     private final SubscriptionContractRepository subscriptionContractRepository;
-    private final PlanRateMapper planRateMapper;
-    private final SubscriptionContractMapper subscriptionContractMapper;
 
-    public PlanService(PlanRepository planRepository, PlanMapper mapper, CycleAvoidingMappingContext context,
-                       PlanRateRepository planRateRepository, SubscriptionContractRepository subscriptionContractRepository,
-                       PlanRateMapper planRateMapper, SubscriptionContractMapper subscriptionContractMapper, PlanMapper planMapper) {
+    public PlanService(PlanMapper planMapper, PlanRepository planRepository,
+                       CycleAvoidingMappingContext context, PlanRateRepository planRateRepository,
+                       SubscriptionContractRepository subscriptionContractRepository) {
+        this.planMapper = planMapper;
         this.planRepository = planRepository;
-        this.mapper = mapper;
         this.context = context;
         this.planRateRepository = planRateRepository;
         this.subscriptionContractRepository = subscriptionContractRepository;
-        this.planRateMapper = planRateMapper;
-        this.subscriptionContractMapper = subscriptionContractMapper;
-        this.planMapper = planMapper;
     }
 
     @Transactional(readOnly = true)
@@ -78,7 +70,7 @@ public class PlanService {
     @Transactional
     public PlanDTO create(PlanCreationDTO planCreationDTO) {
         logger.info("Creating plan with name {}", planCreationDTO.getName());
-        Plan planToSave = mapper.toEntity(planCreationDTO);
+        Plan planToSave = planMapper.toEntity(planCreationDTO);
         planToSave.setCreatedAt(LocalDateTime.now());
         planToSave.setUpdatedAt(LocalDateTime.now());
         Plan savedPlan = planRepository.save(planToSave);
