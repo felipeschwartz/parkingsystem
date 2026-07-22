@@ -1,20 +1,20 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
 import com.github.felipeschwartz.parkingsystem.controller.VehicleController;
+import com.github.felipeschwartz.parkingsystem.mapper.VehicleMapper;
+import com.github.felipeschwartz.parkingsystem.model.dto.VehicleDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.SubscriptionContract;
 import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.stereotype.Service;
-import com.github.felipeschwartz.parkingsystem.model.dto.VehicleDTO;
-import com.github.felipeschwartz.parkingsystem.mapper.VehicleMapper;
 import com.github.felipeschwartz.parkingsystem.model.enums.SubscripionStatus;
 import com.github.felipeschwartz.parkingsystem.repository.SubscriptionContractRepository;
 import com.github.felipeschwartz.parkingsystem.repository.VehicleRepository;
 import com.github.felipeschwartz.parkingsystem.service.exceptions.NoActiveContractException;
 import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -112,10 +112,6 @@ public class VehicleService {
         vehicleRepository.delete(vehicle);
     }
 
-    /*
-     * Busca um veículo pela placa.
-     * Lança VehicleNotFoundException se não encontrado.
-     */
     @Transactional(readOnly = true)
     public VehicleDTO findByLicensePlate(String licensePlate) {
         logger.info("Finding one Vehicle by Licence Plate!");
@@ -127,17 +123,10 @@ public class VehicleService {
     }
 
 
-    //    Método nâo exposto via API
-
     private Vehicle findVehicleEntityByLicensePlate(String licensePlate) {
         return vehicleRepository.findVehicleByLicensePlate(licensePlate)
                 .orElseThrow(() -> new ObjectNotFoundException("Vehicle ", licensePlate));
     }
-
-    /*
-     * Verifica se o veículo (pela placa) possui contrato ativo.
-     * Retorna true se tiver, false se não tiver.
-     */
     @Transactional(readOnly = true)
     public boolean hasActiveContract(String licensePlate) {
         logger.info("Verifying if a Vehicle has an active Contract!");
@@ -147,10 +136,6 @@ public class VehicleService {
                 .isPresent();
     }
 
-    /*
-     * Busca o contrato ativo do veículo pela placa.
-     * Lança NoActiveContractException se não houver contrato ativo.
-     */
     @Transactional(readOnly = true)
     public SubscriptionContract findActiveContract(String licensePlate) {
         logger.info("Finding an active Contract!");
@@ -160,7 +145,6 @@ public class VehicleService {
                 .orElseThrow(() -> new NoActiveContractException(licensePlate));
     }
 
-
     private void addHateoasLinks(VehicleDTO dto) {
         dto.add(linkTo(methodOn(VehicleController.class).findById(dto.getId())).withSelfRel().withType("GET"));
         dto.add(linkTo(methodOn(VehicleController.class).findAll()).withRel("findAll").withType("GET"));
@@ -168,6 +152,4 @@ public class VehicleService {
         dto.add(linkTo(methodOn(VehicleController.class).update(dto)).withRel("update").withType("PUT"));
         dto.add(linkTo(methodOn(VehicleController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
     }
-
-
 }

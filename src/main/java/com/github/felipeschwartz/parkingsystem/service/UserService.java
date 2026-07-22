@@ -1,7 +1,9 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
 import com.github.felipeschwartz.parkingsystem.controller.UserController;
-import com.github.felipeschwartz.parkingsystem.mapper.*;
+import com.github.felipeschwartz.parkingsystem.mapper.UserCreationMapper;
+import com.github.felipeschwartz.parkingsystem.mapper.UserEntityMapper;
+import com.github.felipeschwartz.parkingsystem.mapper.UserIndividualMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.CreateUserRequestDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.UserDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.UserEntityDTO;

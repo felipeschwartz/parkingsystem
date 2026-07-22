@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.felipeschwartz.parkingsystem.model.enums.UserProfile;
 import com.github.felipeschwartz.parkingsystem.model.enums.UserType;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Collate;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
