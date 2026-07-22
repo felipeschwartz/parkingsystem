@@ -1,6 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.felipeschwartz.parkingsystem.model.enums.UserProfile;
 import com.github.felipeschwartz.parkingsystem.model.enums.UserType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Collate;
@@ -39,6 +40,9 @@ public abstract class User implements Serializable {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
+    @Enumerated(EnumType.STRING)
+    private UserProfile userProfile;
+
     @Column
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -58,12 +62,13 @@ public abstract class User implements Serializable {
     protected User() {
     }
 
-    public User(Long id, String phone, String email, Address address, UserType userType, LocalDateTime createdAt, LocalDateTime updatedAt, String password) {
+    public User(Long id, String phone, String email, Address address, UserType userType, UserProfile userProfile, LocalDateTime createdAt, LocalDateTime updatedAt, String password) {
         this.id = id;
         this.phone = phone;
         this.email = email;
         this.address = address;
         this.userType = userType;
+        this.userProfile = userProfile;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.password = password;
@@ -128,6 +133,14 @@ public abstract class User implements Serializable {
 
     public void setVehicles(Set<Vehicle> vehicles) {
         this.vehicles = vehicles;
+    }
+
+    public UserProfile getUserProfile() {
+        return userProfile;
+    }
+
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
 
     public LocalDateTime getCreatedAt() {

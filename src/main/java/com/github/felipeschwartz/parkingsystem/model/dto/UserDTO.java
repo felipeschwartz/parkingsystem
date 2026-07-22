@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
+import com.github.felipeschwartz.parkingsystem.model.enums.UserProfile;
 import com.github.felipeschwartz.parkingsystem.model.enums.UserType;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -18,18 +19,20 @@ public abstract class UserDTO<T extends UserDTO<T>> extends RepresentationModel<
     private Set<VehicleDTO> vehicles = new HashSet<>();
     private AddressDTO address;
     private UserType userType;
+    private UserProfile userProfile;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     protected UserDTO() {
     }
 
-    public UserDTO(Long id, String phone, String email, AddressDTO address, UserType userType, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UserDTO(Long id, String phone, String email, AddressDTO address, UserType userType, UserProfile userProfile, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.phone = phone;
         this.email = email;
         this.address = address;
         this.userType = userType;
+        this.userProfile = userProfile;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -55,6 +58,14 @@ public abstract class UserDTO<T extends UserDTO<T>> extends RepresentationModel<
 
     public void setUserType(UserType userType) {
         this.userType = userType;
+    }
+
+    public UserProfile getUserProfile() {
+        return userProfile;
+    }
+
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
 
     public LocalDateTime getCreatedAt() { return createdAt; }

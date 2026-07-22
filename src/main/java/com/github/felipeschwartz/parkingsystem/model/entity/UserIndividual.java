@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.model.entity;
 
+import com.github.felipeschwartz.parkingsystem.model.enums.UserProfile;
 import com.github.felipeschwartz.parkingsystem.model.enums.UserType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,8 +31,8 @@ public class UserIndividual extends User implements Serializable {
     public UserIndividual() {
     }
 
-    public UserIndividual(Long id, String phone, String email, Address address, UserType userType, LocalDateTime createdAt, LocalDateTime updatedAt, String password, String cpf, String firstName, String lastName, LocalDate birthDate) {
-        super(id, phone, email, address, userType, createdAt, updatedAt, password);
+    public UserIndividual(Long id, String phone, String email, Address address, UserType userType, UserProfile userProfile, LocalDateTime createdAt, LocalDateTime updatedAt, String password, String cpf, String firstName, String lastName, LocalDate birthDate) {
+        super(id, phone, email, address, userType, userProfile, createdAt, updatedAt, password);
         this.cpf = cpf;
         this.firstName = firstName;
         this.lastName = lastName;
