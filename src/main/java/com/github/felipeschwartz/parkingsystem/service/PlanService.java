@@ -110,7 +110,9 @@ public class PlanService {
 
     @Transactional
     public void activatePlan(Long id) {
-        Plan p = getPlanOrThrow(id);
+        logger.info("Activating plan with id {}", id);
+        Plan p = planRepository.findById(id)
+                        .orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: ", id));
         p.setActive(true);
         p.setUpdatedAt(LocalDateTime.now());
         planRepository.save(p);
@@ -118,7 +120,9 @@ public class PlanService {
 
     @Transactional
     public void deactivatePlan(Long id) {
-        Plan p = getPlanOrThrow(id);
+        logger.info("Deactivating plan with id {}", id);
+        Plan p = planRepository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: ", id));
         p.setActive(false);
         p.setUpdatedAt(LocalDateTime.now());
         planRepository.save(p);

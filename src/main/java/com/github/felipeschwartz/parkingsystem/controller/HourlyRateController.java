@@ -1,7 +1,9 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import com.github.felipeschwartz.parkingsystem.controller.docs.HourlyRateControllerDocs;
 import com.github.felipeschwartz.parkingsystem.model.dto.HourlyRateDTO;
 import com.github.felipeschwartz.parkingsystem.service.HourlyRateService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +14,9 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/hourly_rate")
-public class HourlyRateController {
+@RequestMapping("/api/hourly_rate/v1")
+@Tag(name = "Hourly Rate", description = "Endpoints for managing Hourly Rate")
+public class HourlyRateController implements HourlyRateControllerDocs {
 
     private final HourlyRateService service;
 
@@ -22,12 +25,14 @@ public class HourlyRateController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Override
     public ResponseEntity<List<HourlyRateDTO>> findAll() {
         List<HourlyRateDTO> hourlyRates = service.findAll();
         return ResponseEntity.ok(hourlyRates);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Override
     public ResponseEntity<HourlyRateDTO> findById(@PathVariable("id") long id) {
         HourlyRateDTO hourlyRate = service.findById(id);
         return ResponseEntity.ok(hourlyRate);
@@ -37,6 +42,7 @@ public class HourlyRateController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @Override
     public ResponseEntity<HourlyRateDTO> create(@RequestBody @Valid HourlyRateDTO hourlyRateDTO) {
         HourlyRateDTO createdHourlyRate = service.create(hourlyRateDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -51,14 +57,16 @@ public class HourlyRateController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @Override
     public ResponseEntity<HourlyRateDTO> update(@RequestBody @Valid HourlyRateDTO hourlyRateDTO) {
         HourlyRateDTO updatedHourlyRate = service.update(hourlyRateDTO);
         return ResponseEntity.ok(updatedHourlyRate);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") long id) {
+    @Override
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
-        return ResponseEntity.noContent().build(); // Retorna 204 No Content
+        return ResponseEntity.noContent().build();
     }
 }

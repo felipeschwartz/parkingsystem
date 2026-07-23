@@ -96,6 +96,16 @@ public class PlanRateService  {
         planRateRepository.save(rate);
     }
 
+    @Transactional
+    public void activateRate(Long id) {
+        PlanRate rate = planRateRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("PlanRate not found: " + id));
+
+        rate.setActive(true);
+        rate.setUpdatedAt(LocalDateTime.now());
+        planRateRepository.save(rate);
+    }
+
     private void addHateoasLinks(PlanRateDTO dto) {
         dto.add(linkTo(methodOn(PlanRateController.class).findById(dto.getId())).withSelfRel().withType("GET"));
         dto.add(linkTo(methodOn(PlanRateController.class).findAll()).withRel("findAll").withType("GET"));
