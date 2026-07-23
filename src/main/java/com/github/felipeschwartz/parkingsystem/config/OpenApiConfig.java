@@ -13,9 +13,9 @@ public class OpenApiConfig {
     OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                    .title("REST API'S RESTFUL FROM 0 WITH JAVA, SPRING BOOT, KUBERNETES AND DOCKER")
+                    .title("REST API'S RESTFUL, WITH JAVA, SPRING BOOT, KUBERNETES AND DOCKER")
                         .version("V1")
-                        .description("REST API'S RESTFUL FROM 0 WITH JAVA, SPRING BOOT, KUBERNETES AND DOCKER")
+                        .description("REST API'S RESTFUL, WITH JAVA, SPRING BOOT, KUBERNETES AND DOCKER")
                         .termsOfService("https://github.com/felipeschwartz/parkingsystem")
                         .license(new License()
                             .name("Apache 2.0")
