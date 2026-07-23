@@ -1,7 +1,9 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import com.github.felipeschwartz.parkingsystem.controller.docs.ReservationControllerDocs;
 import com.github.felipeschwartz.parkingsystem.model.dto.ReservationDTO;
 import com.github.felipeschwartz.parkingsystem.service.ReservationService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +14,9 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/reservation")
-public class ReservationController {
+@RequestMapping("/api/reservation/v1")
+@Tag(name = "Reservation", description = "Endpoint for managing Reservations")
+public class ReservationController implements ReservationControllerDocs {
 
     private final ReservationService service;
 
@@ -23,11 +26,13 @@ public class ReservationController {
 
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Override
     public List<ReservationDTO> findAll() {
         return service.findAll();
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Override
     public ReservationDTO findById(@PathVariable Long id) {
         return service.findById(id);
     }
@@ -37,6 +42,7 @@ public class ReservationController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @Override
     public ResponseEntity<ReservationDTO> create(@RequestBody @Valid ReservationDTO reservationDTO) {
         ReservationDTO createdReservation = service.create(reservationDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -51,6 +57,7 @@ public class ReservationController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @Override
     public ResponseEntity<ReservationDTO> update(@RequestBody ReservationDTO updatedDTO) {
         updatedDTO.setId(updatedDTO.getId());
         ReservationDTO result = service.update(updatedDTO);
@@ -58,6 +65,7 @@ public class ReservationController {
     }
 
     @DeleteMapping(value = "/{id}")
+    @Override
     public ResponseEntity<?> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
