@@ -1,0 +1,52 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      TZ: America/Sao_Paulo
+      POSTGRES_PASSWORD: 1234567890
+      POSTGRES_DB: parkingsystem
+      POSTGRES_USER: postgres
+
+
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    networks:
+      - parking-network
+  parking-system:
+    image: felipeschwartz/parking-system
+    restart: always
+    build: ./
+    working_dir: /
+    environment:
+      TZ: America/Sao_Paulo
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/parkingsystem
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234567890
+    # command: mvn spring-boot:run
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    networks:
+      - parking-network
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    restart: always
+    ports:
+      - 9000:9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - parking-network
+
+volumes:
+  portainer_data:
+
+networks:
+  parking-network:
+    driver: bridge
