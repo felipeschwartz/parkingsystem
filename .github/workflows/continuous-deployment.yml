@@ -27,3 +27,18 @@ jobs:
           distribution: 'zulu' # See 'Supported distributions' for available options
           java-version: '25'
           cache: maven
+
+      - name: Build Application .jar
+        working-directory: ./
+        run: mvn clean package
+
+      - name: Docker Compose Build
+        working-directory: ./
+        run: docker compose build
+
+      - name: Push to Docker Hub Container Registry
+        run: |
+          docker tag ${{ secrets.DOCKER_USERNAME }}/parkingsystem:latest ${{ secrets.DOCKER_USERNAME }}/parkingsystem:${{ github.run_id }}
+
+          docker push ${{ secrets.DOCKER_USERNAME }}/parkingsystem:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/parkingsystem:${{ github.run_id }}
