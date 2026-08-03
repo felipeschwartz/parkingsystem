@@ -40,7 +40,8 @@ jobs:
 
       - name: Push to Docker Hub Container Registry
         run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/parking-system:latest ${{ secrets.DOCKER_USERNAME }}/parking-system:${{ github.run_id }}
+          docker tag parking-system ${{ secrets.DOCKER_USERNAME }}/parking-system:latest
+          docker tag parking-system ${{ secrets.DOCKER_USERNAME }}/parking-system:${{ github.run_id }}
 
           docker push ${{ secrets.DOCKER_USERNAME }}/parking-system:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/parking-system:${{ github.run_id }}
