@@ -1,15 +1,10 @@
 package com.github.felipeschwartz.parkingsystem.config;
 
 import com.github.felipeschwartz.parkingsystem.model.entity.User;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.github.felipeschwartz.parkingsystem.repository.UserRepository;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 @Service
 public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
@@ -25,14 +20,6 @@ public class UserDetailsService implements org.springframework.security.core.use
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
-        Collection<? extends GrantedAuthority> authorities = user.getRoles().stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())
-                .password(user.getPassword())
-                .authorities(authorities)
-                .build();
+        return new CustomUserDetails(user);
     }
 }
