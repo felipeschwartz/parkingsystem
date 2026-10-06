@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
         HourlyRateService.class, ParkingLotService.class, ParkingSessionService.class,
         ParkingSpaceService.class, PaymentService.class, PlanRateService.class, PlanService.class,
         ReservationService.class, SubscriptionContractService.class, UserService.class,
-        VehicleService.class, JwtService.class, UserDetailsService.class
+        VehicleService.class, AuthService.class, JwtService.class, UserDetailsService.class
 })
 class SecurityConfigDevTest {
 
