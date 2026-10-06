@@ -61,7 +61,6 @@ public class VehicleService {
 
     }
 
-    // -------- CREATE --------
 
 
     @Transactional
@@ -85,7 +84,6 @@ public class VehicleService {
         return createdDto;
     }
 
-    // -------- UPDATE --------
 
     @Transactional
     public VehicleDTO update(VehicleDTO updated) {
@@ -102,7 +100,6 @@ public class VehicleService {
         return updatedDto;
     }
 
-    // -------- DELETE --------
 
     @Transactional
     public void delete(Long id) {
@@ -139,7 +136,7 @@ public class VehicleService {
     @Transactional(readOnly = true)
     public SubscriptionContract findActiveContract(String licensePlate) {
         logger.info("Finding an active Contract!");
-        Vehicle vehicle = findVehicleEntityByLicensePlate(licensePlate); // já é Vehicle, não Optional
+        Vehicle vehicle = findVehicleEntityByLicensePlate(licensePlate);
         return contractRepository
                 .findByVehicleAndStatus(vehicle, SubscripionStatus.ACTIVE)
                 .orElseThrow(() -> new NoActiveContractException(licensePlate));

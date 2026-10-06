@@ -30,7 +30,6 @@ public class ParkingSessionController implements ParkingSessionControllerDocs {
         this.sessionService = sessionService;
     }
 
-    // CREATE - OPEN SESSION
 
     @PostMapping("/open")
     @Override
@@ -45,7 +44,6 @@ public class ParkingSessionController implements ParkingSessionControllerDocs {
     }
 
 
-    // UPDATE - CLOSE SESSION
 
     @PostMapping("/{id}/close")
     @Override
@@ -59,7 +57,6 @@ public class ParkingSessionController implements ParkingSessionControllerDocs {
         return ResponseEntity.ok(closedSession);
     }
 
-    // READ SESSIONS
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Override

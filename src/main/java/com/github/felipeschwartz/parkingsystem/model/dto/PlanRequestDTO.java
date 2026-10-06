@@ -5,7 +5,7 @@ import java.util.List;
 public class PlanRequestDTO {
     private String name;
     private Boolean active;
-    private List<Long> rateIds; // Para receber apenas os IDs das Rates
+    private List<Long> rateIds;
     private List<Long> subscriptionContractIds;
 
     public PlanRequestDTO() {

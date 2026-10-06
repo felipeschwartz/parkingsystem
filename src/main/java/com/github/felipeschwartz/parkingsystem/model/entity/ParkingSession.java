@@ -235,7 +235,7 @@ public class ParkingSession implements Serializable {
         }
 
         Duration duration = getDuration();
-        long minutes = duration.toMinutes(); // proporcional por minuto
+        long minutes = duration.toMinutes();
 
         BigDecimal hours = BigDecimal.valueOf(minutes)
                 .divide(BigDecimal.valueOf(60), 6, RoundingMode.HALF_UP);

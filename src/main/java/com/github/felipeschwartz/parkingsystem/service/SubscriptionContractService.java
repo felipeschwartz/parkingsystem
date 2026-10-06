@@ -136,35 +136,6 @@ public class SubscriptionContractService {
     }
 
 
-
-//    @Transactional
-//    public SubscriptionContract createContract(SubscriptionContract contract) {
-//        validateDates(contract.getStartDate(), contract.getEndDate());
-//
-//        // Se endDate for null (sem fim), use uma data "bem grande" só para checar sobreposição
-//        LocalDate end = (contract.getEndDate() == null) ? LocalDate.of(9999, 12, 31) : contract.getEndDate();
-//
-//        List<SubscriptionContract> overlaps = subscriptionContractRepository.findOverlappingContracts(
-//                contract.getVehicle().getId(),
-//                SubscripionStatus.ACTIVE,
-//                contract.getStartDate(),
-//                end
-//        );
-//
-//        if (!overlaps.isEmpty()) {
-//            throw new IllegalStateException("There is already an active contract with an overlapping period for this vehicle.");
-//        }
-//
-//        // Garante status default
-//        if (contract.getStatus() == null) {
-//            contract.setStatus(SubscripionStatus.ACTIVE);
-//        }
-//
-//        return subscriptionContractRepository.save(contract);
-//    }
-
-
-
     private void validateDates(LocalDate startDate, LocalDate endDate) {
         if (startDate == null || startDate.isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("startDate cannot be null or before today.");

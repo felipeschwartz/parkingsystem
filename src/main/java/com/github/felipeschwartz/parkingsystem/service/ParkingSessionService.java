@@ -58,7 +58,6 @@ public class ParkingSessionService {
         this.sessionMapper = sessionMapper; 
     }
 
-    //OPEN
     @Transactional
     public ParkingSessionDTO openParkingSession(OpenSessionRequestDTO request) {
         logger.info("Opening Parking Session");
@@ -96,7 +95,6 @@ public class ParkingSessionService {
     }
 
 
-    // CLOSE
 
     @Transactional
     public ParkingSessionDTO closeSession(Long sessionId, LocalDateTime exitTime) { 
@@ -125,7 +123,6 @@ public class ParkingSessionService {
         return updatedSessionDTO;
     }
 
-    // READ (Novos métodos)
 
     @Transactional(readOnly = true)
     public ParkingSessionDTO findById(Long id) {
@@ -161,7 +158,6 @@ public class ParkingSessionService {
                 .collect(Collectors.toList());
     }
 
-    // HELPERS
 
     private BigDecimal calculateAmountFor(ParkingSession session) {
         if (session.getVehicle() != null) {
