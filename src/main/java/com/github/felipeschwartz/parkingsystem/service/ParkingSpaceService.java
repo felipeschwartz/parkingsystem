@@ -44,7 +44,7 @@ public class ParkingSpaceService {
     public ParkingSpaceDTO findById(Long id) {
         logger.info("Finding Parking Space!");
         ParkingSpace parkingSpace = repository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Parking Space not found: ", id));
+                .orElseThrow(() -> new ObjectNotFoundException("Parking Space", id));
         ParkingSpaceDTO parkingSpaceDTO = mapper.toDTO(parkingSpace);
         addHateoasLinks(parkingSpaceDTO);
         return parkingSpaceDTO;
@@ -67,7 +67,7 @@ public class ParkingSpaceService {
     public ParkingSpaceDTO updateParkingSpace(ParkingSpaceDTO parkingSpaceDTO) {
         logger.info("Updating Parking Space!");
         ParkingSpace parkingSpace = repository.findById(parkingSpaceDTO.getId())
-                .orElseThrow(() -> new ObjectNotFoundException("Parking Space not found: ", parkingSpaceDTO.getId()));
+                .orElseThrow(() -> new ObjectNotFoundException("Parking Space", parkingSpaceDTO.getId()));
         mapper.updateEntityFromDto(parkingSpaceDTO, parkingSpace);
         parkingSpace.setUpdatedAt(LocalDateTime.now());
         ParkingSpaceDTO updatedParkingSpaceDTO = mapper.toDTO(repository.save(parkingSpace));
@@ -80,7 +80,7 @@ public class ParkingSpaceService {
     public void deleteParkingSpace(Long id) {
         logger.info("Deleting Parking Space!");
         if (!repository.existsById(id)) {
-            throw new ObjectNotFoundException("Parking Space not found: ", id);
+            throw new ObjectNotFoundException("Parking Space", id);
         }
         repository.deleteById(id);
     }

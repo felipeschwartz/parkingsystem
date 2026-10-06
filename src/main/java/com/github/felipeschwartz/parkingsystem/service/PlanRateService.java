@@ -43,7 +43,7 @@ public class PlanRateService  {
     public PlanRateDTO findById(Long id) {
         logger.info("Finding plan rate record with id {}", id);
         PlanRate planRate = planRateRepository.findById(id)
-                .orElseThrow(() ->new ObjectNotFoundException("Plan rate not found with id: ", id));
+                .orElseThrow(() ->new ObjectNotFoundException("Plan rate", id));
         PlanRateDTO planRateDTO = planRateMapper.toDTO(planRate);
         addHateoasLinks(planRateDTO);
         return planRateDTO;

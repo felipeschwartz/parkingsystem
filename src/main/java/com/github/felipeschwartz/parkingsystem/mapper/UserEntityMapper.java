@@ -23,6 +23,7 @@ public interface UserEntityMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "userProfile", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "cnpj", source = "cnpj")
     @Mapping(target = "billingContact", source = "billingContact")

@@ -3,7 +3,7 @@ package com.github.felipeschwartz.parkingsystem.controller;
 import com.github.felipeschwartz.parkingsystem.config.CustomUserDetails;
 import com.github.felipeschwartz.parkingsystem.config.JwtFilter;
 import com.github.felipeschwartz.parkingsystem.config.JwtService;
-import com.github.felipeschwartz.parkingsystem.config.SecurityConfigDev;
+import com.github.felipeschwartz.parkingsystem.config.SecurityConfig;
 import com.github.felipeschwartz.parkingsystem.config.UserDetailsService;
 import com.github.felipeschwartz.parkingsystem.model.entity.UserIndividual;
 import com.github.felipeschwartz.parkingsystem.service.AuthRateLimiter;
@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -34,8 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthController.class)
-@ActiveProfiles("dev")
-@Import({SecurityConfigDev.class, JwtFilter.class, AuthService.class, AuthRateLimiter.class})
+@Import({SecurityConfig.class, JwtFilter.class, AuthService.class, AuthRateLimiter.class})
 @MockitoBean(types = {JwtService.class, UserDetailsService.class})
 class AuthControllerTest {
 

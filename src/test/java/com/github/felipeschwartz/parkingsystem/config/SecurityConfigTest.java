@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
@@ -27,15 +26,14 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 
 @WebMvcTest
-@ActiveProfiles("dev")
-@Import({SecurityConfigDev.class, JwtFilter.class})
+@Import({SecurityConfig.class, JwtFilter.class})
 @MockitoBean(types = {
         HourlyRateService.class, ParkingLotService.class, ParkingSessionService.class,
         ParkingSpaceService.class, PaymentService.class, PlanRateService.class, PlanService.class,
         ReservationService.class, SubscriptionContractService.class, UserService.class,
         VehicleService.class, AuthService.class, JwtService.class, UserDetailsService.class
 })
-class SecurityConfigDevTest {
+class SecurityConfigTest {
 
     private static final List<String> ALL_ROLES = List.of("ADMIN", "USER", "PARKING", "PARKING_MANAGER");
 

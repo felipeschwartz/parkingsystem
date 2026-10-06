@@ -23,6 +23,7 @@ public interface UserIndividualMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "userProfile", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "cpf", source = "cpf")
     @Mapping(target = "firstName", source = "firstName")

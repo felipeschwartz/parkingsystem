@@ -61,7 +61,7 @@ public class PlanService {
     public PlanDTO findById(Long id) {
         logger.info("Finding plan record with id {}", id);
         Plan plan = planRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: ", id));
+                .orElseThrow(() -> new ObjectNotFoundException("Plan", id));
         PlanDTO planDTO = planMapper.toDTO(plan, context);
         addHateoasLinks(planDTO);
         return planDTO;
@@ -100,7 +100,7 @@ public class PlanService {
     public PlanDTO update(PlanDTO updated) {
         logger.info("Updating plan with id {}", updated.getId());
         Plan existingPlan = planRepository.findById(updated.getId())
-                .orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: ", updated.getId()));
+                .orElseThrow(() -> new ObjectNotFoundException("Plan", updated.getId()));
         planMapper.updateEntityFromDTO(updated, existingPlan);
         existingPlan.setUpdatedAt(LocalDateTime.now());
         PlanDTO updatedPlanDTO = planMapper.toDTO(existingPlan, context);
@@ -112,7 +112,7 @@ public class PlanService {
     public void activatePlan(Long id) {
         logger.info("Activating plan with id {}", id);
         Plan p = planRepository.findById(id)
-                        .orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: ", id));
+                        .orElseThrow(() -> new ObjectNotFoundException("Plan", id));
         p.setActive(true);
         p.setUpdatedAt(LocalDateTime.now());
         planRepository.save(p);
@@ -122,7 +122,7 @@ public class PlanService {
     public void deactivatePlan(Long id) {
         logger.info("Deactivating plan with id {}", id);
         Plan p = planRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: ", id));
+                .orElseThrow(() -> new ObjectNotFoundException("Plan", id));
         p.setActive(false);
         p.setUpdatedAt(LocalDateTime.now());
         planRepository.save(p);
@@ -132,7 +132,7 @@ public class PlanService {
     public void deletePlan(Long id) {
         logger.info("Deleting plan with id {}", id);
         if (!planRepository.existsById(id)) {
-            throw new ObjectNotFoundException("Plan not found with id: ", id);
+            throw new ObjectNotFoundException("Plan", id);
         }
         planRepository.deleteById(id);
     }

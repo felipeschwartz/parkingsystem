@@ -1,18 +1,14 @@
 services:
   db:
-    image: postgres
+    image: postgres:16
     restart: always
     environment:
       TZ: America/Sao_Paulo
-      POSTGRES_PASSWORD: 1234567890
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: parkingsystem
       POSTGRES_USER: postgres
-
-
     ports:
-      - "5432:5432"
-    expose:
-      - 5432
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
     networks:
       - parking-network
   parking-system:
@@ -22,10 +18,14 @@ services:
     working_dir: /
     environment:
       TZ: America/Sao_Paulo
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/parkingsystem
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 1234567890
-    # command: mvn spring-boot:run
+      DB_URL: jdbc:postgresql://db:5432/parkingsystem
+      DB_USERNAME: postgres
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      SWAGGER_ENABLED: ${SWAGGER_ENABLED:-false}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-}
     ports:
       - 8080:8080
     depends_on:
@@ -33,16 +33,17 @@ services:
     networks:
       - parking-network
 
+  # Ferramenta de administração, fora do `up` padrão: docker compose --profile tools up -d
+  # Tem acesso total ao Docker do host, então só escuta em localhost (em servidor, acesse por túnel SSH).
   portainer:
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer-ce:lts
+    profiles: ["tools"]
     restart: always
     ports:
-      - 9000:9000
+      - "127.0.0.1:9000:9000"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - portainer_data:/data
-    networks:
-      - parking-network
 
 volumes:
   portainer_data:

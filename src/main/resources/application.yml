@@ -7,9 +7,9 @@ spring:
     name: parking_system
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/parkingsystem
-    username: postgres
-    password: 1234567890
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: none
@@ -17,21 +17,23 @@ spring:
       hibernate:
     show-sql: false
     open-in-view: false
-  profiles:
-    active: dev
   flyway:
     enabled: true
 
 security:
   jwt:
-    secret: parking-system-secret-key-felipe-schwartz-2026
+    secret: ${JWT_SECRET}
     expiration: 86400000
-
-logging:
-  level:
-    org.springframework.security: DEBUG
 
 springdoc:
   paths-to-match: /api/**/v1/**
+  api-docs:
+    enabled: ${SWAGGER_ENABLED:false}
   swagger-ui:
+    enabled: ${SWAGGER_ENABLED:false}
     use-root-path: true
+
+bootstrap:
+  admin:
+    email: ${ADMIN_EMAIL:}
+    password: ${ADMIN_PASSWORD:}

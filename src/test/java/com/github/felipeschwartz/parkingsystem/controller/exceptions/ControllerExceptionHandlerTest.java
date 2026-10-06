@@ -60,6 +60,13 @@ class ControllerExceptionHandlerTest {
     }
 
     @Test
+    void shouldReturnTheMessageOfAnObjectNotFoundCreatedFromASingleString() throws Exception {
+        mvc.perform(get("/probe/not-found-message"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Plan with id 3 not found!"));
+    }
+
+    @Test
     void shouldListEveryInvalidFieldOfTheBody() throws Exception {
         mvc.perform(post("/probe/body")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -121,6 +128,11 @@ class ControllerExceptionHandlerTest {
         @GetMapping("/not-found")
         String notFound() {
             throw new ObjectNotFoundException("Vehicle", 9L);
+        }
+
+        @GetMapping("/not-found-message")
+        String notFoundWithMessage() {
+            throw new ObjectNotFoundException("Plan with id 3 not found!");
         }
 
         @PostMapping("/body")

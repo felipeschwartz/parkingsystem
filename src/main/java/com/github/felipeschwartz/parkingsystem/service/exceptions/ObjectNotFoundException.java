@@ -6,11 +6,11 @@ public class ObjectNotFoundException extends RuntimeException {
         super(entityName + " not found by ID: " + id);
     }
 
-    public ObjectNotFoundException(String entityName, String licensePlate) {
-        super(entityName + " not found: " + licensePlate);
+    public ObjectNotFoundException(String entityName, String identifier) {
+        super(entityName + " not found: " + identifier);
     }
 
-    public ObjectNotFoundException(String s) {
-
+    public ObjectNotFoundException(String message) {
+        super(message);
     }
 }
