@@ -66,7 +66,7 @@ public class ParkingSessionService {
         ParkingSpace space = spaceRepository.findById(request.parkingSpaceId())
                 .orElseThrow(() -> new ObjectNotFoundException("ParkingSpace not found with ID: " + request.parkingSpaceId()));
         if (sessionRepository.existsByParkingSpace_IdAndStatus(space.getId(), SessionStatus.OPEN)) {
-            throw new ObjectNotFoundException("There is already an OPEN session for parking space ID: " + space.getId());
+            throw new IllegalStateException("There is already an OPEN session for parking space ID: " + space.getId());
         }
         Optional<Vehicle> existingVehicle = vehicleRepository.findVehicleByLicensePlate(request.licensePlate());
 
@@ -128,7 +128,7 @@ public class ParkingSessionService {
     public ParkingSessionDTO findById(Long id) {
         logger.info("Finding Parking Session with ID {}", id);
         ParkingSession parkingSession = sessionRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Parking Session not found: ", id));
+                .orElseThrow(() -> new ObjectNotFoundException("Parking Session", id));
         ParkingSessionDTO parkingSessionDTO = sessionMapper.toDTO(parkingSession);
         addHateoasLinks(parkingSessionDTO);
         return parkingSessionDTO;

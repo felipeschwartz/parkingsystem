@@ -54,7 +54,7 @@ public class VehicleService {
     public VehicleDTO findById(Long id) {
         logger.info("Finding one Vehicle!");
         Vehicle vehicle = vehicleRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Vehicle not found: ", id));
+                .orElseThrow(() -> new ObjectNotFoundException("Vehicle", id));
         VehicleDTO dto = vehicleMapper.toDTO(vehicle);
         addHateoasLinks(dto);
         return dto;
@@ -89,7 +89,7 @@ public class VehicleService {
     public VehicleDTO update(VehicleDTO updated) {
         logger.info("Updating one Vehicle!");
         Vehicle vehicle = vehicleRepository.findById(updated.getId())
-                .orElseThrow(() -> new ObjectNotFoundException("Vehicle not found: ", updated.getId()));
+                .orElseThrow(() -> new ObjectNotFoundException("Vehicle", updated.getId()));
 
         if (updated.getLicensePlate() != null) vehicle.setLicensePlate(updated.getLicensePlate());
         if (updated.getType() != null) vehicle.setType(updated.getType());
@@ -105,7 +105,7 @@ public class VehicleService {
     public void delete(Long id) {
         logger.info("Deleting one Vehicle!");
         Vehicle vehicle = vehicleRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Vehicle not found: ", id));
+                .orElseThrow(() -> new ObjectNotFoundException("Vehicle", id));
         vehicleRepository.delete(vehicle);
     }
 
@@ -113,7 +113,7 @@ public class VehicleService {
     public VehicleDTO findByLicensePlate(String licensePlate) {
         logger.info("Finding one Vehicle by Licence Plate!");
         Vehicle vehicle = vehicleRepository.findVehicleByLicensePlate(licensePlate)
-                .orElseThrow(() -> new ObjectNotFoundException("Vehicle ", licensePlate));
+                .orElseThrow(() -> new ObjectNotFoundException("Vehicle", licensePlate));
         VehicleDTO dto = vehicleMapper.toDTO(vehicle);
         addHateoasLinks(dto);
         return dto;
@@ -122,7 +122,7 @@ public class VehicleService {
 
     private Vehicle findVehicleEntityByLicensePlate(String licensePlate) {
         return vehicleRepository.findVehicleByLicensePlate(licensePlate)
-                .orElseThrow(() -> new ObjectNotFoundException("Vehicle ", licensePlate));
+                .orElseThrow(() -> new ObjectNotFoundException("Vehicle", licensePlate));
     }
     @Transactional(readOnly = true)
     public boolean hasActiveContract(String licensePlate) {

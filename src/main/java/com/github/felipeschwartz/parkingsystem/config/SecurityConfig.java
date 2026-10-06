@@ -2,7 +2,6 @@ package com.github.felipeschwartz.parkingsystem.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -19,14 +18,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.util.Collections;
 
 @Configuration
-@Profile("dev")
 @EnableMethodSecurity(securedEnabled = true)
-public class SecurityConfigDev {
+public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
 
-    public SecurityConfigDev(UserDetailsService userDetailsService, JwtFilter jwtFilter) {
+    public SecurityConfig(UserDetailsService userDetailsService, JwtFilter jwtFilter) {
         this.userDetailsService = userDetailsService;
         this.jwtFilter = jwtFilter;
     }

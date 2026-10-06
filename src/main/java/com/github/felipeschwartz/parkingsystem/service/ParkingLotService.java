@@ -45,7 +45,7 @@ public class ParkingLotService {
     public ParkingLotDTO findById(Long id) {
         logger.info("Finding Parking Lot with id {}", id);
         ParkingLot parkingLot = repository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("ParkingLot not found: ", id));
+                .orElseThrow(() -> new ObjectNotFoundException("ParkingLot", id));
         ParkingLotDTO parkingLotDTO = mapper.toDTO(parkingLot);
         addHateoasLinks(parkingLotDTO);
         return parkingLotDTO;
@@ -68,7 +68,7 @@ public class ParkingLotService {
     public ParkingLotDTO update(ParkingLotDTO parkingLotDTO) {
         logger.info("Updating one ParkingLot!");
         ParkingLot parkingLot = repository.findById(parkingLotDTO.getId())
-                .orElseThrow(() -> new ObjectNotFoundException("ParkingLot not found: ", parkingLotDTO.getId()));
+                .orElseThrow(() -> new ObjectNotFoundException("ParkingLot", parkingLotDTO.getId()));
         mapper.updateEntityFromDto(parkingLotDTO, parkingLot);
         parkingLot.setUpdatedAt(LocalDateTime.now());
         ParkingLotDTO updatedParkingLotDTO = mapper.toDTO(repository.save(parkingLot));
@@ -80,7 +80,7 @@ public class ParkingLotService {
     public void delete(Long id) {
         logger.info("Deleting Hourly Rate {}", id);
         if (!repository.existsById(id)) {
-            throw new ObjectNotFoundException("ParkingLot not found: ", id);
+            throw new ObjectNotFoundException("ParkingLot", id);
         }
         repository.deleteById(id);
     }

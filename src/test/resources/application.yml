@@ -32,7 +32,7 @@ logging:
 
 security:
   jwt:
-    secret: parking-system-secret-key-felipe-schwartz-2026
+    secret: test-only-secret-with-at-least-32-bytes!!
     expiration: 86400000
 
 springdoc:

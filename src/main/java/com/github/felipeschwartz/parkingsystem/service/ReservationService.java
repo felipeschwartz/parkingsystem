@@ -52,7 +52,7 @@ public class ReservationService {
     public ReservationDTO findById(Long id) {
         logger.info("Finding reservation record with id {}", id);
         Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() ->new ObjectNotFoundException("Reservation not found with id: ", id));
+                .orElseThrow(() ->new ObjectNotFoundException("Reservation", id));
         ReservationDTO reservationDTO = reservationMapper.toDTO(reservation);
         addHateoasLinks(reservationDTO);
         return reservationDTO;
@@ -81,7 +81,7 @@ public class ReservationService {
     public ReservationDTO update(ReservationDTO updated) {
         logger.info("Updating reservation record with Id {}", updated.getId());
         Reservation existingReservation = reservationRepository.findById(updated.getId())
-                .orElseThrow(() ->new ObjectNotFoundException("Reservation not found with id: ", updated.getId()));
+                .orElseThrow(() ->new ObjectNotFoundException("Reservation", updated.getId()));
         if (updated.getvId() != null) {
             Vehicle newVehice = reservationRepository.findById(updated.getvId())
                     .orElseThrow(() -> new ObjectNotFoundException("Reservation not found with id: " + updated.getvId())).getVehicle();

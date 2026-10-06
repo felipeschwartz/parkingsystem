@@ -71,7 +71,7 @@ public class UserService {
                     } else if (user instanceof UserEntity oe) {
                         return (UserDTO) entityMapper.toDTO(oe);
                     }
-                    throw new ObjectNotFoundException("Unknown user type: " + user.getId());
+                    throw new IllegalStateException("Unknown user type: " + user.getId());
                 }).collect(Collectors.toList());
         userDTOS.forEach(this::addHateoasLinks);
         return userDTOS;
@@ -126,24 +126,25 @@ public class UserService {
         User user;
         if (requestDTO.getUserType() == UserType.INDIVIDUAL) {
             if (requestDTO.getCpf() == null || requestDTO.getCpf().isBlank()) {
-                throw new ObjectNotFoundException("CPF must not be blank for individual users.");
+                throw new IllegalArgumentException("CPF must not be blank for individual users.");
             }
             if (userIndividualRepository.existsByCpf(requestDTO.getCpf())) {
-                throw new ObjectNotFoundException("User with CPF already exists.");
+                throw new IllegalStateException("User with CPF already exists.");
             }
             user = userCreationMapper.toIndividualEntity(requestDTO);
         } else if (requestDTO.getUserType() == UserType.ENTITY) {
             if (requestDTO.getCnpj() == null || requestDTO.getCnpj().isBlank()) {
-                throw new ObjectNotFoundException("CNPJ must not be blank for individual users.");
+                throw new IllegalArgumentException("CNPJ must not be blank for entity users.");
             }
             if (userEntityRepository.existsByCnpj(requestDTO.getCnpj())) {
-                throw new ObjectNotFoundException("User with CNPJ already exists.");
+                throw new IllegalStateException("User with CNPJ already exists.");
             }
             user = userCreationMapper.toEntityEntity(requestDTO);
         } else  {
             throw new IllegalArgumentException("Unsupported UserType for creation: " + requestDTO.getUserType());
         }
         user.setPassword(passwordEncoder.encode(requestDTO.getPassword()));
+        user.setRoles(requestDTO.getUserProfile().roles());
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
@@ -181,7 +182,7 @@ public class UserService {
         Objects.requireNonNull(updatedDTO, "User update request must not be null.");
 
         User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("User with ID: " + id));
+                .orElseThrow(() -> new ObjectNotFoundException("User", id));
 
         if (existingUser.getUserType() != updatedDTO.getUserType()) {
             throw new IllegalArgumentException("Cannot change user type during update. Existing user is "
@@ -195,7 +196,7 @@ public class UserService {
             if (updatedDTO.getCpf() != null && !updatedDTO.getCpf().isBlank()
                     && !updatedDTO.getCpf().equals(individual.getCpf())) {
                 if (userIndividualRepository.existsByCpf(updatedDTO.getCpf())) {
-                    throw new IllegalArgumentException("An UserIndividual with this CPF already exists.");
+                    throw new IllegalStateException("An UserIndividual with this CPF already exists.");
                 }
             }
             individualMapper.updateIndividualFromCreateRequest(updatedDTO, individual);
@@ -214,7 +215,7 @@ public class UserService {
             if (updatedDTO.getCnpj() != null && !updatedDTO.getCnpj().isBlank()
                     && !updatedDTO.getCnpj().equals(entity.getCnpj())) {
                 if (userEntityRepository.existsByCnpj(updatedDTO.getCnpj())) {
-                    throw new IllegalArgumentException("An User with this CNPJ already exists.");
+                    throw new IllegalStateException("An User with this CNPJ already exists.");
                 }
             }
             entityMapper.updateEntityFromCreateRequest(updatedDTO, entity);

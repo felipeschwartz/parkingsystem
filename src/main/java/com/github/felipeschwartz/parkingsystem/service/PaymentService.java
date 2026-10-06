@@ -50,7 +50,7 @@ public class PaymentService {
     public PaymentDTO findById(Long id) {
         logger.info("Finding Parking Lot!");
         Payment payment = paymentRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Payment not found: ", id));
+                .orElseThrow(() -> new ObjectNotFoundException("Payment", id));
         PaymentDTO paymentDTO = mapper.toDTO(payment);
         addHateoasLinks(paymentDTO);
         return paymentDTO;
@@ -73,7 +73,7 @@ public class PaymentService {
     public PaymentDTO update(PaymentDTO updated) {
         logger.info("Updating Payment with id: {}", updated.getId());
         Payment entity = paymentRepository.findById(updated.getId())
-                .orElseThrow(() -> new ObjectNotFoundException("Payment not found: ", updated.getId()));
+                .orElseThrow(() -> new ObjectNotFoundException("Payment", updated.getId()));
         mapper.updateEntityFromDTO(updated, entity);
         entity.setUpdatedAt(LocalDateTime.now());
 
