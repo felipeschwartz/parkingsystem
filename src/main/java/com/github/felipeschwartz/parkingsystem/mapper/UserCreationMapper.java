@@ -34,7 +34,6 @@ public interface UserCreationMapper {
     @Mapping(target = "vehicles", source = "vehicles")
     User toEntity(CreateUserRequestDTO dto);
 
-    // Mapeamentos específicos para UserIndividual
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
@@ -47,7 +46,6 @@ public interface UserCreationMapper {
     @Mapping(target = "vehicles", source = "vehicles")
     UserIndividual toIndividualEntity(CreateUserRequestDTO dto);
 
-    // Mapeamentos específicos para UserEntity
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

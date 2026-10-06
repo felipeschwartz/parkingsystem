@@ -65,11 +65,6 @@ public class PlanRateService  {
         logger.info("Updating plan rate record {}", updatedDto);
         PlanRate existingRate = planRateRepository.findById(updatedDto.getId())
                 .orElseThrow(() -> new ObjectNotFoundException("Plan rate not found with id: " + updatedDto.getId()));
-//        if (updatedDto.getpId() != null) {
-//            Plan newPlan = planRepository.findById(updatedDto.getpId())
-//                    .orElseThrow(() -> new ObjectNotFoundException("Plan not found with id: " + updatedDto.getpId()));
-//            existingRate.setPlan(newPlan);
-//        }
         planRateMapper.updatePlanRateFromDto(updatedDto, existingRate);
         existingRate.setUpdatedAt(LocalDateTime.now());
         PlanRateDTO planRateDTO = planRateMapper.toDTO(planRateRepository.save(existingRate));

@@ -41,11 +41,11 @@ public interface UserSummaryMapper {
     @Mapping(target = "vehicles", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "userProfile", ignore = true) // IGNORADO
-    @Mapping(target = "roles", ignore = true) // IGNORADO
-    @Mapping(target = "firstName", ignore = true) // IGNORADO
-    @Mapping(target = "lastName", ignore = true) // IGNORADO
-    @Mapping(target = "birthDate", ignore = true) // IGNORADO
+    @Mapping(target = "userProfile", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "firstName", ignore = true)
+    @Mapping(target = "lastName", ignore = true)
+    @Mapping(target = "birthDate", ignore = true)
     UserIndividual summaryDTOToIndividual(UserSummaryDTO dto);
 
     @Named("summaryDTOToEntity")
@@ -55,11 +55,11 @@ public interface UserSummaryMapper {
     @Mapping(target = "vehicles", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "userProfile", ignore = true) // IGNORADO
-    @Mapping(target = "roles", ignore = true) // IGNORADO
-    @Mapping(target = "billingContact", ignore = true) // IGNORADO
-    @Mapping(target = "corporateName", ignore = true) // IGNORADO
-    @Mapping(target = "fantasyName", ignore = true) // IGNORADO
+    @Mapping(target = "userProfile", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "billingContact", ignore = true)
+    @Mapping(target = "corporateName", ignore = true)
+    @Mapping(target = "fantasyName", ignore = true)
     UserEntity summaryDTOToEntity(UserSummaryDTO dto);
 
 

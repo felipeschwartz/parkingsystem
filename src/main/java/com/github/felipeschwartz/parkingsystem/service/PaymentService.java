@@ -56,7 +56,6 @@ public class PaymentService {
         return paymentDTO;
     }
 
-    // -------- CREATE --------
 
     @Transactional
     public PaymentDTO create(PaymentDTO paymentDTO) {
@@ -69,7 +68,6 @@ public class PaymentService {
         return paymentDTOCreated;
     }
 
-    // -------- UPDATE --------
 
     @Transactional
     public PaymentDTO update(PaymentDTO updated) {

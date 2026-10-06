@@ -21,11 +21,10 @@ public interface SubscriptionContractRepository extends JpaRepository<Subscripti
     @Query("SELECT sc FROM SubscriptionContract sc JOIN FETCH sc.user")
     List<SubscriptionContract> findAllWithUsers();
 
-    // Query method simples: busca por veículo e status (sem lógica de vigência)
     List<SubscriptionContract> findByVehicleIdAndStatusOrderByStartDateDesc(Long vehicleId, SubscripionStatus status);
     Optional<SubscriptionContract> findByVehicleAndStatus(Vehicle vehicle, SubscripionStatus status);
 
-    // @Query: contrato ATIVO e vigente numa data (cobre endDate null)
+    // Contrato ativo e vigente na data; endDate nulo significa sem fim.
     @Query("""
            select sc
            from SubscriptionContract sc
@@ -41,7 +40,7 @@ public interface SubscriptionContractRepository extends JpaRepository<Subscripti
             @Param("date") LocalDate date
     );
 
-    // @Query: detetar sobreposição de período (para impedir contratos duplicados)
+    // Contratos ativos que se sobrepõem ao período informado.
     @Query("""
            select sc
            from SubscriptionContract sc

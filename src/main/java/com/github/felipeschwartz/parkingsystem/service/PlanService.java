@@ -137,9 +137,6 @@ public class PlanService {
         planRepository.deleteById(id);
     }
 
-    // --------------------
-    // helpers
-    // --------------------
     @Transactional(readOnly = true)
     public Plan getPlanOrThrow(Long planId) {
         return planRepository.findById(planId)

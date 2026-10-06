@@ -158,7 +158,6 @@ public class Plan implements Serializable {
 
         if (!belongsToThisPlan) return false;
 
-        // Flag: null => false, true => true
         return Boolean.TRUE.equals(chosenRate.getActive());
     }
 

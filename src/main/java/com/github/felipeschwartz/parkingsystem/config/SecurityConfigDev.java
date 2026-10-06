@@ -39,7 +39,6 @@ public class SecurityConfigDev {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/error", "/api/test/v1").permitAll() // TestLogController pode ser acessado por todos
-                        // Proteção de endpoints por URL
                         .requestMatchers(HttpMethod.POST, "/api/user/v1").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/user/v1/{id}").hasAnyRole("ADMIN", "USER", "PARKING", "PARKING_MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/api/user/v1/id/{id}").hasRole("ADMIN")

@@ -44,7 +44,6 @@ public class DevDatabaseSeeder implements CommandLineRunner {
 
         String encodedDefaultPassword = passwordEncoder.encode(DEFAULT_USER_PASSWORD);
 
-        // ---------- Helpers de enums (evita depender de nomes específicos) ----------
         VehicleType[] vehicleTypes = VehicleType.values();
         if (vehicleTypes.length == 0) throw new IllegalStateException("VehicleType enum has no values.");
 
@@ -53,7 +52,6 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         PaymentMethod[] paymentMethods = PaymentMethod.values();
         PaymentStatus[] paymentStatuses = PaymentStatus.values();
 
-        // ---------- Addresses (embeddable; não persiste sozinho) ----------
         Address addr1 = new Address("Av. Paulista", "1000", "10º andar", "São Paulo", "SP", "01310-100", "BR");
         Address addr2 = new Address("Rua das Flores", "123", "Casa", "Curitiba", "PR", "80000-000", "BR");
         Address addr3 = new Address("Av. Atlântica", "500", "Apto 301", "Rio de Janeiro", "RJ", "22010-000", "BR");
@@ -61,7 +59,6 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         Address addr5 = new Address("Av. Brasil", "777", "Sala 12", "Belo Horizonte", "MG", "30000-000", "BR");
         Address addr6 = new Address("Rua Central", "999", "Bloco B", "Florianópolis", "SC", "88000-000", "BR");
 
-        // ---------- Users (3 Individuals + 3 Entities) ----------
         List<UserIndividual> individuals = new ArrayList<>();
         individuals.add(newIndividual("11911110001", "pf1@teste.com", addr1, UserType.INDIVIDUAL, UserProfile.USER, "11111111111", "Ana", "Silva", LocalDate.of(1994, 1, 10), encodedDefaultPassword, now, Set.of("ROLE_USER")));
         individuals.add(newIndividual("11911110002", "pf2@teste.com", addr2, UserType.INDIVIDUAL, UserProfile.USER,"22222222222", "Bruno", "Souza", LocalDate.of(1990, 5, 20), encodedDefaultPassword, now, Set.of("ROLE_PARKING")));
@@ -80,12 +77,10 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         entities.forEach(em::persist);
         em.flush();
 
-        // Junta em lista "User" para facilitar
         List<User> users = new ArrayList<>();
         users.addAll(individuals);
         users.addAll(entities);
 
-        // ---------- ParkingLots (3) ----------
         ParkingLot lot1 = new ParkingLot(null, "Lot Paulista", addr1, "113000-0001", 100, true, 60, 30, 10);
         lot1.setCreatedAt(now); lot1.setUpdatedAt(now);
 
@@ -100,7 +95,6 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         em.persist(lot3);
         em.flush();
 
-        // ---------- ParkingSpaces (9 total: 3 por lot) ----------
         List<ParkingSpace> spaces = new ArrayList<>();
         spaces.add(newSpace(lot1, "1", "A01", vehicleTypes[0], spaceStatuses, now));
         spaces.add(newSpace(lot1, "1", "A02", vehicleTypes[Math.min(1, vehicleTypes.length - 1)], spaceStatuses, now));
@@ -117,7 +111,6 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         spaces.forEach(em::persist);
         em.flush();
 
-        // ---------- Plans (3) + PlanRates (9 total: 3 por plan) ----------
         Plan plan1 = new Plan(null, "Basic");
         plan1.setActive(true);
         plan1.setCreatedAt(now); plan1.setUpdatedAt(now);
@@ -151,7 +144,6 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         em.persist(plan3);
         em.flush();
 
-        // ---------- HourlyRate (3) ----------
         HourlyRate hr1 = new HourlyRate(vehicleTypes[0], new BigDecimal("15.00"), true);
         hr1.setCreatedAt(now); hr1.setUpdatedAt(now);
 
@@ -166,8 +158,6 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         em.persist(hr3);
         em.flush();
 
-        // ---------- Vehicles (6) ----------
-        // Um veículo por user (6) => atende min 3 / max 10
         List<Vehicle> vehicles = new ArrayList<>();
         vehicles.add(newVehicle("ABC-1001", vehicleTypes[0], users.get(0), now));
         vehicles.add(newVehicle("ABC-1002", vehicleTypes[Math.min(1, vehicleTypes.length - 1)], users.get(1), now));
@@ -179,8 +169,6 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         vehicles.forEach(em::persist);
         em.flush();
 
-        // ---------- SubscriptionContracts (3) ----------
-        // 3 contratos vinculando (vehicle + user + plan)
         SubscriptionContract sc1 = new SubscriptionContract(null, vehicles.get(0), plan1, today.minusMonths(2), today.plusMonths(10), SubscripionStatus.ACTIVE, vehicles.get(0).getUser());
         sc1.setCreatedAt(now); sc1.setUpdatedAt(now);
 
@@ -195,7 +183,6 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         em.persist(sc3);
         em.flush();
 
-        // ---------- Reservations (3) ----------
         Reservation r1 = new Reservation(null, vehicles.get(1), spaces.get(0), now.plusHours(1), now.plusHours(2), pick(reservationStatuses, 0));
         r1.setCreatedAt(now); r1.setUpdatedAt(now);
 
@@ -210,7 +197,6 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         em.persist(r3);
         em.flush();
 
-        // ---------- ParkingSessions (3) ----------
         ParkingSession s1 = ParkingSession.forSubscription(vehicles.get(0), spaces.get(1), now.minusHours(3));
         s1.close(now.minusHours(1));
         em.persist(s1);
@@ -225,8 +211,6 @@ public class DevDatabaseSeeder implements CommandLineRunner {
 
         em.flush();
 
-        // ---------- Payments (3) ----------
-        // Payment NÃO tem @GeneratedValue no seu código; então setamos IDs manualmente.
         Payment p1 = new Payment(null, s1, new BigDecimal("0.00"), now.minusHours(1), pick(paymentMethods, 0), pick(paymentStatuses, 0), "PAY-0001", now, now);
         Payment p2 = new Payment(null, s2, new BigDecimal("0.00"), now.minusHours(2), pick(paymentMethods, 0), pick(paymentStatuses, 0), "PAY-0002", now, now);
         Payment p3 = new Payment(null, s3, new BigDecimal("15.00"), now, pick(paymentMethods, 0), pick(paymentStatuses, 0), "PAY-0003", now, now);
@@ -238,7 +222,6 @@ public class DevDatabaseSeeder implements CommandLineRunner {
         em.flush();
     }
 
-    // ----------------- helpers -----------------
 
     private long count(String entityName) {
         return em.createQuery("select count(e) from " + entityName + " e", Long.class)

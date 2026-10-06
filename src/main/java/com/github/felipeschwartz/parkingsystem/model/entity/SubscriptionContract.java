@@ -179,7 +179,6 @@ public class SubscriptionContract implements Serializable {
 
         LocalDate today = LocalDate.now();
 
-        // regra: não renova se já venceu
         if (today.isAfter(this.endDate)) {
             throw new IllegalStateException("Contrato vencido. Não é possível renovar.");
         }
@@ -188,7 +187,6 @@ public class SubscriptionContract implements Serializable {
             throw new IllegalArgumentException("newEndDate não pode ser nulo.");
         }
 
-        // renovação deve estender (não encurtar, nem manter igual)
         if (!newEndDate.isAfter(this.endDate)) {
             throw new IllegalArgumentException("newEndDate deve ser após o endDate atual.");
         }

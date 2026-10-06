@@ -50,7 +50,6 @@ public class ParkingSpaceService {
         return parkingSpaceDTO;
     }
 
-    // -------- CREATE --------
 
     @Transactional
     public ParkingSpaceDTO createParkingSpace(ParkingSpaceDTO parkingSpaceDTO) {
@@ -63,7 +62,6 @@ public class ParkingSpaceService {
         return savedParkingSpaceDTO;
     }
 
-    // -------- UPDATE --------
 
     @Transactional
     public ParkingSpaceDTO updateParkingSpace(ParkingSpaceDTO parkingSpaceDTO) {
@@ -77,7 +75,6 @@ public class ParkingSpaceService {
         return updatedParkingSpaceDTO;
     }
 
-    // -------- DELETE --------
 
     @Transactional
     public void deleteParkingSpace(Long id) {
