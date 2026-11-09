@@ -1,6 +1,5 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
-import com.github.felipeschwartz.parkingsystem.controller.SubscriptionContractController;
 import com.github.felipeschwartz.parkingsystem.mapper.CycleAvoidingMappingContext;
 import com.github.felipeschwartz.parkingsystem.mapper.SubscriptionContractMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.SubscriptionContractDTO;
@@ -25,9 +24,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 @Service
 public class SubscriptionContractService {
 
@@ -51,11 +47,9 @@ public class SubscriptionContractService {
     @Transactional(readOnly = true)
     public List<SubscriptionContractDTO> findAll() {
         logger.info("Finding all Subscription contracts records");
-        CycleAvoidingMappingContext context = new CycleAvoidingMappingContext();
         List<SubscriptionContractDTO> contracts = subscriptionContractRepository.findAllWithUsers()
                 .stream().map(entity -> subscriptionContractMapper.toDTO(entity, context))
                 .collect(Collectors.toList());
-        contracts.forEach(this::addHateoasLinks);
         return contracts;
     }
 
@@ -65,20 +59,19 @@ public class SubscriptionContractService {
         SubscriptionContract subscriptionContract = subscriptionContractRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Subscription contract with id " + id + " not found!"));
         SubscriptionContractDTO subscriptionContractDTO = subscriptionContractMapper.toDTO(subscriptionContract, context);
-        addHateoasLinks(subscriptionContractDTO);
         return subscriptionContractDTO;
     }
 
     @Transactional
     public SubscriptionContractDTO create(SubscriptionContractDTO dto) {
         logger.info("Creating Subscription contract record {}", dto);
-        validateDates(dto.getStartDate(), dto.getEndDate());
-        Plan plan = planRepository.findById(dto.getpId())
-                .orElseThrow(() -> new ObjectNotFoundException("Plan with id " + dto.getpId() + " not found!"));
-        Vehicle vehicle = vehicleRepository.findById(dto.getVehicle().getId())
-                .orElseThrow(() -> new ObjectNotFoundException("Vehicle with id " + dto.getVehicle().getId() + " not found!"));
-        User user = userRepository.findById(dto.getUser().getId())
-                .orElseThrow(() -> new ObjectNotFoundException("User with id " + dto.getUser().getId() + " not found!"));
+        validateDates(dto.startDate(), dto.endDate());
+        Plan plan = planRepository.findById(dto.pId())
+                .orElseThrow(() -> new ObjectNotFoundException("Plan with id " + dto.pId() + " not found!"));
+        Vehicle vehicle = vehicleRepository.findById(dto.vehicle().id())
+                .orElseThrow(() -> new ObjectNotFoundException("Vehicle with id " + dto.vehicle().id() + " not found!"));
+        User user = userRepository.findById(dto.user().id())
+                .orElseThrow(() -> new ObjectNotFoundException("User with id " + dto.user().id() + " not found!"));
         SubscriptionContract subscriptionToSave = subscriptionContractMapper.toEntity(dto);
         subscriptionToSave.setPlan(plan);
         subscriptionToSave.setVehicle(vehicle);
@@ -93,20 +86,18 @@ public class SubscriptionContractService {
         plan.setSubscriptionContracts(currentContracts);
         planRepository.save(plan);
         SubscriptionContractDTO subscriptionContractDTO = subscriptionContractMapper.toDTO(savedSubscription, context);
-        addHateoasLinks(subscriptionContractDTO);
 
         return subscriptionContractDTO;
     }
 
     @Transactional
     public SubscriptionContractDTO update(SubscriptionContractDTO dto) {
-        logger.info("Updating Subscription contract with id {}", dto.getId());
-        SubscriptionContract existingSubscription = subscriptionContractRepository.findById(dto.getId())
-                .orElseThrow(() -> new ObjectNotFoundException("Subscription contract with id " + dto.getId() + " not found!"));
+        logger.info("Updating Subscription contract with id {}", dto.id());
+        SubscriptionContract existingSubscription = subscriptionContractRepository.findById(dto.id())
+                .orElseThrow(() -> new ObjectNotFoundException("Subscription contract with id " + dto.id() + " not found!"));
         subscriptionContractMapper.updateSubscriptionContractFromDto(dto, existingSubscription);
         existingSubscription.setUpdatedAt(LocalDateTime.now());
         SubscriptionContractDTO updatedSubscriptionDTO = subscriptionContractMapper.toDTO(existingSubscription, context);
-        addHateoasLinks(updatedSubscriptionDTO);
         return updatedSubscriptionDTO;
     }
 
@@ -120,21 +111,19 @@ public class SubscriptionContractService {
     }
 
     @Transactional
-    public SubscriptionContractDTO renew(SubscriptionContractDTO dto) {
-        logger.info("Renewing Subscription contract record {}", dto);
-        SubscriptionContract existingSubscription = subscriptionContractRepository.findById(dto.getId())
-                .orElseThrow(() -> new ObjectNotFoundException("Subscription contract with id " + dto.getId() + " not found!"));
-        if (dto.getEndDate() == null) {
+    public SubscriptionContractDTO renew(Long id, SubscriptionContractDTO dto) {
+        logger.info("Renewing Subscription contract record {}", id);
+        SubscriptionContract existingSubscription = subscriptionContractRepository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Subscription contract with id " + id + " not found!"));
+        if (dto.endDate() == null) {
             throw new IllegalArgumentException("New end date must be provided in the DTO for renewal.");
         }
 
-        existingSubscription.renew(dto.getEndDate());
+        existingSubscription.renew(dto.endDate());
         existingSubscription.setUpdatedAt(LocalDateTime.now());
         SubscriptionContractDTO updatedSubscriptionDTO = subscriptionContractMapper.toDTO(existingSubscription, context);
-        addHateoasLinks(updatedSubscriptionDTO);
         return updatedSubscriptionDTO;
     }
-
 
     private void validateDates(LocalDate startDate, LocalDate endDate) {
         if (startDate == null || startDate.isBefore(LocalDate.now())) {
@@ -143,15 +132,6 @@ public class SubscriptionContractService {
         if (endDate != null && endDate.isBefore(startDate)) {
             throw new IllegalArgumentException("endDate cannot be earlier than startDate.");
         }
-    }
-
-    private void addHateoasLinks(SubscriptionContractDTO dto) {
-        dto.add(linkTo(methodOn(SubscriptionContractController.class).findById(dto.getId())).withSelfRel().withType("GET"));
-        dto.add(linkTo(methodOn(SubscriptionContractController.class).findAll()).withRel("findAll").withType("GET"));
-        dto.add(linkTo(methodOn(SubscriptionContractController.class).create(dto)).withRel("create").withType("POST"));
-        dto.add(linkTo(methodOn(SubscriptionContractController.class).update(dto)).withRel("update").withType("PUT"));
-        dto.add(linkTo(methodOn(SubscriptionContractController.class).update(dto)).withRel("renew").withType("PUT"));
-        dto.add(linkTo(methodOn(SubscriptionContractController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
     }
 
 }

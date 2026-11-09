@@ -18,12 +18,12 @@ public interface UserCreationMapper {
 
     @ObjectFactory
     default User createUser(CreateUserRequestDTO dto) {
-        if (dto.getUserType() == UserType.INDIVIDUAL) {
+        if (dto.userType() == UserType.INDIVIDUAL) {
             return new UserIndividual();
-        } else if (dto.getUserType() == UserType.ENTITY) {
+        } else if (dto.userType() == UserType.ENTITY) {
             return new UserEntity();
         }
-        throw new IllegalArgumentException("Unsupported UserType for creation: " + dto.getUserType());
+        throw new IllegalArgumentException("Unsupported UserType for creation: " + dto.userType());
     }
 
     @Mapping(target = "id", ignore = true)

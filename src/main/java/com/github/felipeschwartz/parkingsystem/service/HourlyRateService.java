@@ -1,6 +1,5 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
-import com.github.felipeschwartz.parkingsystem.controller.HourlyRateController;
 import com.github.felipeschwartz.parkingsystem.mapper.HourlyRateMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.HourlyRateDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.HourlyRate;
@@ -14,9 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class HourlyRateService {
@@ -36,7 +32,6 @@ public class HourlyRateService {
         List<HourlyRateDTO> hourlyRates = hourlyRateRepository.findAll().stream()
                 .map(hourlyRateMapper::toDTO)
                 .collect(Collectors.toList());
-        hourlyRates.forEach(this::addHateoasLinks);
         return hourlyRates;
     }
 
@@ -46,7 +41,6 @@ public class HourlyRateService {
         HourlyRate hourlyRate = hourlyRateRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("HourlyRate", id));
         HourlyRateDTO hourlyRateDTO = hourlyRateMapper.toDTO(hourlyRate);
-        addHateoasLinks(hourlyRateDTO);
         return hourlyRateDTO;
     }
 
@@ -58,19 +52,17 @@ public class HourlyRateService {
         hourlyRate.setCreatedAt(now);
         hourlyRate.setUpdatedAt(now);
         HourlyRateDTO createdHourlyRateDTO = hourlyRateMapper.toDTO(hourlyRateRepository.save(hourlyRate));
-        addHateoasLinks(createdHourlyRateDTO);
         return createdHourlyRateDTO;
     }
 
     @Transactional
     public HourlyRateDTO update(HourlyRateDTO hourlyRateDTO) {
         logger.info("Updating Hourly Rate {}", hourlyRateDTO);
-        HourlyRate rate = hourlyRateRepository.findById(hourlyRateDTO.getId())
-                .orElseThrow(() -> new ObjectNotFoundException("HourlyRate", hourlyRateDTO.getId()));
+        HourlyRate rate = hourlyRateRepository.findById(hourlyRateDTO.id())
+                .orElseThrow(() -> new ObjectNotFoundException("HourlyRate", hourlyRateDTO.id()));
         hourlyRateMapper.updateEntityFromDto(hourlyRateDTO, rate);
         rate.setUpdatedAt(LocalDateTime.now());
         HourlyRateDTO updatedHourlyRateDTO = hourlyRateMapper.toDTO(hourlyRateRepository.save(rate));
-        addHateoasLinks(updatedHourlyRateDTO);
         return updatedHourlyRateDTO;
     }
 
@@ -83,12 +75,4 @@ public class HourlyRateService {
         hourlyRateRepository.delete(hourlyRate);
     }
 
-
-    private void addHateoasLinks(HourlyRateDTO dto) {
-        dto.add(linkTo(methodOn(HourlyRateController.class).findById(dto.getId())).withSelfRel().withType("GET"));
-        dto.add(linkTo(methodOn(HourlyRateController.class).findAll()).withRel("findAll").withType("GET"));
-        dto.add(linkTo(methodOn(HourlyRateController.class).create(dto)).withRel("create").withType("POST"));
-        dto.add(linkTo(methodOn(HourlyRateController.class).update(dto)).withRel("update").withType("PUT"));
-        dto.add(linkTo(methodOn(HourlyRateController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
-    }
 }

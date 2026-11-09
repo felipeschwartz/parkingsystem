@@ -1,10 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
-import com.github.felipeschwartz.parkingsystem.controller.ParkingLotController;
-import com.github.felipeschwartz.parkingsystem.controller.ParkingSessionController;
 import com.github.felipeschwartz.parkingsystem.mapper.ParkingSessionMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.OpenSessionRequestDTO;
-import com.github.felipeschwartz.parkingsystem.model.dto.ParkingLotDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.ParkingSessionDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.HourlyRate;
 import com.github.felipeschwartz.parkingsystem.model.entity.ParkingSession;
@@ -27,9 +24,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class ParkingSessionService {
@@ -90,11 +84,8 @@ public class ParkingSessionService {
         spaceRepository.save(space);
         ParkingSession savedSession = sessionRepository.save(session);
         ParkingSessionDTO createdSessionDTO = sessionMapper.toDTO(savedSession);
-        addHateoasLinks(createdSessionDTO);
         return createdSessionDTO;
     }
-
-
 
     @Transactional
     public ParkingSessionDTO closeSession(Long sessionId, LocalDateTime exitTime) { 
@@ -119,10 +110,8 @@ public class ParkingSessionService {
         }
         ParkingSession savedSession = sessionRepository.save(session);
         ParkingSessionDTO updatedSessionDTO = sessionMapper.toDTO(savedSession);
-        addHateoasLinks(updatedSessionDTO);
         return updatedSessionDTO;
     }
-
 
     @Transactional(readOnly = true)
     public ParkingSessionDTO findById(Long id) {
@@ -130,7 +119,6 @@ public class ParkingSessionService {
         ParkingSession parkingSession = sessionRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Parking Session", id));
         ParkingSessionDTO parkingSessionDTO = sessionMapper.toDTO(parkingSession);
-        addHateoasLinks(parkingSessionDTO);
         return parkingSessionDTO;
     }
 
@@ -140,7 +128,6 @@ public class ParkingSessionService {
         List<ParkingSessionDTO> parkingSessionDTOS = sessionRepository.findAll().stream()
                 .map(sessionMapper::toDTO)
                 .collect(Collectors.toList());
-        parkingSessionDTOS.forEach(this::addHateoasLinks);
         return parkingSessionDTOS;
     }
 
@@ -157,7 +144,6 @@ public class ParkingSessionService {
                 .map(sessionMapper::toDTO) 
                 .collect(Collectors.toList());
     }
-
 
     private BigDecimal calculateAmountFor(ParkingSession session) {
         if (session.getVehicle() != null) {
@@ -190,10 +176,4 @@ public class ParkingSessionService {
         }
     }
 
-    private void addHateoasLinks(ParkingSessionDTO dto) {
-        dto.add(linkTo(methodOn(ParkingSessionController.class).findById(dto.getId())).withSelfRel().withType("GET"));
-        dto.add(linkTo(methodOn(ParkingSessionController.class).findAll()).withRel("findAll").withType("GET"));
-        dto.add(linkTo(methodOn(ParkingSessionController.class).openSession(null)).withRel("create").withType("POST"));
-        dto.add(linkTo(methodOn(ParkingSessionController.class).closeSession(dto.getId(), null)).withRel("close").withType("PUT"));
-    }
 }

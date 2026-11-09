@@ -47,7 +47,11 @@ public class AuthService {
         UserSummaryDTO userSummary = new UserSummaryDTO(
                 principal.getId(),
                 principal.getName(),
+                null,
                 principal.getEmail(),
+                null,
+                null,
+                null,
                 principal.getRoles()
         );
 

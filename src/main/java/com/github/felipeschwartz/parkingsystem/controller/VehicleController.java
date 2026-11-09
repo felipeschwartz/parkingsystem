@@ -1,9 +1,10 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import com.github.felipeschwartz.parkingsystem.controller.assembler.VehicleModelAssembler;
+import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.controller.docs.VehicleControllerDocs;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,21 +22,23 @@ import java.util.List;
 public class VehicleController implements VehicleControllerDocs {
 
     private final VehicleService service;
+    private final VehicleModelAssembler assembler;
 
-    public VehicleController(VehicleService service) {
+    public VehicleController(VehicleService service, VehicleModelAssembler assembler) {
         this.service = service;
+        this.assembler = assembler;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public List<VehicleDTO> findAll() {
-        return service.findAll();
+    public List<EntityModel<VehicleDTO>> findAll() {
+        return service.findAll().stream().map(assembler::toModel).toList();
     }
 
     @GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public VehicleDTO findById(@PathVariable Long id) {
-        return service.findById(id);
+    public EntityModel<VehicleDTO> findById(@PathVariable Long id) {
+        return assembler.toModel(service.findById(id));
     }
 
 
@@ -44,13 +47,13 @@ public class VehicleController implements VehicleControllerDocs {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Override
-    public ResponseEntity<VehicleDTO> create(@RequestBody @Valid VehicleDTO vehicle) {
+    public ResponseEntity<EntityModel<VehicleDTO>> create(@RequestBody @Valid VehicleDTO vehicle) {
         VehicleDTO createdVehicle = service.create(vehicle);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/id/{id}")
-                .buildAndExpand(createdVehicle.getId())
+                .buildAndExpand(createdVehicle.id())
                 .toUri();
-        return ResponseEntity.created(location).body(createdVehicle);
+        return ResponseEntity.created(location).body(assembler.toModel(createdVehicle));
     }
 
     @PutMapping(
@@ -59,8 +62,8 @@ public class VehicleController implements VehicleControllerDocs {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Override
-    public VehicleDTO update(@RequestBody @Valid VehicleDTO updatedVehicle) {
-        return service.update(updatedVehicle);
+    public EntityModel<VehicleDTO> update(@RequestBody @Valid VehicleDTO updatedVehicle) {
+        return assembler.toModel(service.update(updatedVehicle));
     }
 
 
@@ -73,6 +76,6 @@ public class VehicleController implements VehicleControllerDocs {
 
     @GetMapping(value = "/licence_plate/{licence_plate}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public VehicleDTO findByLicensePlate(@PathVariable String licence_plate) { return service.findByLicensePlate(licence_plate); }
+    public EntityModel<VehicleDTO> findByLicensePlate(@PathVariable String licence_plate) { return assembler.toModel(service.findByLicensePlate(licence_plate)); }
 
 }

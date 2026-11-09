@@ -5,6 +5,7 @@ import com.github.felipeschwartz.parkingsystem.model.dto.CreateUserRequestDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.UserDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.UserEntityDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.UserIndividualDTO;
+import com.github.felipeschwartz.parkingsystem.controller.assembler.UserModelAssembler;
 import com.github.felipeschwartz.parkingsystem.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -17,7 +18,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -28,18 +28,19 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UserController implements UserControllerDocs {
 
     private final UserService service;
+    private final UserModelAssembler assembler;
 
-    public UserController(UserService service) {
+    public UserController(UserService service, UserModelAssembler assembler) {
         this.service = service;
+        this.assembler = assembler;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
     public ResponseEntity<CollectionModel<EntityModel<UserDTO>>> findAll() {
-        List<UserDTO> users = service.findAll();
-        List<EntityModel<UserDTO>> userModels = users.stream()
-                .map(userDTO -> EntityModel.of(userDTO, userDTO.getLinks().stream().collect(Collectors.toList())))
-                .collect(Collectors.toList());
+        List<EntityModel<UserDTO>> userModels = service.findAll().stream()
+                .<EntityModel<UserDTO>>map(assembler::toModel)
+                .toList();
 
         return ResponseEntity.ok(
                 CollectionModel.of(userModels, linkTo(methodOn(UserController.class).findAll()).withSelfRel())
@@ -50,21 +51,21 @@ public class UserController implements UserControllerDocs {
     @Override
     public ResponseEntity<EntityModel<UserDTO>> findById(@PathVariable Long id) {
         UserDTO userDTO = service.findById(id);
-        return ResponseEntity.ok(EntityModel.of(userDTO, userDTO.getLinks().stream().collect(Collectors.toList())));
+        return ResponseEntity.ok(assembler.toModel(userDTO));
     }
 
     @GetMapping(value = "/cpf/{cpf}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
     public ResponseEntity<EntityModel<UserIndividualDTO>> findByCpf(@PathVariable String cpf) {
         UserIndividualDTO userIndividualDTO = service.findByCpf(cpf);
-        return ResponseEntity.ok(EntityModel.of(userIndividualDTO, userIndividualDTO.getLinks().stream().collect(Collectors.toList())));
+        return ResponseEntity.ok(assembler.toModel(userIndividualDTO));
     }
 
     @GetMapping(value = "/cnpj/{cnpj}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
     public ResponseEntity<EntityModel<UserEntityDTO>> findByCnpj(@PathVariable String cnpj) {
         UserEntityDTO userEntityDTO = service.findByCnpj(cnpj);
-        return ResponseEntity.ok(EntityModel.of(userEntityDTO, userEntityDTO.getLinks().stream().collect(Collectors.toList())));
+        return ResponseEntity.ok(assembler.toModel(userEntityDTO));
     }
 
     @PostMapping(
@@ -76,9 +77,9 @@ public class UserController implements UserControllerDocs {
         UserDTO createdUser = service.create(requestDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/id/{id}")
-                .buildAndExpand(createdUser.getId())
+                .buildAndExpand(createdUser.id())
                 .toUri();
-        return ResponseEntity.created(location).body(EntityModel.of(createdUser, createdUser.getLinks().stream().collect(Collectors.toList())));
+        return ResponseEntity.created(location).body(assembler.toModel(createdUser));
     }
 
     @PutMapping(
@@ -89,7 +90,7 @@ public class UserController implements UserControllerDocs {
     @Override
     public ResponseEntity<EntityModel<UserDTO>> update(@PathVariable Long id, @RequestBody @Valid CreateUserRequestDTO requestDTO) {
         UserDTO updatedUser = service.update(id, requestDTO);
-        return ResponseEntity.ok(EntityModel.of(updatedUser, updatedUser.getLinks().stream().collect(Collectors.toList())));
+        return ResponseEntity.ok(assembler.toModel(updatedUser));
     }
 
     @DeleteMapping(value = "/id/{id}")

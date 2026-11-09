@@ -1,5 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import com.github.felipeschwartz.parkingsystem.controller.assembler.ReservationModelAssembler;
+import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.controller.docs.ReservationControllerDocs;
 import com.github.felipeschwartz.parkingsystem.model.dto.ReservationDTO;
 import com.github.felipeschwartz.parkingsystem.service.ReservationService;
@@ -19,22 +21,24 @@ import java.util.List;
 public class ReservationController implements ReservationControllerDocs {
 
     private final ReservationService service;
+    private final ReservationModelAssembler assembler;
 
-    public ReservationController(ReservationService service) {
+    public ReservationController(ReservationService service, ReservationModelAssembler assembler) {
         this.service = service;
+        this.assembler = assembler;
     }
 
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public List<ReservationDTO> findAll() {
-        return service.findAll();
+    public List<EntityModel<ReservationDTO>> findAll() {
+        return service.findAll().stream().map(assembler::toModel).toList();
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public ReservationDTO findById(@PathVariable Long id) {
-        return service.findById(id);
+    public EntityModel<ReservationDTO> findById(@PathVariable Long id) {
+        return assembler.toModel(service.findById(id));
     }
 
 
@@ -43,13 +47,13 @@ public class ReservationController implements ReservationControllerDocs {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Override
-    public ResponseEntity<ReservationDTO> create(@RequestBody @Valid ReservationDTO reservationDTO) {
+    public ResponseEntity<EntityModel<ReservationDTO>> create(@RequestBody @Valid ReservationDTO reservationDTO) {
         ReservationDTO createdReservation = service.create(reservationDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(createdReservation.getId())
+                .buildAndExpand(createdReservation.id())
                 .toUri();
-        return ResponseEntity.created(location).body(createdReservation);
+        return ResponseEntity.created(location).body(assembler.toModel(createdReservation));
     }
 
     @PutMapping(
@@ -58,10 +62,9 @@ public class ReservationController implements ReservationControllerDocs {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Override
-    public ResponseEntity<ReservationDTO> update(@RequestBody ReservationDTO updatedDTO) {
-        updatedDTO.setId(updatedDTO.getId());
+    public ResponseEntity<EntityModel<ReservationDTO>> update(@RequestBody ReservationDTO updatedDTO) {
         ReservationDTO result = service.update(updatedDTO);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(assembler.toModel(result));
     }
 
     @DeleteMapping(value = "/{id}")

@@ -1,6 +1,5 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
-import com.github.felipeschwartz.parkingsystem.controller.PlanController;
 import com.github.felipeschwartz.parkingsystem.mapper.CycleAvoidingMappingContext;
 import com.github.felipeschwartz.parkingsystem.mapper.PlanMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanCreationDTO;
@@ -22,9 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class PlanService {
@@ -49,11 +45,9 @@ public class PlanService {
     @Transactional(readOnly = true)
     public List<PlanDTO> findAll() {
         logger.info("Finding all plan records");
-        CycleAvoidingMappingContext context = new CycleAvoidingMappingContext();
         List<PlanDTO> planDTOS = planRepository.findAll().stream()
                 .map(entity -> planMapper.toDTO(entity, context))
                 .collect(Collectors.toList());
-        planDTOS.forEach(this::addHateoasLinks);
         return planDTOS;
     }
 
@@ -63,27 +57,26 @@ public class PlanService {
         Plan plan = planRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Plan", id));
         PlanDTO planDTO = planMapper.toDTO(plan, context);
-        addHateoasLinks(planDTO);
         return planDTO;
     }
 
     @Transactional
     public PlanDTO create(PlanCreationDTO planCreationDTO) {
-        logger.info("Creating plan with name {}", planCreationDTO.getName());
+        logger.info("Creating plan with name {}", planCreationDTO.name());
         Plan planToSave = planMapper.toEntity(planCreationDTO);
         planToSave.setCreatedAt(LocalDateTime.now());
         planToSave.setUpdatedAt(LocalDateTime.now());
         Plan savedPlan = planRepository.save(planToSave);
-        if (planCreationDTO.getRateIds() != null && !planCreationDTO.getRateIds().isEmpty()) {
-            Set<PlanRate> fetchedRates = new HashSet<>(planRateRepository.findAllById(planCreationDTO.getRateIds()));
+        if (planCreationDTO.rateIds() != null && !planCreationDTO.rateIds().isEmpty()) {
+            Set<PlanRate> fetchedRates = new HashSet<>(planRateRepository.findAllById(planCreationDTO.rateIds()));
             for (PlanRate planRate : fetchedRates) {
                 planRate.setPlan(savedPlan);
                 savedPlan.getRates().add(planRate);
             }
         }
-        if (planCreationDTO.getSubscriptionContractIds() != null && !planCreationDTO.getSubscriptionContractIds().isEmpty()) {
+        if (planCreationDTO.subscriptionContractIds() != null && !planCreationDTO.subscriptionContractIds().isEmpty()) {
             Set<SubscriptionContract> fetchedContracts = new HashSet<>(subscriptionContractRepository.findAllById(planCreationDTO
-                    .getSubscriptionContractIds()));
+                    .subscriptionContractIds()));
             for (SubscriptionContract subscriptionContract : fetchedContracts) {
                 subscriptionContract.setPlan(savedPlan);
                 savedPlan.getSubscriptionContracts().add(subscriptionContract);
@@ -91,20 +84,17 @@ public class PlanService {
         }
         savedPlan.validate();
         PlanDTO savedPlanDTO = planMapper.toDTO(savedPlan, context);
-        addHateoasLinks(savedPlanDTO);
         return savedPlanDTO;
     }
 
-
     @Transactional
     public PlanDTO update(PlanDTO updated) {
-        logger.info("Updating plan with id {}", updated.getId());
-        Plan existingPlan = planRepository.findById(updated.getId())
-                .orElseThrow(() -> new ObjectNotFoundException("Plan", updated.getId()));
+        logger.info("Updating plan with id {}", updated.id());
+        Plan existingPlan = planRepository.findById(updated.id())
+                .orElseThrow(() -> new ObjectNotFoundException("Plan", updated.id()));
         planMapper.updateEntityFromDTO(updated, existingPlan);
         existingPlan.setUpdatedAt(LocalDateTime.now());
         PlanDTO updatedPlanDTO = planMapper.toDTO(existingPlan, context);
-        addHateoasLinks(updatedPlanDTO);
         return updatedPlanDTO;
     }
 
@@ -143,11 +133,4 @@ public class PlanService {
                 .orElseThrow(() -> new IllegalArgumentException("Plan not found: " + planId));
     }
 
-    private void addHateoasLinks(PlanDTO dto) {
-        dto.add(linkTo(methodOn(PlanController.class).findById(dto.getId())).withSelfRel().withType("GET"));
-        dto.add(linkTo(methodOn(PlanController.class).findAll()).withRel("findAll").withType("GET"));
-        dto.add(linkTo(methodOn(PlanController.class).create(null)).withRel("create").withType("POST"));
-        dto.add(linkTo(methodOn(PlanController.class).update(dto)).withRel("update").withType("PUT"));
-        dto.add(linkTo(methodOn(PlanController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
-    }
 }

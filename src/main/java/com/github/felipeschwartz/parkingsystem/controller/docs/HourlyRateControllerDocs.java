@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller.docs;
 
+import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.model.dto.HourlyRateDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -34,7 +35,7 @@ public interface HourlyRateControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<List<HourlyRateDTO>> findAll();
+    ResponseEntity<List<EntityModel<HourlyRateDTO>>> findAll();
 
     @Operation(
             summary = "Finds a hourly rate",
@@ -53,7 +54,7 @@ public interface HourlyRateControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<HourlyRateDTO> findById(@PathVariable("id") long id);
+    ResponseEntity<EntityModel<HourlyRateDTO>> findById(@PathVariable("id") long id);
 
     
     
@@ -79,7 +80,7 @@ public interface HourlyRateControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<HourlyRateDTO> create(@RequestBody @Valid HourlyRateDTO hourlyRateDTO);
+    ResponseEntity<EntityModel<HourlyRateDTO>> create(@RequestBody @Valid HourlyRateDTO hourlyRateDTO);
 
     @Operation(
             summary = "Updates an existing hourly rate",
@@ -103,7 +104,7 @@ public interface HourlyRateControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<HourlyRateDTO> update(@RequestBody @Valid HourlyRateDTO hourlyRateDTO);
+    ResponseEntity<EntityModel<HourlyRateDTO>> update(@RequestBody @Valid HourlyRateDTO hourlyRateDTO);
 
     @Operation(
             summary = "Deletes a hourly rate",

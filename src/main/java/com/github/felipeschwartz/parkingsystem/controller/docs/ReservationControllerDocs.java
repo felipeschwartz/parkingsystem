@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller.docs;
 
+import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.model.dto.ReservationDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -34,7 +35,7 @@ public interface ReservationControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    List<ReservationDTO> findAll();
+    List<EntityModel<ReservationDTO>> findAll();
 
     @Operation(
             summary = "Finds a reservation",
@@ -53,7 +54,7 @@ public interface ReservationControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ReservationDTO findById(@PathVariable Long id);
+    EntityModel<ReservationDTO> findById(@PathVariable Long id);
 
     
     
@@ -79,7 +80,7 @@ public interface ReservationControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ReservationDTO> create(@RequestBody @Valid ReservationDTO reservationDTO);
+    ResponseEntity<EntityModel<ReservationDTO>> create(@RequestBody @Valid ReservationDTO reservationDTO);
 
 
 
@@ -105,7 +106,7 @@ public interface ReservationControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ReservationDTO> update(@RequestBody ReservationDTO updatedDTO);
+    ResponseEntity<EntityModel<ReservationDTO>> update(@RequestBody ReservationDTO updatedDTO);
 
 
 

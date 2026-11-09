@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.config;
 
+import com.github.felipeschwartz.parkingsystem.controller.assembler.*;
 import com.github.felipeschwartz.parkingsystem.model.entity.UserIndividual;
 import com.github.felipeschwartz.parkingsystem.service.*;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
         HourlyRateService.class, ParkingLotService.class, ParkingSessionService.class,
         ParkingSpaceService.class, PaymentService.class, PlanRateService.class, PlanService.class,
         ReservationService.class, SubscriptionContractService.class, UserService.class,
-        VehicleService.class, AuthService.class, JwtService.class, UserDetailsService.class
+        VehicleService.class, AuthService.class, JwtService.class, UserDetailsService.class,
+        HourlyRateModelAssembler.class, ParkingLotModelAssembler.class, ParkingSessionModelAssembler.class,
+        ParkingSpaceModelAssembler.class, PaymentModelAssembler.class, PlanRateModelAssembler.class,
+        PlanModelAssembler.class, ReservationModelAssembler.class, SubscriptionContractModelAssembler.class,
+        UserModelAssembler.class, VehicleModelAssembler.class
 })
 class SecurityConfigTest {
 

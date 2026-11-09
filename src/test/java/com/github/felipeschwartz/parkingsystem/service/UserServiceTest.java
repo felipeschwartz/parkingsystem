@@ -75,10 +75,6 @@ class UserServiceTest {
     }
 
     private CreateUserRequestDTO request(UserType type, String cpf, String cnpj) {
-        CreateUserRequestDTO dto = new CreateUserRequestDTO();
-        dto.setUserType(type);
-        dto.setCpf(cpf);
-        dto.setCnpj(cnpj);
-        return dto;
+        return new CreateUserRequestDTO(null, null, null, null, type, null, cpf, null, null, null, cnpj, null, null, null, null);
     }
 }

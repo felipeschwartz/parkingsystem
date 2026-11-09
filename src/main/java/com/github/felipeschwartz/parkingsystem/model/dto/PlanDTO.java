@@ -2,104 +2,22 @@ package com.github.felipeschwartz.parkingsystem.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import org.springframework.hateoas.RepresentationModel;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
-public class PlanDTO extends RepresentationModel<PlanDTO> implements Serializable {
-    private static final long serialVersionUID = 1L;
+public record PlanDTO(
+        Long id,
+        @NotBlank @Size(min = 3, max = 100, message = "Plan name must be between 3 and 100 characters") String name,
+        Set<SubscriptionContractDTO> subscriptionContracts,
+        Set<PlanRateDTO> rates,
+        Boolean active,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
+) implements Serializable {
 
-    private Long id;
-
-    @NotBlank
-    @Size(min = 3, max = 100, message = "Plan name must be between 3 and 100 characters")
-    private String name;
-
-    private Set<SubscriptionContractDTO> subscriptionContracts =  new HashSet<>();
-    private Set<PlanRateDTO> rates = new HashSet<>();
-    private Boolean active;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
-    public PlanDTO() {
+    public PlanDTO {
+        subscriptionContracts = subscriptionContracts == null ? Set.of() : Set.copyOf(subscriptionContracts);
+        rates = rates == null ? Set.of() : Set.copyOf(rates);
     }
-
-    public PlanDTO(Long id, String name) {
-        this.id = id;
-        this.name = name;
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<PlanRateDTO> getRates() {
-        return rates;
-    }
-
-    public void setRates(Set<PlanRateDTO> planRates) {
-        this.rates = planRates;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-
-    public Set<SubscriptionContractDTO> getSubscriptionContracts() {
-        return subscriptionContracts;
-    }
-
-    public void setSubscriptionContracts(Set<SubscriptionContractDTO> subscriptionContracts) {
-        this.subscriptionContracts = subscriptionContracts;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof PlanDTO plan)) return false;
-        return Objects.equals(getId(), plan.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getId());
-    }
-
 }

@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller.docs;
 
+import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.model.dto.CloseSessionRequestDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.OpenSessionRequestDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.ParkingSessionDTO;
@@ -36,7 +37,7 @@ public interface ParkingSessionControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<List<ParkingSessionDTO>> findAll();
+    ResponseEntity<List<EntityModel<ParkingSessionDTO>>> findAll();
 
 
 
@@ -57,7 +58,7 @@ public interface ParkingSessionControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ParkingSessionDTO> findById(@PathVariable Long id);
+    ResponseEntity<EntityModel<ParkingSessionDTO>> findById(@PathVariable Long id);
 
     
     
@@ -83,7 +84,7 @@ public interface ParkingSessionControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ParkingSessionDTO> openSession(@org.springframework.web.bind.annotation.RequestBody @Valid OpenSessionRequestDTO request);
+    ResponseEntity<EntityModel<ParkingSessionDTO>> openSession(@org.springframework.web.bind.annotation.RequestBody @Valid OpenSessionRequestDTO request);
 
 
     @Operation(
@@ -103,7 +104,7 @@ public interface ParkingSessionControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ParkingSessionDTO> closeSession(@PathVariable Long id, @RequestBody(required = false) CloseSessionRequestDTO request);
+    ResponseEntity<EntityModel<ParkingSessionDTO>> closeSession(@PathVariable Long id, @RequestBody(required = false) CloseSessionRequestDTO request);
 
 
 
@@ -124,7 +125,7 @@ public interface ParkingSessionControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<List<ParkingSessionDTO>> findOpenSessionsByParkingSpace(@PathVariable Long parkingSpaceId);
+    ResponseEntity<List<EntityModel<ParkingSessionDTO>>> findOpenSessionsByParkingSpace(@PathVariable Long parkingSpaceId);
 
     @Operation(
             summary = "Finds a vehicle parking session",
@@ -143,5 +144,5 @@ public interface ParkingSessionControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<List<ParkingSessionDTO>> findSessionsByVehicle(@PathVariable Long vehicleId);
+    ResponseEntity<List<EntityModel<ParkingSessionDTO>>> findSessionsByVehicle(@PathVariable Long vehicleId);
 }

@@ -1,5 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import com.github.felipeschwartz.parkingsystem.controller.assembler.ParkingSpaceModelAssembler;
+import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.controller.docs.ParkingSpaceControllerDocs;
 import com.github.felipeschwartz.parkingsystem.model.dto.ParkingSpaceDTO;
 import com.github.felipeschwartz.parkingsystem.service.ParkingSpaceService;
@@ -19,22 +21,24 @@ import java.util.List;
 public class ParkingSpaceController implements ParkingSpaceControllerDocs {
 
     private final ParkingSpaceService service;
+    private final ParkingSpaceModelAssembler assembler;
 
-    public ParkingSpaceController(ParkingSpaceService service) {
+    public ParkingSpaceController(ParkingSpaceService service, ParkingSpaceModelAssembler assembler) {
         this.service = service;
+        this.assembler = assembler;
     }
 
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public List<ParkingSpaceDTO> findAll() {
-        return service.findAll();
+    public List<EntityModel<ParkingSpaceDTO>> findAll() {
+        return service.findAll().stream().map(assembler::toModel).toList();
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public ParkingSpaceDTO findById(@PathVariable Long id) {
-        return service.findById(id);
+    public EntityModel<ParkingSpaceDTO> findById(@PathVariable Long id) {
+        return assembler.toModel(service.findById(id));
     }
 
 
@@ -43,13 +47,13 @@ public class ParkingSpaceController implements ParkingSpaceControllerDocs {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Override
-    public ResponseEntity<ParkingSpaceDTO> create(@RequestBody @Valid ParkingSpaceDTO parkingSpace) {
+    public ResponseEntity<EntityModel<ParkingSpaceDTO>> create(@RequestBody @Valid ParkingSpaceDTO parkingSpace) {
         ParkingSpaceDTO createdParkingSpace = service.createParkingSpace(parkingSpace);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/id/{id}")
-                .buildAndExpand(createdParkingSpace.getId())
+                .path("/{id}")
+                .buildAndExpand(createdParkingSpace.id())
                 .toUri();
-        return ResponseEntity.created(location).body(createdParkingSpace);
+        return ResponseEntity.created(location).body(assembler.toModel(createdParkingSpace));
     }
 
     @PutMapping(
@@ -58,8 +62,8 @@ public class ParkingSpaceController implements ParkingSpaceControllerDocs {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Override
-    public ParkingSpaceDTO update(@RequestBody @Valid ParkingSpaceDTO updatedParkingSpace) {
-        return service.updateParkingSpace(updatedParkingSpace);
+    public EntityModel<ParkingSpaceDTO> update(@RequestBody @Valid ParkingSpaceDTO updatedParkingSpace) {
+        return assembler.toModel(service.updateParkingSpace(updatedParkingSpace));
     }
 
 

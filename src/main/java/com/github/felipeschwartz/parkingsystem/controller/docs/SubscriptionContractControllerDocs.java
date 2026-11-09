@@ -1,6 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.controller.docs;
 
 
+import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.model.dto.SubscriptionContractDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -36,7 +37,7 @@ public interface SubscriptionContractControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    List<SubscriptionContractDTO> findAll();
+    List<EntityModel<SubscriptionContractDTO>> findAll();
 
     @Operation(
             summary = "Finds a subscription contract",
@@ -55,7 +56,7 @@ public interface SubscriptionContractControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    SubscriptionContractDTO findById(@PathVariable Long id);
+    EntityModel<SubscriptionContractDTO> findById(@PathVariable Long id);
 
     
     
@@ -81,7 +82,7 @@ public interface SubscriptionContractControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<SubscriptionContractDTO> create(@RequestBody @Valid SubscriptionContractDTO subscriptionContractDTO);
+    ResponseEntity<EntityModel<SubscriptionContractDTO>> create(@RequestBody @Valid SubscriptionContractDTO subscriptionContractDTO);
 
 
 
@@ -107,7 +108,7 @@ public interface SubscriptionContractControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<SubscriptionContractDTO> update(@RequestBody @Valid SubscriptionContractDTO subscriptionContractDTO);
+    ResponseEntity<EntityModel<SubscriptionContractDTO>> update(@RequestBody @Valid SubscriptionContractDTO subscriptionContractDTO);
 
 
 
@@ -133,7 +134,7 @@ public interface SubscriptionContractControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<SubscriptionContractDTO> renew(@PathVariable Long id, @RequestBody SubscriptionContractDTO subscriptionContractDTO);
+    ResponseEntity<EntityModel<SubscriptionContractDTO>> renew(@PathVariable Long id, @RequestBody SubscriptionContractDTO subscriptionContractDTO);
 
 
 
