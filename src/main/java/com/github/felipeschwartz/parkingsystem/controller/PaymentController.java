@@ -1,5 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import com.github.felipeschwartz.parkingsystem.controller.assembler.PaymentModelAssembler;
+import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.controller.docs.PaymentControllerDocs;
 import com.github.felipeschwartz.parkingsystem.model.dto.PaymentDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.Payment;
@@ -20,21 +22,23 @@ import java.util.List;
 public class PaymentController implements PaymentControllerDocs {
 
     private final PaymentService service;
+    private final PaymentModelAssembler assembler;
 
-    public PaymentController(PaymentService service) {
+    public PaymentController(PaymentService service, PaymentModelAssembler assembler) {
         this.service = service;
+        this.assembler = assembler;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public List<PaymentDTO> findAll() {
-        return service.findAll();
+    public List<EntityModel<PaymentDTO>> findAll() {
+        return service.findAll().stream().map(assembler::toModel).toList();
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public PaymentDTO findById(@PathVariable Long id) {
-        return service.findById(id);
+    public EntityModel<PaymentDTO> findById(@PathVariable Long id) {
+        return assembler.toModel(service.findById(id));
     }
 
 
@@ -43,13 +47,13 @@ public class PaymentController implements PaymentControllerDocs {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Override
-    public ResponseEntity<PaymentDTO> create(@RequestBody @Valid PaymentDTO payment) {
+    public ResponseEntity<EntityModel<PaymentDTO>> create(@RequestBody @Valid PaymentDTO payment) {
         PaymentDTO createdPayment = service.create(payment);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(createdPayment.getId())
+                .buildAndExpand(createdPayment.id())
                 .toUri();
-        return ResponseEntity.created(location).body(createdPayment);
+        return ResponseEntity.created(location).body(assembler.toModel(createdPayment));
     }
 
     @PutMapping(
@@ -58,7 +62,7 @@ public class PaymentController implements PaymentControllerDocs {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Override
-    public PaymentDTO update(@RequestBody @Valid PaymentDTO updatedPayment) {
-        return service.update(updatedPayment);
+    public EntityModel<PaymentDTO> update(@RequestBody @Valid PaymentDTO updatedPayment) {
+        return assembler.toModel(service.update(updatedPayment));
     }
 }

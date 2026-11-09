@@ -6,29 +6,29 @@ import com.github.felipeschwartz.parkingsystem.model.entity.UserEntity;
 import com.github.felipeschwartz.parkingsystem.model.entity.UserIndividual;
 import org.mapstruct.*;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserSummaryMapper {
 
     @Named("userToSummaryDTO")
-    @Mapping(target = "cpf", ignore = true)
-    @Mapping(target = "cnpj", ignore = true)
-    UserSummaryDTO userToSummaryDTO(User user);
-
-    @AfterMapping
-    default void fillPolymorphicFields(@MappingTarget UserSummaryDTO dto, User user) {
-        if (user instanceof UserIndividual individual) {
-            dto.setCpf(individual.getCpf());
-        } else if (user instanceof UserEntity entity) {
-            dto.setCnpj(entity.getCnpj());
+    default UserSummaryDTO userToSummaryDTO(User user) {
+        if (user == null) {
+            return null;
         }
+        String cpf = user instanceof UserIndividual individual ? individual.getCpf() : null;
+        String cnpj = user instanceof UserEntity entity ? entity.getCnpj() : null;
+        Set<String> roles = user.getRoles() == null ? null : new LinkedHashSet<>(user.getRoles());
+        return new UserSummaryDTO(user.getId(), null, user.getPhone(), user.getEmail(), user.getUserType(), cpf, cnpj, roles);
     }
 
 
     @ObjectFactory
     default User createUser(UserSummaryDTO dto) {
-        if (dto.getCpf() != null && !dto.getCpf().isBlank()) {
+        if (dto.cpf() != null && !dto.cpf().isBlank()) {
             return new UserIndividual();
-        } else if (dto.getCnpj() != null && !dto.getCnpj().isBlank()) {
+        } else if (dto.cnpj() != null && !dto.cnpj().isBlank()) {
             return new UserEntity();
         }
         throw new IllegalArgumentException("UserSummaryDTO must contain either CPF or CNPJ to create an User entity.");

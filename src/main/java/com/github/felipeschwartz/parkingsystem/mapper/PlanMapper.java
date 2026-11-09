@@ -44,7 +44,7 @@ public interface PlanMapper {
         if (plan == null) {
             return null;
         }
-        return context.getMappedInstance(plan, PlanDTO.class, () -> toDTO(plan, context));
+        return toDTO(plan, context);
     }
 
 
@@ -56,7 +56,7 @@ public interface PlanMapper {
             return null;
         }
         return contracts.stream()
-                .map(contract -> context.getMappedInstance(contract, SubscriptionContractDTO.class, () -> context.getSubscriptionContractMapper().toDTO(contract, context)))
+                .map(contract -> context.getSubscriptionContractMapper().toDTO(contract, context))
                 .collect(Collectors.toSet());
     }
 
@@ -68,7 +68,7 @@ public interface PlanMapper {
             return null;
         }
         return rates.stream()
-                .map(rate -> context.getMappedInstance(rate, PlanRateDTO.class, () -> context.getPlanRateMapper().toDTO(rate)))
+                .map(rate -> context.getPlanRateMapper().toDTO(rate))
                 .collect(Collectors.toSet());
     }
 

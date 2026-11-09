@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller.docs;
 
+import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanCreationDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +36,7 @@ public interface PlanControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    List<PlanDTO> findAll();
+    List<EntityModel<PlanDTO>> findAll();
 
     @Operation(
             summary = "Finds a plan",
@@ -54,7 +55,7 @@ public interface PlanControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    PlanDTO findById(@PathVariable Long id);
+    EntityModel<PlanDTO> findById(@PathVariable Long id);
 
     
     
@@ -80,7 +81,7 @@ public interface PlanControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<PlanDTO> create(@RequestBody @Valid PlanCreationDTO planCreationDTO);
+    ResponseEntity<EntityModel<PlanDTO>> create(@RequestBody @Valid PlanCreationDTO planCreationDTO);
 
 
 
@@ -106,7 +107,7 @@ public interface PlanControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    PlanDTO update(@RequestBody @Valid PlanDTO updatedPlan);
+    EntityModel<PlanDTO> update(@RequestBody @Valid PlanDTO updatedPlan);
 
 
 

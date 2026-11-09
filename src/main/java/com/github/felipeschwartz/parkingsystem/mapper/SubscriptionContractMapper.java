@@ -34,16 +34,8 @@ public interface SubscriptionContractMapper {
         if (user == null) {
             return null;
         }
-        UserSummaryDTO dto = new UserSummaryDTO();
-        dto.setId(user.getId());
-        dto.setEmail(user.getEmail());
-        dto.setPhone(user.getPhone());
-
-        if (user instanceof UserIndividual individual) {
-            dto.setCpf(individual.getCpf());
-        } else if (user instanceof UserEntity entity) {
-            dto.setCnpj(entity.getCnpj());
-        }
-        return dto;
+        String cpf = user instanceof UserIndividual individual ? individual.getCpf() : null;
+        String cnpj = user instanceof UserEntity entity ? entity.getCnpj() : null;
+        return new UserSummaryDTO(user.getId(), null, user.getPhone(), user.getEmail(), null, cpf, cnpj, null);
     }
 }

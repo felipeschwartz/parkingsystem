@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller.docs;
 
+import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.model.dto.ParkingSpaceDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -34,7 +35,7 @@ public interface ParkingSpaceControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    List<ParkingSpaceDTO> findAll();
+    List<EntityModel<ParkingSpaceDTO>> findAll();
 
     @Operation(
             summary = "Finds a parking space",
@@ -53,7 +54,7 @@ public interface ParkingSpaceControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ParkingSpaceDTO findById(@PathVariable Long id);
+    EntityModel<ParkingSpaceDTO> findById(@PathVariable Long id);
 
     
     
@@ -79,7 +80,7 @@ public interface ParkingSpaceControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<ParkingSpaceDTO> create(@RequestBody @Valid ParkingSpaceDTO parkingSpace);
+    ResponseEntity<EntityModel<ParkingSpaceDTO>> create(@RequestBody @Valid ParkingSpaceDTO parkingSpace);
 
 
 
@@ -105,7 +106,7 @@ public interface ParkingSpaceControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ParkingSpaceDTO update(@RequestBody @Valid ParkingSpaceDTO updatedParkingSpace);
+    EntityModel<ParkingSpaceDTO> update(@RequestBody @Valid ParkingSpaceDTO updatedParkingSpace);
 
 
 

@@ -1,44 +1,27 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
-public class UserEntityDTO extends UserDTO<UserEntityDTO> {
-    private String cnpj;
-    private String billingContact;
-    private String corporateName;
-    private String fantasyName;
+import com.github.felipeschwartz.parkingsystem.model.enums.UserProfile;
+import com.github.felipeschwartz.parkingsystem.model.enums.UserType;
+import java.time.LocalDateTime;
+import java.util.Set;
 
-    public UserEntityDTO() {
+public record UserEntityDTO(
+        Long id,
+        String phone,
+        String email,
+        Set<VehicleDTO> vehicles,
+        AddressDTO address,
+        UserType userType,
+        UserProfile userProfile,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt,
+        String cnpj,
+        String billingContact,
+        String corporateName,
+        String fantasyName
+) implements UserDTO {
+
+    public UserEntityDTO {
+        vehicles = vehicles == null ? Set.of() : Set.copyOf(vehicles);
     }
-
-    public String getCnpj() {
-        return cnpj;
-    }
-
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
-    }
-
-    public String getBillingContact() {
-        return billingContact;
-    }
-
-    public void setBillingContact(String billingContact) {
-        this.billingContact = billingContact;
-    }
-
-    public String getCorporateName() {
-        return corporateName;
-    }
-
-    public void setCorporateName(String corporateName) {
-        this.corporateName = corporateName;
-    }
-
-    public String getFantasyName() {
-        return fantasyName;
-    }
-
-    public void setFantasyName(String fantasyName) {
-        this.fantasyName = fantasyName;
-    }
-
 }

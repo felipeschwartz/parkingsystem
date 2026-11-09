@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller.docs;
 
+import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.model.dto.PaymentDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -34,7 +35,7 @@ public interface PaymentControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    List<PaymentDTO> findAll();
+    List<EntityModel<PaymentDTO>> findAll();
 
     @Operation(
             summary = "Finds a payment",
@@ -53,7 +54,7 @@ public interface PaymentControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    PaymentDTO findById(@PathVariable Long id);
+    EntityModel<PaymentDTO> findById(@PathVariable Long id);
 
     
     
@@ -79,7 +80,7 @@ public interface PaymentControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<PaymentDTO> create(@RequestBody @Valid PaymentDTO payment);
+    ResponseEntity<EntityModel<PaymentDTO>> create(@RequestBody @Valid PaymentDTO payment);
 
 
 
@@ -105,5 +106,5 @@ public interface PaymentControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    PaymentDTO update(@RequestBody @Valid PaymentDTO updatedPayment);
+    EntityModel<PaymentDTO> update(@RequestBody @Valid PaymentDTO updatedPayment);
 }

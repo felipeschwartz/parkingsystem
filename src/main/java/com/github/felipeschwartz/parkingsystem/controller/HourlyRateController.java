@@ -1,5 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import com.github.felipeschwartz.parkingsystem.controller.assembler.HourlyRateModelAssembler;
+import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.controller.docs.HourlyRateControllerDocs;
 import com.github.felipeschwartz.parkingsystem.model.dto.HourlyRateDTO;
 import com.github.felipeschwartz.parkingsystem.service.HourlyRateService;
@@ -19,23 +21,25 @@ import java.util.List;
 public class HourlyRateController implements HourlyRateControllerDocs {
 
     private final HourlyRateService service;
+    private final HourlyRateModelAssembler assembler;
 
-    public HourlyRateController(HourlyRateService service) {
+    public HourlyRateController(HourlyRateService service, HourlyRateModelAssembler assembler) {
         this.service = service;
+        this.assembler = assembler;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public ResponseEntity<List<HourlyRateDTO>> findAll() {
+    public ResponseEntity<List<EntityModel<HourlyRateDTO>>> findAll() {
         List<HourlyRateDTO> hourlyRates = service.findAll();
-        return ResponseEntity.ok(hourlyRates);
+        return ResponseEntity.ok(hourlyRates.stream().map(assembler::toModel).toList());
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public ResponseEntity<HourlyRateDTO> findById(@PathVariable("id") long id) {
+    public ResponseEntity<EntityModel<HourlyRateDTO>> findById(@PathVariable("id") long id) {
         HourlyRateDTO hourlyRate = service.findById(id);
-        return ResponseEntity.ok(hourlyRate);
+        return ResponseEntity.ok(assembler.toModel(hourlyRate));
     }
 
     @PostMapping(
@@ -43,13 +47,13 @@ public class HourlyRateController implements HourlyRateControllerDocs {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Override
-    public ResponseEntity<HourlyRateDTO> create(@RequestBody @Valid HourlyRateDTO hourlyRateDTO) {
+    public ResponseEntity<EntityModel<HourlyRateDTO>> create(@RequestBody @Valid HourlyRateDTO hourlyRateDTO) {
         HourlyRateDTO createdHourlyRate = service.create(hourlyRateDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(createdHourlyRate.getId())
+                .buildAndExpand(createdHourlyRate.id())
                 .toUri();
-        return ResponseEntity.created(location).body(createdHourlyRate);
+        return ResponseEntity.created(location).body(assembler.toModel(createdHourlyRate));
     }
 
     @PutMapping(
@@ -58,9 +62,9 @@ public class HourlyRateController implements HourlyRateControllerDocs {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Override
-    public ResponseEntity<HourlyRateDTO> update(@RequestBody @Valid HourlyRateDTO hourlyRateDTO) {
+    public ResponseEntity<EntityModel<HourlyRateDTO>> update(@RequestBody @Valid HourlyRateDTO hourlyRateDTO) {
         HourlyRateDTO updatedHourlyRate = service.update(hourlyRateDTO);
-        return ResponseEntity.ok(updatedHourlyRate);
+        return ResponseEntity.ok(assembler.toModel(updatedHourlyRate));
     }
 
     @DeleteMapping(value = "/{id}")

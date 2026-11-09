@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller.docs;
 
+import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.model.dto.VehicleDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -34,7 +35,7 @@ public interface VehicleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    List<VehicleDTO> findAll();
+    List<EntityModel<VehicleDTO>> findAll();
 
     @Operation(
             summary = "Finds a vehicle",
@@ -53,7 +54,7 @@ public interface VehicleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    VehicleDTO findById(@PathVariable Long id);
+    EntityModel<VehicleDTO> findById(@PathVariable Long id);
 
     
     
@@ -79,7 +80,7 @@ public interface VehicleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<VehicleDTO> create(@RequestBody @Valid VehicleDTO vehicle);
+    ResponseEntity<EntityModel<VehicleDTO>> create(@RequestBody @Valid VehicleDTO vehicle);
 
 
 
@@ -105,7 +106,7 @@ public interface VehicleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    VehicleDTO update(@RequestBody @Valid VehicleDTO updatedVehicle);
+    EntityModel<VehicleDTO> update(@RequestBody @Valid VehicleDTO updatedVehicle);
 
 
 
@@ -145,5 +146,5 @@ public interface VehicleControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    VehicleDTO findByLicensePlate(@PathVariable String licence_plate);
+    EntityModel<VehicleDTO> findByLicensePlate(@PathVariable String licence_plate);
 }

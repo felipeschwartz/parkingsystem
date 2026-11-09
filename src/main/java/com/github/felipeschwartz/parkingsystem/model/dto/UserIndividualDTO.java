@@ -1,45 +1,28 @@
 package com.github.felipeschwartz.parkingsystem.model.dto;
 
+import com.github.felipeschwartz.parkingsystem.model.enums.UserProfile;
+import com.github.felipeschwartz.parkingsystem.model.enums.UserType;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
 
-public class UserIndividualDTO extends UserDTO<UserIndividualDTO> {
-    private String cpf;
-    private String firstName;
-    private String lastName;
-    private LocalDate birthDate;
+public record UserIndividualDTO(
+        Long id,
+        String phone,
+        String email,
+        Set<VehicleDTO> vehicles,
+        AddressDTO address,
+        UserType userType,
+        UserProfile userProfile,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt,
+        String cpf,
+        String firstName,
+        String lastName,
+        LocalDate birthDate
+) implements UserDTO {
 
-    public UserIndividualDTO() {
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
+    public UserIndividualDTO {
+        vehicles = vehicles == null ? Set.of() : Set.copyOf(vehicles);
     }
 }

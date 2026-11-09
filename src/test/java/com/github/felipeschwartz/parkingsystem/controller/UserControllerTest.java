@@ -1,6 +1,8 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import com.github.felipeschwartz.parkingsystem.TestDtos;
 import com.github.felipeschwartz.parkingsystem.config.JwtService;
+import com.github.felipeschwartz.parkingsystem.controller.assembler.UserModelAssembler;
 import com.github.felipeschwartz.parkingsystem.model.dto.CreateUserRequestDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.UserIndividualDTO;
 import com.github.felipeschwartz.parkingsystem.model.enums.UserProfile;
@@ -10,6 +12,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -25,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
+@Import(UserModelAssembler.class)
 @AutoConfigureMockMvc(addFilters = false)
 @MockitoBean(types = {JwtService.class, UserDetailsService.class})
 class UserControllerTest {
@@ -42,8 +46,7 @@ class UserControllerTest {
 
     @Test
     void shouldBindTheUserProfileSentInTheBody() throws Exception {
-        UserIndividualDTO created = new UserIndividualDTO();
-        created.setId(10L);
+        UserIndividualDTO created = TestDtos.userIndividual(10L, null);
         when(userService.create(any(CreateUserRequestDTO.class))).thenReturn(created);
 
         mvc.perform(post("/api/user/v1")
@@ -53,7 +56,7 @@ class UserControllerTest {
 
         ArgumentCaptor<CreateUserRequestDTO> sent = ArgumentCaptor.forClass(CreateUserRequestDTO.class);
         verify(userService).create(sent.capture());
-        assertEquals(UserProfile.PARKING_MANAGER, sent.getValue().getUserProfile());
+        assertEquals(UserProfile.PARKING_MANAGER, sent.getValue().userProfile());
     }
 
     @Test

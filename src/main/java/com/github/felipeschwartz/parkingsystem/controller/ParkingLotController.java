@@ -1,5 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import com.github.felipeschwartz.parkingsystem.controller.assembler.ParkingLotModelAssembler;
+import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.controller.docs.ParkingLotControllerDocs;
 import com.github.felipeschwartz.parkingsystem.model.dto.ParkingLotDTO;
 import com.github.felipeschwartz.parkingsystem.service.ParkingLotService;
@@ -19,21 +21,23 @@ import java.util.List;
 public class ParkingLotController implements ParkingLotControllerDocs {
 
     private final ParkingLotService service;
+    private final ParkingLotModelAssembler assembler;
 
-    public ParkingLotController(ParkingLotService service) {
+    public ParkingLotController(ParkingLotService service, ParkingLotModelAssembler assembler) {
         this.service = service;
+        this.assembler = assembler;
     }
 
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public List<ParkingLotDTO> findAll() {
-        return service.findAll();
+    public List<EntityModel<ParkingLotDTO>> findAll() {
+        return service.findAll().stream().map(assembler::toModel).toList();
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ParkingLotDTO findById(@PathVariable Long id) {
-        return service.findById(id);
+    public EntityModel<ParkingLotDTO> findById(@PathVariable Long id) {
+        return assembler.toModel(service.findById(id));
     }
 
 
@@ -42,13 +46,13 @@ public class ParkingLotController implements ParkingLotControllerDocs {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Override
-    public ResponseEntity<ParkingLotDTO> create(@RequestBody @Valid ParkingLotDTO parkingLot) {
+    public ResponseEntity<EntityModel<ParkingLotDTO>> create(@RequestBody @Valid ParkingLotDTO parkingLot) {
         ParkingLotDTO createdParkingLot = service.create(parkingLot);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/id/{id}")
-                .buildAndExpand(createdParkingLot.getId())
+                .path("/{id}")
+                .buildAndExpand(createdParkingLot.id())
                 .toUri();
-        return ResponseEntity.created(location).body(createdParkingLot);
+        return ResponseEntity.created(location).body(assembler.toModel(createdParkingLot));
     }
 
     @PutMapping(
@@ -57,8 +61,8 @@ public class ParkingLotController implements ParkingLotControllerDocs {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Override
-    public ParkingLotDTO update(@RequestBody @Valid ParkingLotDTO updatedParkingLot) {
-        return service.update(updatedParkingLot);
+    public EntityModel<ParkingLotDTO> update(@RequestBody @Valid ParkingLotDTO updatedParkingLot) {
+        return assembler.toModel(service.update(updatedParkingLot));
     }
 
 

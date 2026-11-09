@@ -1,5 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import com.github.felipeschwartz.parkingsystem.controller.assembler.PlanRateModelAssembler;
+import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.controller.docs.PlanRateControllerDocs;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanRateDTO;
 import com.github.felipeschwartz.parkingsystem.service.PlanRateService;
@@ -19,22 +21,24 @@ import java.util.List;
 public class PlanRateController implements PlanRateControllerDocs {
 
     private final PlanRateService service;
+    private final PlanRateModelAssembler assembler;
 
-    public PlanRateController(PlanRateService service) {
+    public PlanRateController(PlanRateService service, PlanRateModelAssembler assembler) {
         this.service = service;
+        this.assembler = assembler;
     }
 
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public List<PlanRateDTO> findAll() {
-        return service.findAll();
+    public List<EntityModel<PlanRateDTO>> findAll() {
+        return service.findAll().stream().map(assembler::toModel).toList();
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public PlanRateDTO findById(@PathVariable Long id) {
-        return service.findById(id);
+    public EntityModel<PlanRateDTO> findById(@PathVariable Long id) {
+        return assembler.toModel(service.findById(id));
     }
 
 
@@ -43,13 +47,13 @@ public class PlanRateController implements PlanRateControllerDocs {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Override
-    public ResponseEntity<PlanRateDTO> create(@RequestBody @Valid PlanRateDTO planRateDTO) {
+    public ResponseEntity<EntityModel<PlanRateDTO>> create(@RequestBody @Valid PlanRateDTO planRateDTO) {
         PlanRateDTO createdPlanRate = service.create(planRateDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(createdPlanRate.getId())
+                .buildAndExpand(createdPlanRate.id())
                 .toUri();
-        return ResponseEntity.created(location).body(createdPlanRate);
+        return ResponseEntity.created(location).body(assembler.toModel(createdPlanRate));
     }
 
     @PutMapping(
@@ -58,10 +62,9 @@ public class PlanRateController implements PlanRateControllerDocs {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Override
-    public ResponseEntity<PlanRateDTO> update(@RequestBody PlanRateDTO updatedDTO) {
-        updatedDTO.setId(updatedDTO.getId());
+    public ResponseEntity<EntityModel<PlanRateDTO>> update(@RequestBody PlanRateDTO updatedDTO) {
         PlanRateDTO result = service.update(updatedDTO);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(assembler.toModel(result));
     }
 
 

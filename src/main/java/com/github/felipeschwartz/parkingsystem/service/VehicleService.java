@@ -1,6 +1,5 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
-import com.github.felipeschwartz.parkingsystem.controller.VehicleController;
 import com.github.felipeschwartz.parkingsystem.mapper.VehicleMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.VehicleDTO;
 import com.github.felipeschwartz.parkingsystem.model.entity.SubscriptionContract;
@@ -20,9 +19,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 @Service
 public class VehicleService {
 
@@ -39,14 +35,12 @@ public class VehicleService {
         this.vehicleMapper = vehicleMapper;
     }
 
-
     @Transactional(readOnly = true)
     public List<VehicleDTO> findAll() {
         logger.info("Finding all Vehicles!");
         List<VehicleDTO> vehicles = vehicleRepository.findAll().stream()
                 .map(vehicleMapper::toDTO)
                 .collect(Collectors.toList());
-        vehicles.forEach(this::addHateoasLinks);
         return vehicles;
     }
 
@@ -56,19 +50,16 @@ public class VehicleService {
         Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Vehicle", id));
         VehicleDTO dto = vehicleMapper.toDTO(vehicle);
-        addHateoasLinks(dto);
         return dto;
 
     }
-
-
 
     @Transactional
     public VehicleDTO create(VehicleDTO vehicleDTO) {
         logger.info("Creating one Vehicle!");
         Objects.requireNonNull(vehicleDTO, "vehicle must not be null.");
 
-        String licencePlate = vehicleDTO.getLicensePlate();
+        String licencePlate = vehicleDTO.licensePlate();
         if (licencePlate == null || licencePlate.isBlank()) {
             throw new IllegalArgumentException("Licence Plate must not be blank.");
         }
@@ -80,26 +71,22 @@ public class VehicleService {
         vehicle.setCreatedAt(now);
         vehicle.setUpdatedAt(now);
         VehicleDTO createdDto = vehicleMapper.toDTO(vehicleRepository.save(vehicle));
-        addHateoasLinks(createdDto);
         return createdDto;
     }
-
 
     @Transactional
     public VehicleDTO update(VehicleDTO updated) {
         logger.info("Updating one Vehicle!");
-        Vehicle vehicle = vehicleRepository.findById(updated.getId())
-                .orElseThrow(() -> new ObjectNotFoundException("Vehicle", updated.getId()));
+        Vehicle vehicle = vehicleRepository.findById(updated.id())
+                .orElseThrow(() -> new ObjectNotFoundException("Vehicle", updated.id()));
 
-        if (updated.getLicensePlate() != null) vehicle.setLicensePlate(updated.getLicensePlate());
-        if (updated.getType() != null) vehicle.setType(updated.getType());
+        if (updated.licensePlate() != null) vehicle.setLicensePlate(updated.licensePlate());
+        if (updated.type() != null) vehicle.setType(updated.type());
 
         vehicle.setUpdatedAt(LocalDateTime.now());
         VehicleDTO updatedDto = vehicleMapper.toDTO(vehicleRepository.save(vehicle));
-        addHateoasLinks(updatedDto);
         return updatedDto;
     }
-
 
     @Transactional
     public void delete(Long id) {
@@ -115,10 +102,8 @@ public class VehicleService {
         Vehicle vehicle = vehicleRepository.findVehicleByLicensePlate(licensePlate)
                 .orElseThrow(() -> new ObjectNotFoundException("Vehicle", licensePlate));
         VehicleDTO dto = vehicleMapper.toDTO(vehicle);
-        addHateoasLinks(dto);
         return dto;
     }
-
 
     private Vehicle findVehicleEntityByLicensePlate(String licensePlate) {
         return vehicleRepository.findVehicleByLicensePlate(licensePlate)
@@ -142,11 +127,4 @@ public class VehicleService {
                 .orElseThrow(() -> new NoActiveContractException(licensePlate));
     }
 
-    private void addHateoasLinks(VehicleDTO dto) {
-        dto.add(linkTo(methodOn(VehicleController.class).findById(dto.getId())).withSelfRel().withType("GET"));
-        dto.add(linkTo(methodOn(VehicleController.class).findAll()).withRel("findAll").withType("GET"));
-        dto.add(linkTo(methodOn(VehicleController.class).create(dto)).withRel("create").withType("POST"));
-        dto.add(linkTo(methodOn(VehicleController.class).update(dto)).withRel("update").withType("PUT"));
-        dto.add(linkTo(methodOn(VehicleController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
-    }
 }

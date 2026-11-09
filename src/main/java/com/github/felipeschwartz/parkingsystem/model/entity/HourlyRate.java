@@ -48,6 +48,10 @@ public class HourlyRate implements Serializable {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public VehicleType getVehicleType() {
         return vehicleType;
     }
