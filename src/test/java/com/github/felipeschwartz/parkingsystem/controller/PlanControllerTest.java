@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import org.springframework.data.domain.PageImpl;
 import com.github.felipeschwartz.parkingsystem.TestDtos;
 import com.github.felipeschwartz.parkingsystem.controller.assembler.PlanModelAssembler;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanCreationDTO;
@@ -25,11 +26,11 @@ class PlanControllerTest {
 
     @Test
     void findAllShouldReturnThePlans() throws Exception {
-        when(service.findAll()).thenReturn(List.of(plan));
+        when(service.findAll(0, 10)).thenReturn(new PageImpl<>(List.of(plan)));
 
         mvc.perform(get("/api/plan/v1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1));
+                .andExpect(jsonPath("$.data[0].id").value(1));
     }
 
     @Test

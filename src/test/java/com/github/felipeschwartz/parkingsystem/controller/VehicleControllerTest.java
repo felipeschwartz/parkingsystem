@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import org.springframework.data.domain.PageImpl;
 import com.github.felipeschwartz.parkingsystem.TestDtos;
 import com.github.felipeschwartz.parkingsystem.controller.assembler.VehicleModelAssembler;
 import com.github.felipeschwartz.parkingsystem.model.dto.VehicleDTO;
@@ -24,11 +25,11 @@ class VehicleControllerTest {
 
     @Test
     void findAllShouldReturnTheVehicles() throws Exception {
-        when(service.findAll()).thenReturn(List.of(vehicle));
+        when(service.findAll(0, 10)).thenReturn(new PageImpl<>(List.of(vehicle)));
 
         mvc.perform(get("/api/vehicle/v1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1));
+                .andExpect(jsonPath("$.data[0].id").value(1));
     }
 
     @Test

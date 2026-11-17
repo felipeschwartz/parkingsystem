@@ -15,6 +15,7 @@ import com.github.felipeschwartz.parkingsystem.repository.*;
 import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -123,11 +124,10 @@ public class ParkingSessionService {
     }
 
     @Transactional(readOnly = true)
-    public List<ParkingSessionDTO> findAll() {
+    public Page<ParkingSessionDTO> findAll(Integer page, Integer pageSize) {
         logger.info("Finding all Parking Sessions");
-        List<ParkingSessionDTO> parkingSessionDTOS = sessionRepository.findAll().stream()
-                .map(sessionMapper::toDTO)
-                .collect(Collectors.toList());
+        Page<ParkingSessionDTO> parkingSessionDTOS = sessionRepository.findAll(PageRequests.of(page, pageSize))
+                .map(sessionMapper::toDTO);
         return parkingSessionDTOS;
     }
 

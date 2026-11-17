@@ -7,12 +7,11 @@ import com.github.felipeschwartz.parkingsystem.repository.PlanRateRepository;
 import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PlanRateService  {
@@ -27,10 +26,10 @@ public class PlanRateService  {
     }
 
     @Transactional(readOnly = true)
-    public List<PlanRateDTO> findAll() {
+    public Page<PlanRateDTO> findAll(Integer page, Integer pageSize) {
         logger.info("Finding all plan rate records");
-        List<PlanRateDTO> planRates = planRateRepository.findAll().stream()
-                .map(planRateMapper::toDTO).collect(Collectors.toList());
+        Page<PlanRateDTO> planRates = planRateRepository.findAll(PageRequests.of(page, pageSize))
+                .map(planRateMapper::toDTO);
         return planRates;
     }
 

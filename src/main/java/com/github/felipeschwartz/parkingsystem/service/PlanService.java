@@ -13,14 +13,13 @@ import com.github.felipeschwartz.parkingsystem.repository.SubscriptionContractRe
 import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class PlanService {
@@ -43,11 +42,10 @@ public class PlanService {
     }
 
     @Transactional(readOnly = true)
-    public List<PlanDTO> findAll() {
+    public Page<PlanDTO> findAll(Integer page, Integer pageSize) {
         logger.info("Finding all plan records");
-        List<PlanDTO> planDTOS = planRepository.findAll().stream()
-                .map(entity -> planMapper.toDTO(entity, context))
-                .collect(Collectors.toList());
+        Page<PlanDTO> planDTOS = planRepository.findAll(PageRequests.of(page, pageSize))
+                .map(entity -> planMapper.toDTO(entity, context));
         return planDTOS;
     }
 

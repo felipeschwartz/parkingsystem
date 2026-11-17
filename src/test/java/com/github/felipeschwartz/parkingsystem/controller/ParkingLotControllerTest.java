@@ -1,5 +1,7 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import com.github.felipeschwartz.parkingsystem.TestDtos;
 import com.github.felipeschwartz.parkingsystem.controller.assembler.ParkingLotModelAssembler;
 import com.github.felipeschwartz.parkingsystem.model.dto.ParkingLotDTO;
@@ -24,11 +26,24 @@ class ParkingLotControllerTest {
 
     @Test
     void findAllShouldReturnTheLots() throws Exception {
-        when(service.findAll()).thenReturn(List.of(lot));
+        when(service.findAll(0, 10)).thenReturn(new PageImpl<>(List.of(lot)));
 
         mvc.perform(get("/api/parking_lot/v1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1));
+                .andExpect(jsonPath("$.data[0].id").value(1));
+    }
+
+    @Test
+    void findAllShouldForwardThePageParamsAndExposeThePagination() throws Exception {
+        when(service.findAll(1, 5)).thenReturn(new PageImpl<>(List.of(lot), PageRequest.of(1, 5), 11));
+
+        mvc.perform(get("/api/parking_lot/v1?page=1&pageSize=5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].id").value(1))
+                .andExpect(jsonPath("$.pagination.page").value(1))
+                .andExpect(jsonPath("$.pagination.pageSize").value(5))
+                .andExpect(jsonPath("$.pagination.totalElements").value(11))
+                .andExpect(jsonPath("$.pagination.totalPages").value(3));
     }
 
     @Test

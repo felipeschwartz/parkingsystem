@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import org.springframework.data.domain.PageImpl;
 import com.github.felipeschwartz.parkingsystem.TestDtos;
 import com.github.felipeschwartz.parkingsystem.controller.assembler.ParkingSpaceModelAssembler;
 import com.github.felipeschwartz.parkingsystem.model.dto.ParkingSpaceDTO;
@@ -24,11 +25,11 @@ class ParkingSpaceControllerTest {
 
     @Test
     void findAllShouldReturnTheSpaces() throws Exception {
-        when(service.findAll()).thenReturn(List.of(space));
+        when(service.findAll(0, 10)).thenReturn(new PageImpl<>(List.of(space)));
 
         mvc.perform(get("/api/parking_space/v1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1));
+                .andExpect(jsonPath("$.data[0].id").value(1));
     }
 
     @Test

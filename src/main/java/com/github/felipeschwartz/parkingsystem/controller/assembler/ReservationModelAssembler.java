@@ -16,7 +16,7 @@ public class ReservationModelAssembler implements RepresentationModelAssembler<R
     public EntityModel<ReservationDTO> toModel(ReservationDTO dto) {
         return EntityModel.of(dto,
                 linkTo(methodOn(ReservationController.class).findById(dto.id())).withSelfRel().withType("GET"),
-                linkTo(methodOn(ReservationController.class).findAll()).withRel("findAll").withType("GET"),
+                linkTo(ReservationController.class).withRel("findAll").withType("GET"),
                 linkTo(methodOn(ReservationController.class).create(dto)).withRel("create").withType("POST"),
                 linkTo(methodOn(ReservationController.class).update(dto)).withRel("update").withType("PUT"),
                 linkTo(methodOn(ReservationController.class).delete(dto.id())).withRel("delete").withType("DELETE"));

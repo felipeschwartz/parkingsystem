@@ -1,17 +1,17 @@
 package com.github.felipeschwartz.parkingsystem.controller.docs;
 
+import org.springframework.web.bind.annotation.RequestParam;
+import com.github.felipeschwartz.parkingsystem.model.dto.PagedResponse;
 import com.github.felipeschwartz.parkingsystem.model.dto.CreateUserRequestDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.UserDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.UserEntityDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.UserIndividualDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ public interface UserControllerDocs {
                             content = {
                                     @Content(
                                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                            array = @ArraySchema(schema = @Schema(implementation = UserDTO.class)))}),
+                                            schema = @Schema(implementation = PagedResponse.class))}),
                     @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
                     @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
@@ -37,7 +37,8 @@ public interface UserControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<CollectionModel<EntityModel<UserDTO>>> findAll();
+    ResponseEntity<PagedResponse<EntityModel<UserDTO>>> findAll(@RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize);
 
     @Operation(
             summary = "Finds a user",

@@ -18,13 +18,13 @@ import com.github.felipeschwartz.parkingsystem.repository.UserRepository;
 import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -56,10 +56,9 @@ public class UserService {
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ADMIN') or hasRole('PARKING_MANAGER')")
-    public List<UserDTO> findAll() {
+    public Page<UserDTO> findAll(Integer page, Integer pageSize) {
         logger.info("Finding all Users!");
-        List<UserDTO> userDTOS = userRepository.findAll()
-                .stream()
+        return userRepository.findAll(PageRequests.of(page, pageSize))
                 .map(user -> {
                     if (user instanceof UserIndividual oi) {
                         return (UserDTO) individualMapper.toDTO(oi);
@@ -67,8 +66,7 @@ public class UserService {
                         return (UserDTO) entityMapper.toDTO(oe);
                     }
                     throw new IllegalStateException("Unknown user type: " + user.getId());
-                }).collect(Collectors.toList());
-        return userDTOS;
+                });
     }
 
     @Transactional(readOnly = true)

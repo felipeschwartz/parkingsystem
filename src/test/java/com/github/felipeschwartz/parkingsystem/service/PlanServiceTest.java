@@ -1,5 +1,8 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Page;
 import com.github.felipeschwartz.parkingsystem.TestDtos;
 import com.github.felipeschwartz.parkingsystem.mapper.CycleAvoidingMappingContext;
 import com.github.felipeschwartz.parkingsystem.mapper.PlanMapper;
@@ -46,12 +49,12 @@ class PlanServiceTest {
     @Test
     void findAllShouldMapEveryPlanAndAddLinks() {
         Plan plan = new Plan();
-        when(repository.findAll()).thenReturn(List.of(plan));
+        when(repository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(plan)));
         when(mapper.toDTO(eq(plan), any(CycleAvoidingMappingContext.class))).thenReturn(dto(1L));
 
-        List<PlanDTO> result = service.findAll();
+        Page<PlanDTO> result = service.findAll(0, 10);
 
-        assertEquals(1, result.size());
+        assertEquals(1, result.getContent().size());
     }
 
     @Test

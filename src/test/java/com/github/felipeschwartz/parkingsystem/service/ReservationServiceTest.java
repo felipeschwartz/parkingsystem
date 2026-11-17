@@ -1,5 +1,8 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Page;
 import com.github.felipeschwartz.parkingsystem.TestDtos;
 import com.github.felipeschwartz.parkingsystem.mapper.ReservationMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.ReservationDTO;
@@ -38,12 +41,12 @@ class ReservationServiceTest {
     @Test
     void findAllShouldMapEveryReservationAndAddLinks() {
         Reservation reservation = new Reservation();
-        when(repository.findAll()).thenReturn(List.of(reservation));
+        when(repository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(reservation)));
         when(mapper.toDTO(reservation)).thenReturn(dto(1L));
 
-        List<ReservationDTO> result = service.findAll();
+        Page<ReservationDTO> result = service.findAll(0, 10);
 
-        assertEquals(1, result.size());
+        assertEquals(1, result.getContent().size());
     }
 
     @Test

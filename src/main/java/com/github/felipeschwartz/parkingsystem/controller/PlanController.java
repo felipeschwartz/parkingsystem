@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import com.github.felipeschwartz.parkingsystem.model.dto.PagedResponse;
 import com.github.felipeschwartz.parkingsystem.controller.assembler.PlanModelAssembler;
 import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.controller.docs.PlanControllerDocs;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/plan/v1")
@@ -33,8 +33,9 @@ public class PlanController implements PlanControllerDocs {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public List<EntityModel<PlanDTO>> findAll() {
-        return service.findAll().stream().map(assembler::toModel).toList();
+    public PagedResponse<EntityModel<PlanDTO>> findAll(@RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        return PagedResponse.from(service.findAll(page, pageSize), assembler::toModel);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

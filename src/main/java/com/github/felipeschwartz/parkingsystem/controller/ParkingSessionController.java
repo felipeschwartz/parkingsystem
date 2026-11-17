@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import com.github.felipeschwartz.parkingsystem.model.dto.PagedResponse;
 import com.github.felipeschwartz.parkingsystem.controller.assembler.ParkingSessionModelAssembler;
 import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.controller.docs.ParkingSessionControllerDocs;
@@ -71,9 +72,9 @@ public class ParkingSessionController implements ParkingSessionControllerDocs {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public ResponseEntity<List<EntityModel<ParkingSessionDTO>>> findAll() {
-        List<ParkingSessionDTO> sessions = sessionService.findAll();
-        return ResponseEntity.ok(sessions.stream().map(assembler::toModel).toList());
+    public ResponseEntity<PagedResponse<EntityModel<ParkingSessionDTO>>> findAll(@RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        return ResponseEntity.ok(PagedResponse.from(sessionService.findAll(page, pageSize), assembler::toModel));
     }
 
     @GetMapping(value = "/open/space/{parkingSpaceId}", produces = MediaType.APPLICATION_JSON_VALUE)

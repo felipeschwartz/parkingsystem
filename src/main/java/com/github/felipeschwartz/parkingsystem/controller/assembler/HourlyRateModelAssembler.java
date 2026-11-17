@@ -16,7 +16,7 @@ public class HourlyRateModelAssembler implements RepresentationModelAssembler<Ho
     public EntityModel<HourlyRateDTO> toModel(HourlyRateDTO dto) {
         return EntityModel.of(dto,
                 linkTo(methodOn(HourlyRateController.class).findById(dto.id())).withSelfRel().withType("GET"),
-                linkTo(methodOn(HourlyRateController.class).findAll()).withRel("findAll").withType("GET"),
+                linkTo(HourlyRateController.class).withRel("findAll").withType("GET"),
                 linkTo(methodOn(HourlyRateController.class).create(dto)).withRel("create").withType("POST"),
                 linkTo(methodOn(HourlyRateController.class).update(dto)).withRel("update").withType("PUT"),
                 linkTo(methodOn(HourlyRateController.class).delete(dto.id())).withRel("delete").withType("DELETE"));
