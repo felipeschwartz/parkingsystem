@@ -1,5 +1,8 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Page;
 import com.github.felipeschwartz.parkingsystem.TestDtos;
 import com.github.felipeschwartz.parkingsystem.mapper.ParkingSessionMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.OpenSessionRequestDTO;
@@ -240,12 +243,12 @@ class ParkingSessionServiceFlowTest {
     @Test
     void findAllShouldMapEverySessionAndAddLinks() {
         ParkingSession session = new ParkingSession();
-        when(sessionRepository.findAll()).thenReturn(List.of(session));
+        when(sessionRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(session)));
         when(mapper.toDTO(session)).thenReturn(dto(1L));
 
-        List<ParkingSessionDTO> result = service.findAll();
+        Page<ParkingSessionDTO> result = service.findAll(0, 10);
 
-        assertEquals(1, result.size());
+        assertEquals(1, result.getContent().size());
     }
 
     @Test

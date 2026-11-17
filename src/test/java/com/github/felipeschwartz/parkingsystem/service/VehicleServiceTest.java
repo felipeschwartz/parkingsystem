@@ -1,5 +1,8 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Page;
 import com.github.felipeschwartz.parkingsystem.TestDtos;
 import com.github.felipeschwartz.parkingsystem.mapper.VehicleMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.VehicleDTO;
@@ -34,12 +37,12 @@ class VehicleServiceTest {
     @Test
     void findAllShouldMapEveryVehicleAndAddLinks() {
         Vehicle vehicle = new Vehicle();
-        when(repository.findAll()).thenReturn(List.of(vehicle));
+        when(repository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(vehicle)));
         when(mapper.toDTO(vehicle)).thenReturn(dto(1L, "ABC1234"));
 
-        List<VehicleDTO> result = service.findAll();
+        Page<VehicleDTO> result = service.findAll(0, 10);
 
-        assertEquals(1, result.size());
+        assertEquals(1, result.getContent().size());
     }
 
     @Test

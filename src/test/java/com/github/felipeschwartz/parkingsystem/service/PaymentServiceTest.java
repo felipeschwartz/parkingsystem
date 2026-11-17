@@ -1,5 +1,8 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Page;
 import com.github.felipeschwartz.parkingsystem.TestDtos;
 import com.github.felipeschwartz.parkingsystem.mapper.PaymentMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.PaymentDTO;
@@ -33,12 +36,12 @@ class PaymentServiceTest {
     @Test
     void findAllShouldMapEveryPaymentAndAddLinks() {
         Payment payment = new Payment();
-        when(paymentRepository.findAll()).thenReturn(List.of(payment));
+        when(paymentRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(payment)));
         when(mapper.toDTO(payment)).thenReturn(dto(1L));
 
-        List<PaymentDTO> result = service.findAll();
+        Page<PaymentDTO> result = service.findAll(0, 10);
 
-        assertEquals(1, result.size());
+        assertEquals(1, result.getContent().size());
     }
 
     @Test

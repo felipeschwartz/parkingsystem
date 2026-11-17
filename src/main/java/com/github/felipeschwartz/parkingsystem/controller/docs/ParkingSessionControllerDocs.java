@@ -1,11 +1,12 @@
 package com.github.felipeschwartz.parkingsystem.controller.docs;
 
+import org.springframework.web.bind.annotation.RequestParam;
+import com.github.felipeschwartz.parkingsystem.model.dto.PagedResponse;
 import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.model.dto.CloseSessionRequestDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.OpenSessionRequestDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.ParkingSessionDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -29,7 +30,7 @@ public interface ParkingSessionControllerDocs {
                             content = {
                                     @Content(
                                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                            array = @ArraySchema(schema = @Schema(implementation = ParkingSessionDTO.class)))}),
+                                            schema = @Schema(implementation = PagedResponse.class))}),
                     @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
                     @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
@@ -37,7 +38,8 @@ public interface ParkingSessionControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    ResponseEntity<List<EntityModel<ParkingSessionDTO>>> findAll();
+    ResponseEntity<PagedResponse<EntityModel<ParkingSessionDTO>>> findAll(@RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize);
 
 
 

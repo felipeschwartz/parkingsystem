@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import com.github.felipeschwartz.parkingsystem.model.dto.PagedResponse;
 import com.github.felipeschwartz.parkingsystem.controller.assembler.HourlyRateModelAssembler;
 import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.controller.docs.HourlyRateControllerDocs;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/hourly_rate/v1")
@@ -30,9 +30,9 @@ public class HourlyRateController implements HourlyRateControllerDocs {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public ResponseEntity<List<EntityModel<HourlyRateDTO>>> findAll() {
-        List<HourlyRateDTO> hourlyRates = service.findAll();
-        return ResponseEntity.ok(hourlyRates.stream().map(assembler::toModel).toList());
+    public ResponseEntity<PagedResponse<EntityModel<HourlyRateDTO>>> findAll(@RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        return ResponseEntity.ok(PagedResponse.from(service.findAll(page, pageSize), assembler::toModel));
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

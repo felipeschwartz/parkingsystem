@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import com.github.felipeschwartz.parkingsystem.model.dto.PagedResponse;
 import com.github.felipeschwartz.parkingsystem.controller.docs.UserControllerDocs;
 import com.github.felipeschwartz.parkingsystem.model.dto.CreateUserRequestDTO;
 import com.github.felipeschwartz.parkingsystem.model.dto.UserDTO;
@@ -9,7 +10,6 @@ import com.github.felipeschwartz.parkingsystem.controller.assembler.UserModelAss
 import com.github.felipeschwartz.parkingsystem.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/user/v1")
@@ -37,14 +34,10 @@ public class UserController implements UserControllerDocs {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public ResponseEntity<CollectionModel<EntityModel<UserDTO>>> findAll() {
-        List<EntityModel<UserDTO>> userModels = service.findAll().stream()
-                .<EntityModel<UserDTO>>map(assembler::toModel)
-                .toList();
-
-        return ResponseEntity.ok(
-                CollectionModel.of(userModels, linkTo(methodOn(UserController.class).findAll()).withSelfRel())
-        );
+    public ResponseEntity<PagedResponse<EntityModel<UserDTO>>> findAll(@RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        return ResponseEntity.ok(PagedResponse.<UserDTO, EntityModel<UserDTO>>from(
+                service.findAll(page, pageSize), assembler::toModel));
     }
 
     @GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

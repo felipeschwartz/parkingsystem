@@ -1,10 +1,11 @@
 package com.github.felipeschwartz.parkingsystem.controller.docs;
 
+import org.springframework.web.bind.annotation.RequestParam;
+import com.github.felipeschwartz.parkingsystem.model.dto.PagedResponse;
 
 import org.springframework.hateoas.EntityModel;
 import com.github.felipeschwartz.parkingsystem.model.dto.SubscriptionContractDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -15,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
-import java.util.List;
 
 public interface SubscriptionContractControllerDocs {
     @Operation(
@@ -29,7 +29,7 @@ public interface SubscriptionContractControllerDocs {
                             content = {
                                     @Content(
                                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                            array = @ArraySchema(schema = @Schema(implementation = SubscriptionContractDTO.class)))}),
+                                            schema = @Schema(implementation = PagedResponse.class))}),
                     @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
                     @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
@@ -37,7 +37,8 @@ public interface SubscriptionContractControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    List<EntityModel<SubscriptionContractDTO>> findAll();
+    PagedResponse<EntityModel<SubscriptionContractDTO>> findAll(@RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize);
 
     @Operation(
             summary = "Finds a subscription contract",

@@ -10,12 +10,11 @@ import com.github.felipeschwartz.parkingsystem.repository.PaymentRepository;
 import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.github.felipeschwartz.parkingsystem.model.enums.PaymentStatus.PAID;
 
@@ -34,11 +33,10 @@ public class PaymentService {
     }
 
     @Transactional(readOnly = true)
-    public List<PaymentDTO> findAll() {
+    public Page<PaymentDTO> findAll(Integer page, Integer pageSize) {
         logger.info("Finding all Payments!");
-        List<PaymentDTO> paymentDTOS = paymentRepository.findAll().stream()
-                .map(mapper::toDTO)
-                .collect(Collectors.toList());
+        Page<PaymentDTO> paymentDTOS = paymentRepository.findAll(PageRequests.of(page, pageSize))
+                .map(mapper::toDTO);
         return paymentDTOS;
     }
 

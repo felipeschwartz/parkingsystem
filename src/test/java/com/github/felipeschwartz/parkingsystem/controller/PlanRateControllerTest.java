@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import org.springframework.data.domain.PageImpl;
 import com.github.felipeschwartz.parkingsystem.TestDtos;
 import com.github.felipeschwartz.parkingsystem.controller.assembler.PlanRateModelAssembler;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanRateDTO;
@@ -24,11 +25,11 @@ class PlanRateControllerTest {
 
     @Test
     void findAllShouldReturnTheRates() throws Exception {
-        when(service.findAll()).thenReturn(List.of(rate));
+        when(service.findAll(0, 10)).thenReturn(new PageImpl<>(List.of(rate)));
 
         mvc.perform(get("/api/plan_rate/v1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1));
+                .andExpect(jsonPath("$.data[0].id").value(1));
     }
 
     @Test

@@ -16,7 +16,7 @@ public class PlanRateModelAssembler implements RepresentationModelAssembler<Plan
     public EntityModel<PlanRateDTO> toModel(PlanRateDTO dto) {
         return EntityModel.of(dto,
                 linkTo(methodOn(PlanRateController.class).findById(dto.id())).withSelfRel().withType("GET"),
-                linkTo(methodOn(PlanRateController.class).findAll()).withRel("findAll").withType("GET"),
+                linkTo(PlanRateController.class).withRel("findAll").withType("GET"),
                 linkTo(methodOn(PlanRateController.class).create(dto)).withRel("create").withType("POST"),
                 linkTo(methodOn(PlanRateController.class).update(dto)).withRel("update").withType("PUT"),
                 linkTo(methodOn(PlanRateController.class).delete(dto.id())).withRel("delete").withType("DELETE"));

@@ -7,12 +7,11 @@ import com.github.felipeschwartz.parkingsystem.repository.ParkingSpaceRepository
 import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ParkingSpaceService {
@@ -27,11 +26,10 @@ public class ParkingSpaceService {
     }
 
     @Transactional(readOnly = true)
-    public List<ParkingSpaceDTO> findAll() {
+    public Page<ParkingSpaceDTO> findAll(Integer page, Integer pageSize) {
         logger.info("Finding all Parking Spaces!");
-        List<ParkingSpaceDTO> parkingSpaces = repository.findAll().stream()
-                .map(mapper::toDTO)
-                .collect(Collectors.toList());
+        Page<ParkingSpaceDTO> parkingSpaces = repository.findAll(PageRequests.of(page, pageSize))
+                .map(mapper::toDTO);
         return parkingSpaces;
     }
 

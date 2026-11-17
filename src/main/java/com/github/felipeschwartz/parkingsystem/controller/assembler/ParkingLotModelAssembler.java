@@ -16,7 +16,7 @@ public class ParkingLotModelAssembler implements RepresentationModelAssembler<Pa
     public EntityModel<ParkingLotDTO> toModel(ParkingLotDTO dto) {
         return EntityModel.of(dto,
                 linkTo(methodOn(ParkingLotController.class).findById(dto.id())).withSelfRel().withType("GET"),
-                linkTo(methodOn(ParkingLotController.class).findAll()).withRel("findAll").withType("GET"),
+                linkTo(ParkingLotController.class).withRel("findAll").withType("GET"),
                 linkTo(methodOn(ParkingLotController.class).create(dto)).withRel("create").withType("POST"),
                 linkTo(methodOn(ParkingLotController.class).update(dto)).withRel("update").withType("PUT"),
                 linkTo(methodOn(ParkingLotController.class).delete(dto.id())).withRel("delete").withType("DELETE"));

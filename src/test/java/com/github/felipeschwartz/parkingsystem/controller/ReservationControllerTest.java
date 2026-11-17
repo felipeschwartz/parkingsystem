@@ -1,5 +1,6 @@
 package com.github.felipeschwartz.parkingsystem.controller;
 
+import org.springframework.data.domain.PageImpl;
 import com.github.felipeschwartz.parkingsystem.TestDtos;
 import com.github.felipeschwartz.parkingsystem.controller.assembler.ReservationModelAssembler;
 import com.github.felipeschwartz.parkingsystem.model.dto.ReservationDTO;
@@ -24,11 +25,11 @@ class ReservationControllerTest {
 
     @Test
     void findAllShouldReturnTheReservations() throws Exception {
-        when(service.findAll()).thenReturn(List.of(reservation));
+        when(service.findAll(0, 10)).thenReturn(new PageImpl<>(List.of(reservation)));
 
         mvc.perform(get("/api/reservation/v1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1));
+                .andExpect(jsonPath("$.data[0].id").value(1));
     }
 
     @Test

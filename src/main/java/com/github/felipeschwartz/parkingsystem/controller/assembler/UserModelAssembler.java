@@ -24,7 +24,7 @@ public class UserModelAssembler {
     public <T extends UserDTO> EntityModel<T> toModel(T dto) {
         List<Link> links = new ArrayList<>();
         links.add(linkTo(methodOn(UserController.class).findById(dto.id())).withSelfRel().withType("GET"));
-        links.add(linkTo(methodOn(UserController.class).findAll()).withRel("findAllUsers").withType("GET"));
+        links.add(linkTo(UserController.class).withRel("findAllUsers").withType("GET"));
         links.add(linkTo(methodOn(UserController.class).create(null)).withRel("createUser").withType("POST"));
         links.add(linkTo(methodOn(UserController.class).update(dto.id(), null)).withRel("updateUser").withType("PUT"));
         links.add(linkTo(methodOn(UserController.class).delete(dto.id())).withRel("deleteUser").withType("DELETE"));

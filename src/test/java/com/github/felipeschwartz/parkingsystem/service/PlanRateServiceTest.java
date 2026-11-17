@@ -1,5 +1,8 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Page;
 import com.github.felipeschwartz.parkingsystem.TestDtos;
 import com.github.felipeschwartz.parkingsystem.mapper.PlanRateMapper;
 import com.github.felipeschwartz.parkingsystem.model.dto.PlanRateDTO;
@@ -28,12 +31,12 @@ class PlanRateServiceTest {
     @Test
     void findAllShouldMapEveryRateAndAddLinks() {
         PlanRate rate = new PlanRate();
-        when(repository.findAll()).thenReturn(List.of(rate));
+        when(repository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(rate)));
         when(mapper.toDTO(rate)).thenReturn(dto(1L));
 
-        List<PlanRateDTO> result = service.findAll();
+        Page<PlanRateDTO> result = service.findAll(0, 10);
 
-        assertEquals(1, result.size());
+        assertEquals(1, result.getContent().size());
     }
 
     @Test

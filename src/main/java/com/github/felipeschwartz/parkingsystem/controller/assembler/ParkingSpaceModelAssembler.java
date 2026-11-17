@@ -16,7 +16,7 @@ public class ParkingSpaceModelAssembler implements RepresentationModelAssembler<
     public EntityModel<ParkingSpaceDTO> toModel(ParkingSpaceDTO dto) {
         return EntityModel.of(dto,
                 linkTo(methodOn(ParkingSpaceController.class).findById(dto.id())).withSelfRel().withType("GET"),
-                linkTo(methodOn(ParkingSpaceController.class).findAll()).withRel("findAll").withType("GET"),
+                linkTo(ParkingSpaceController.class).withRel("findAll").withType("GET"),
                 linkTo(methodOn(ParkingSpaceController.class).create(dto)).withRel("create").withType("POST"),
                 linkTo(methodOn(ParkingSpaceController.class).update(dto)).withRel("update").withType("PUT"),
                 linkTo(methodOn(ParkingSpaceController.class).delete(dto.id())).withRel("delete").withType("DELETE"));

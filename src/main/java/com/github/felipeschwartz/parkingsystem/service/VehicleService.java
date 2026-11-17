@@ -11,13 +11,12 @@ import com.github.felipeschwartz.parkingsystem.service.exceptions.NoActiveContra
 import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class VehicleService {
@@ -36,11 +35,10 @@ public class VehicleService {
     }
 
     @Transactional(readOnly = true)
-    public List<VehicleDTO> findAll() {
+    public Page<VehicleDTO> findAll(Integer page, Integer pageSize) {
         logger.info("Finding all Vehicles!");
-        List<VehicleDTO> vehicles = vehicleRepository.findAll().stream()
-                .map(vehicleMapper::toDTO)
-                .collect(Collectors.toList());
+        Page<VehicleDTO> vehicles = vehicleRepository.findAll(PageRequests.of(page, pageSize))
+                .map(vehicleMapper::toDTO);
         return vehicles;
     }
 

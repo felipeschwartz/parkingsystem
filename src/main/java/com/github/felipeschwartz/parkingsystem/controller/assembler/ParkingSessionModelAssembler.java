@@ -16,7 +16,7 @@ public class ParkingSessionModelAssembler implements RepresentationModelAssemble
     public EntityModel<ParkingSessionDTO> toModel(ParkingSessionDTO dto) {
         return EntityModel.of(dto,
                 linkTo(methodOn(ParkingSessionController.class).findById(dto.id())).withSelfRel().withType("GET"),
-                linkTo(methodOn(ParkingSessionController.class).findAll()).withRel("findAll").withType("GET"),
+                linkTo(ParkingSessionController.class).withRel("findAll").withType("GET"),
                 linkTo(methodOn(ParkingSessionController.class).openSession(null)).withRel("create").withType("POST"),
                 linkTo(methodOn(ParkingSessionController.class).closeSession(dto.id(), null)).withRel("close").withType("POST"));
     }

@@ -1,5 +1,8 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Page;
 import com.github.felipeschwartz.parkingsystem.TestDtos;
 import com.github.felipeschwartz.parkingsystem.mapper.UserCreationMapper;
 import com.github.felipeschwartz.parkingsystem.mapper.UserEntityMapper;
@@ -77,22 +80,22 @@ class UserServiceOperationsTest {
     void findAllShouldMapEachUserByItsConcreteType() {
         UserIndividual person = individual("111");
         UserEntity company = entity("222");
-        when(userRepository.findAll()).thenReturn(List.of(person, company));
+        when(userRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(person, company)));
         when(individualMapper.toDTO(person)).thenReturn(individualDto(1L, "111"));
         when(entityMapper.toDTO(company)).thenReturn(entityDto(2L, "222"));
 
-        List<UserDTO> result = service.findAll();
+        Page<UserDTO> result = service.findAll(0, 10);
 
-        assertEquals(2, result.size());
+        assertEquals(2, result.getContent().size());
 
     }
 
     @Test
     void findAllShouldRejectAnUnknownUserType() {
         User unknown = mock(User.class);
-        when(userRepository.findAll()).thenReturn(List.of(unknown));
+        when(userRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(unknown)));
 
-        assertThrows(IllegalStateException.class, () -> service.findAll());
+        assertThrows(IllegalStateException.class, () -> service.findAll(0, 10));
     }
 
     @Test

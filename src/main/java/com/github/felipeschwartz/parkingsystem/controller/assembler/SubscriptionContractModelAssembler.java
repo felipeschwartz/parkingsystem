@@ -16,7 +16,7 @@ public class SubscriptionContractModelAssembler implements RepresentationModelAs
     public EntityModel<SubscriptionContractDTO> toModel(SubscriptionContractDTO dto) {
         return EntityModel.of(dto,
                 linkTo(methodOn(SubscriptionContractController.class).findById(dto.id())).withSelfRel().withType("GET"),
-                linkTo(methodOn(SubscriptionContractController.class).findAll()).withRel("findAll").withType("GET"),
+                linkTo(SubscriptionContractController.class).withRel("findAll").withType("GET"),
                 linkTo(methodOn(SubscriptionContractController.class).create(dto)).withRel("create").withType("POST"),
                 linkTo(methodOn(SubscriptionContractController.class).update(dto)).withRel("update").withType("PUT"),
                 linkTo(methodOn(SubscriptionContractController.class).renew(dto.id(), dto)).withRel("renew").withType("PUT"),

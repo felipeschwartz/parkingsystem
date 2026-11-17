@@ -3,6 +3,8 @@ package com.github.felipeschwartz.parkingsystem.repository;
 import com.github.felipeschwartz.parkingsystem.model.entity.SubscriptionContract;
 import com.github.felipeschwartz.parkingsystem.model.entity.Vehicle;
 import com.github.felipeschwartz.parkingsystem.model.enums.SubscripionStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,8 +20,9 @@ public interface SubscriptionContractRepository extends JpaRepository<Subscripti
     boolean existsByVehicleIdAndStatusAndEndDateGreaterThanEqual(Long vehicleId, SubscripionStatus status, LocalDate date);
 
 
-    @Query("SELECT sc FROM SubscriptionContract sc JOIN FETCH sc.user")
-    List<SubscriptionContract> findAllWithUsers();
+    @Query(value = "SELECT sc FROM SubscriptionContract sc JOIN FETCH sc.user",
+            countQuery = "SELECT count(sc) FROM SubscriptionContract sc")
+    Page<SubscriptionContract> findAllWithUsers(Pageable pageable);
 
     List<SubscriptionContract> findByVehicleIdAndStatusOrderByStartDateDesc(Long vehicleId, SubscripionStatus status);
     Optional<SubscriptionContract> findByVehicleAndStatus(Vehicle vehicle, SubscripionStatus status);

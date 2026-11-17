@@ -11,12 +11,11 @@ import com.github.felipeschwartz.parkingsystem.repository.VehicleRepository;
 import com.github.felipeschwartz.parkingsystem.service.exceptions.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ReservationService {
@@ -35,11 +34,10 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationDTO> findAll() {
+    public Page<ReservationDTO> findAll(Integer page, Integer pageSize) {
         logger.info("Finding all reservations records");
-        List<ReservationDTO> reservationDTOS = reservationRepository.findAll().stream()
-                .map(reservationMapper::toDTO)
-                .collect(Collectors.toList());
+        Page<ReservationDTO> reservationDTOS = reservationRepository.findAll(PageRequests.of(page, pageSize))
+                .map(reservationMapper::toDTO);
         return reservationDTOS;
     }
 

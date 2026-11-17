@@ -1,5 +1,8 @@
 package com.github.felipeschwartz.parkingsystem.service;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Page;
 import com.github.felipeschwartz.parkingsystem.TestDtos;
 import com.github.felipeschwartz.parkingsystem.mapper.CycleAvoidingMappingContext;
 import com.github.felipeschwartz.parkingsystem.mapper.SubscriptionContractMapper;
@@ -47,12 +50,12 @@ class SubscriptionContractServiceTest {
     @Test
     void findAllShouldMapEveryContractAndAddLinks() {
         SubscriptionContract contract = new SubscriptionContract();
-        when(repository.findAllWithUsers()).thenReturn(List.of(contract));
+        when(repository.findAllWithUsers(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(contract)));
         when(mapper.toDTO(eq(contract), any(CycleAvoidingMappingContext.class))).thenReturn(dto(1L));
 
-        List<SubscriptionContractDTO> result = service.findAll();
+        Page<SubscriptionContractDTO> result = service.findAll(0, 10);
 
-        assertEquals(1, result.size());
+        assertEquals(1, result.getContent().size());
     }
 
     @Test
